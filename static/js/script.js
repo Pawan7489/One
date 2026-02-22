@@ -1,45 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // UI Elements
     const authScreen = document.getElementById("auth-screen");
     const chatScreen = document.getElementById("chat-screen");
-    
     const loginForm = document.getElementById("login-form");
     const signupForm = document.getElementById("signup-form");
     const tabLogin = document.getElementById("tab-login");
     const tabSignup = document.getElementById("tab-signup");
+    
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    const micBtn = document.getElementById("mic-btn");
+    const plusBtn = document.getElementById("plus-btn");
+    const actionMenu = document.getElementById("action-menu");
+    const hologram = document.getElementById("hologram");
+    const statusText = document.getElementById("status-text");
 
-    // TABS LOGIC (Login aur Signup ke beech switch karna)
+    let currentUser = {};
+    let isContinuousMicOn = false;
+    let recognition;
+
+    // --- BROWSER AUDIO UNLOCK HACK (Mobile Fix) ---
+    // Mobile browsers pehle user interaction par hi audio allow karte hain
+    function unlockAudio() {
+        if(window.speechSynthesis) {
+            let u = new SpeechSynthesisUtterance('');
+            u.volume = 0; window.speechSynthesis.speak(u);
+        }
+    }
+
+    // --- TABS LOGIC ---
     tabLogin.addEventListener("click", () => {
-        tabLogin.classList.add("active");
-        tabSignup.classList.remove("active");
-        loginForm.classList.remove("hidden");
-        signupForm.classList.add("hidden");
+        tabLogin.classList.add("active"); tabSignup.classList.remove("active");
+        loginForm.classList.remove("hidden"); signupForm.classList.add("hidden");
     });
-
     tabSignup.addEventListener("click", () => {
-        tabSignup.classList.add("active");
-        tabLogin.classList.remove("active");
-        signupForm.classList.remove("hidden");
-        loginForm.classList.add("hidden");
+        tabSignup.classList.add("active"); tabLogin.classList.remove("active");
+        signupForm.classList.remove("hidden"); loginForm.classList.add("hidden");
     });
 
-    // Dummy Login Form Logic (Abhi DB nahi hai)
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        alert("Commander, abhi humne database connect nahi kiya hai. Chat test karne ke liye 'Sign Up' tab se details dalein!");
-    });
-
-    // Signup Form (Jo pehle hamara main login tha)
+    // --- SIGNUP / LOGIN SUBMIT ---
     signupForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        unlockAudio(); // Unlocking audio immediately on button click
+
         const name = document.getElementById("reg-name").value;
         const dob = document.getElementById("reg-dob").value;
         const gender = document.getElementById("reg-gender").value;
-        
         const submitBtn = signupForm.querySelector('button');
         submitBtn.innerText = "Securing Connection...";
 
-        // Baki purana logic yahan same rahega... (Python ko request bhejna)
         try {
             const response = await fetch("/api/login", {
                 method: "POST",
@@ -50,171 +59,95 @@ document.addEventListener("DOMContentLoaded", () => {
             currentUser = { name, dob, gender, age: data.age, persona: data.persona };
 
             authScreen.classList.add("hidden");
-            setTimeout(() => {
-                chatScreen.classList.remove("hidden");
-                document.getElementById("persona-badge").innerText = `Mode: ${data.persona.label}`;
-                setTimeout(() => { appendMessage("ai", data.greeting); speak(data.greeting); }, 400);
-            }, 600);
+            chatScreen.classList.remove("hidden");
+            document.getElementById("persona-badge").innerText = `Mode: ${data.persona.label}`;
+            
+            // Speak immediately
+            appendMessage("ai", data.greeting);
+            speak(data.greeting);
+
         } catch (error) {
-            submitBtn.innerText = "Create Account";
-            alert("Error connecting to server.");
+            submitBtn.innerText = "Create Secure Account";
+            alert("Server Error! Please restart Python backend.");
         }
     });
 
-    // ... (Yahan ke baad ka Voice aur Chat wala JS code bilkul waisa hi rahega jaisa pehle tha)
-    
-    // Load voices early
-    if (window.speechSynthesis) window.speechSynthesis.getVoices();
-
-    // 1. LOGIN LOGIC
-    loginForm.addEventListener("submit", async (e) => {
+    loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        
-        const name = document.getElementById("user-name").value;
-        const dob = document.getElementById("user-dob").value;
-        const gender = document.getElementById("user-gender").value;
-        
-        const submitBtn = loginForm.querySelector('button');
-        submitBtn.innerText = "Securing Connection...";
-        submitBtn.style.opacity = "0.8";
-
-        try {
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, dob, gender })
-            });
-            const data = await response.json();
-
-            currentUser = { name, dob, gender, age: data.age, persona: data.persona };
-
-            // Apple style smooth screen transition
-            loginScreen.classList.add("hidden");
-            setTimeout(() => {
-                chatScreen.classList.remove("hidden");
-                personaBadge.innerText = `Mode: ${data.persona.label}`;
-                
-                // Greeting Voice
-                setTimeout(() => {
-                    appendMessage("ai", data.greeting);
-                    speak(data.greeting);
-                }, 400); // Thoda ruk kar bolega taaki screen load ho jaye
-            }, 600);
-
-        } catch (error) {
-            submitBtn.innerText = "Secure Login";
-            submitBtn.style.opacity = "1";
-            alert("Connection error! Server check karein.");
-        }
+        alert("Sirf UI Demo hai. Test karne ke liye 'Sign Up' tab use karein!");
     });
 
-    // 2. VOICE SYNTHESIS & AURA ANIMATION
+    // --- VOICE SYNTHESIS ---
     function speak(text) {
         if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel(); 
+        window.speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(text);
         const voices = window.speechSynthesis.getVoices();
         
-        let selectedVoice = null;
-        if (currentUser.gender === "female") {
-            selectedVoice = voices.find(v => (v.name.toLowerCase().includes("female") || v.name.toLowerCase().includes("samantha")) && v.lang.includes("en"));
-        } else {
-            selectedVoice = voices.find(v => (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("david")) && v.lang.includes("en"));
-        }
-        if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes("en-IN") || v.lang.includes("hi-IN"));
+        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN"));
+        if (!selectedVoice) selectedVoice = voices[0];
         
-        if (selectedVoice) utterance.voice = selectedVoice;
+        utterance.voice = selectedVoice;
         utterance.rate = 1.0;
 
-        // Trigger Aura Ripple Animation
-        utterance.onstart = () => {
-            hologram.classList.remove("listening");
-            hologram.classList.add("speaking");
-            statusText.innerText = "A1 is speaking...";
-        };
+        utterance.onstart = () => { hologram.className = "hologram-container speaking"; statusText.innerText = "A1 is speaking..."; };
+        utterance.onend = () => { hologram.className = "hologram-container"; statusText.innerText = "Ready..."; };
         
-        utterance.onend = () => {
-            hologram.classList.remove("speaking");
-            statusText.innerText = "A1 is ready...";
-        };
-
         window.speechSynthesis.speak(utterance);
     }
 
-        // ====================================================
-    // 3. CONTINUOUS MIC & PLUS BUTTON LOGIC
-    // ====================================================
-    const plusBtn = document.getElementById("plus-btn");
-    const actionMenu = document.getElementById("action-menu");
-    const aiVersion = document.getElementById("ai-version");
-    
-    // Plus Button Toggle
-    plusBtn.addEventListener("click", () => {
-        actionMenu.classList.toggle("hidden");
-    });
-    // Kahi aur click karne par menu band karna
-    document.addEventListener("click", (e) => {
-        if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) {
-            actionMenu.classList.add("hidden");
-        }
-    });
-
-    // Continuous Speech Recognition Logic
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let isContinuousMicOn = false; // Flag to track if user wants mic ON forever
-
-    if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-IN'; 
+    // --- CONTINUOUS MIC LOGIC ---
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognitionAPI) {
+        recognition = new SpeechRecognitionAPI();
+        recognition.lang = 'en-IN';
         recognition.interimResults = false;
 
         recognition.onstart = () => {
             micBtn.classList.add("active");
-            hologram.classList.remove("speaking");
-            hologram.classList.add("listening");
+            hologram.className = "hologram-container listening";
             statusText.innerText = "Listening continuously...";
         };
 
         recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.value = transcript;
-            sendMessage(); // Automatically send
+            userInput.value = event.results[0][0].transcript;
+            sendMessage();
         };
 
         recognition.onend = () => {
-            // MAGIC: Agar user ne manual band nahi kiya, toh auto-restart karo
             if (isContinuousMicOn) {
                 try { recognition.start(); } catch(e) {}
             } else {
                 micBtn.classList.remove("active");
-                hologram.classList.remove("listening");
-                if(hologram.classList.length === 0) statusText.innerText = "A1 is ready...";
+                if(!hologram.classList.contains("speaking")) {
+                    hologram.className = "hologram-container"; statusText.innerText = "Ready...";
+                }
             }
         };
     }
 
     micBtn.addEventListener("click", () => {
         if (isContinuousMicOn) {
-            // Turn OFF Manual
             isContinuousMicOn = false;
             recognition.stop();
             micBtn.classList.remove("active");
-            statusText.innerText = "Mic stopped.";
+            statusText.innerText = "Mic paused.";
         } else {
-            // Turn ON Continuous
             isContinuousMicOn = true;
-            micBtn.classList.add("active");
             try { recognition.start(); } catch(e) {}
         }
     });
 
-    // AI Version change hone par backend ko batana (Future Logic)
-    aiVersion.addEventListener("change", (e) => {
-        appendMessage("ai", `Switched to ${e.target.options[e.target.selectedIndex].text} mode.`);
+    // --- PLUS MENU TOGGLE ---
+    plusBtn.addEventListener("click", () => actionMenu.classList.toggle("hidden"));
+    document.addEventListener("click", (e) => {
+        if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) {
+            actionMenu.classList.add("hidden");
+        }
     });
 
-    // 4. CHAT LOGIC
+    // --- SEND MESSAGE ---
     function appendMessage(sender, text) {
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ${sender}-message`;
@@ -230,18 +163,20 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage("user", text);
         userInput.value = "";
 
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text, user: currentUser })
-        });
-
-        const data = await response.json();
-        appendMessage("ai", data.reply);
-        speak(data.reply);
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text, user: currentUser })
+            });
+            const data = await response.json();
+            appendMessage("ai", data.reply);
+            speak(data.reply);
+        } catch (error) {
+            appendMessage("ai", "Network error.");
+        }
     }
 
     sendBtn.addEventListener("click", sendMessage);
     userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
 });
-          

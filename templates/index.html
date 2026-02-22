@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Project A1 - Premium Indian AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3.0">
+</head>
+<body>
+
+    <div class="ambient-bg-glow"></div>
+
+    <div class="main-wrapper">
+        
+        <div id="login-screen" class="app-screen">
+            <div class="login-content">
+                <div class="logo-box aura-glow">A1</div>
+                <h1 class="welcome-text">Swagat Hai</h1>
+                <p class="subtitle">Secure Digital Companion</p>
+                
+                <form id="login-form">
+                    <div class="input-field">
+                        <label>Aapka Naam</label>
+                        <input type="text" id="user-name" required placeholder="Naam darj karein">
+                    </div>
+                    <div class="input-field">
+                        <label>Date of Birth (Umar ke hisaab se logic)</label>
+                        <input type="date" id="user-dob" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Awaaz (Voice Preference)</label>
+                        <select id="user-gender">
+                            <option value="male">Male (Purush)</option>
+                            <option value="female">Female (Mahila)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary apple-btn">Secure Login</button>
+                </form>
+                <div class="trust-badge">🛡️ 256-bit Encrypted | 🇮🇳 Made in India</div>
+            </div>
+        </div>
+
+        <div id="chat-screen" class="app-screen hidden">
+            <div class="header">
+                <div class="logo-text">A1</div>
+                <div class="mode-badge" id="persona-badge">Mode: Active</div>
+            </div>
+
+            <div class="hologram-stage">
+                <div class="hologram-container" id="hologram">
+                    <div class="aura-ring ring-1"></div>
+                    <div class="aura-ring ring-2"></div>
+                    <div class="hologram-core">A1</div>
+                </div>
+                <p id="status-text">Ready...</p>
+            </div>
+
+            <div class="chat-box" id="chat-box">
+                </div>
+
+            <div class="input-area">
+                <button id="mic-btn" class="mic-btn apple-btn">🎤</button>
+                <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+                <button id="send-btn" class="send-btn apple-btn">Send</button>
+            </div>
+
+            <div class="security-footer">
+                <span>🛡️ Private</span> • <span>🔒 No Data Stored</span> • <span class="text-green">🟢 Secure Link</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=3.0"></script>
+</body>
+</html>

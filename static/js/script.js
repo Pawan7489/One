@@ -1,20 +1,68 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const loginScreen = document.getElementById("login-screen");
+    // UI Elements
+    const authScreen = document.getElementById("auth-screen");
     const chatScreen = document.getElementById("chat-screen");
-    const loginForm = document.getElementById("login-form");
     
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const micBtn = document.getElementById("mic-btn");
-    const hologram = document.getElementById("hologram");
-    const statusText = document.getElementById("status-text");
-    const personaBadge = document.getElementById("persona-badge");
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    const tabLogin = document.getElementById("tab-login");
+    const tabSignup = document.getElementById("tab-signup");
 
-    let currentUser = {};
-    let isListening = false;
-    let recognition;
+    // TABS LOGIC (Login aur Signup ke beech switch karna)
+    tabLogin.addEventListener("click", () => {
+        tabLogin.classList.add("active");
+        tabSignup.classList.remove("active");
+        loginForm.classList.remove("hidden");
+        signupForm.classList.add("hidden");
+    });
 
+    tabSignup.addEventListener("click", () => {
+        tabSignup.classList.add("active");
+        tabLogin.classList.remove("active");
+        signupForm.classList.remove("hidden");
+        loginForm.classList.add("hidden");
+    });
+
+    // Dummy Login Form Logic (Abhi DB nahi hai)
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("Commander, abhi humne database connect nahi kiya hai. Chat test karne ke liye 'Sign Up' tab se details dalein!");
+    });
+
+    // Signup Form (Jo pehle hamara main login tha)
+    signupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("reg-name").value;
+        const dob = document.getElementById("reg-dob").value;
+        const gender = document.getElementById("reg-gender").value;
+        
+        const submitBtn = signupForm.querySelector('button');
+        submitBtn.innerText = "Securing Connection...";
+
+        // Baki purana logic yahan same rahega... (Python ko request bhejna)
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, dob, gender })
+            });
+            const data = await response.json();
+            currentUser = { name, dob, gender, age: data.age, persona: data.persona };
+
+            authScreen.classList.add("hidden");
+            setTimeout(() => {
+                chatScreen.classList.remove("hidden");
+                document.getElementById("persona-badge").innerText = `Mode: ${data.persona.label}`;
+                setTimeout(() => { appendMessage("ai", data.greeting); speak(data.greeting); }, 400);
+            }, 600);
+        } catch (error) {
+            submitBtn.innerText = "Create Account";
+            alert("Error connecting to server.");
+        }
+    });
+
+    // ... (Yahan ke baad ka Voice aur Chat wala JS code bilkul waisa hi rahega jaisa pehle tha)
+    
     // Load voices early
     if (window.speechSynthesis) window.speechSynthesis.getVoices();
 

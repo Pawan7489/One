@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
+import requests  # <-- [NEW] Admin Panel से बात करने के लिए
 
 app = Flask(__name__)
 
-# Persona Logic Database
+# --- [NEW] Admin Panel Address ---
+ADMIN_URL = "https://a1-zc43.onrender.com/api/ai/ask"
+
+# Persona Logic Database (Unchanged)
 PERSONAS = {
     "buddy": {
         "label": "Buddy Mode (Kids)",
@@ -23,18 +27,16 @@ PERSONAS = {
     }
 }
 
-# 🛠️ Fix: Error-proof Age Calculation
+# Fix: Error-proof Age Calculation (Unchanged)
 def calculate_age(dob_string):
     try:
         if not dob_string:
-            return 25  # Agar date na ho toh default 25 maan lein
-            
+            return 25
         birth_date = datetime.strptime(dob_string, "%Y-%m-%d")
         today = datetime.now()
         age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
         return age
     except Exception:
-        # Date me koi bhi gadbadi hone par crash hone se bachana
         return 25
 
 def get_persona_mode(age):
@@ -47,16 +49,13 @@ def get_persona_mode(age):
     else:
         return PERSONAS["caretaker"]
 
-# Main page load karne ke liye
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Login API route 
 @app.route('/api/login', methods=['POST'])
 def login():
     try:
-        # 🛠️ Fix: Agar JSON data na aaye toh empty dict lein
         data = request.get_json() or {}
         dob = data.get('dob', '')
         name = data.get('name', 'User')
@@ -73,37 +72,47 @@ def login():
             "greeting": personalized_greeting
         })
     except Exception as e:
-        # Fallback agar koi aur error aaye
-        default_persona = PERSONAS["professional"]
         return jsonify({
             "success": True,
             "age": 25,
-            "persona": default_persona,
-            "greeting": f"Namaskar {name}, Main A1 aapki sahayata ke liye taiyar hoon."
+            "persona": PERSONAS["professional"],
+            "greeting": "Namaskar, Main A1 aapki sahayata ke liye taiyar hoon."
         })
 
-# Chat API route
+# --- [UPDATED] Chat API: Admin Panel से कनेक्टेड ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    # 🛠️ Fix: JSON handling ko safe banaya
     data = request.get_json() or {}
     user_message = data.get('message', '')
-    user_info = data.get('user', {})
-    
-    age = user_info.get('age', 25)
-    name = user_info.get('name', 'User')
+    user_info = data.get('user', {}) # Login se mila hua data
+    ai_version = data.get('engine', 'llama3-8b-8192') # HTML se mila model choice
 
-    # AI Basic Logic (Baad me yahan asli LLM aayega)
-    if age < 18:
-        reply = f"Arey waah {name}, tumne poocha: '{user_message}'. Main iska jawab dhoondhta hoon!"
-    elif age >= 56:
-        reply = f"Ji {name} ji, aapne pucha: '{user_message}'. Main bilkul aaram se check karke batata hoon."
-    else:
-        reply = f"Noted {name} (Commander). Aapki query: '{user_message}' process ho rahi hai."
+    # 1. Admin Panel को डेटा भेजना
+    try:
+        payload = {
+            "query": user_message,
+            "engine": ai_version,
+            "user_context": {
+                "name": user_info.get('name', 'User'),
+                "age": user_info.get('age', 25),
+                "persona": user_info.get('persona', 'professional')
+            }
+        }
+        
+        # Admin Panel (Backend) को कॉल करना
+        response = requests.post(ADMIN_URL, json=payload, timeout=10)
+        backend_data = response.json()
+
+        if backend_data.get('status') == 'success':
+            reply = backend_data.get('answer')
+        else:
+            reply = "Commander, AI Engine se sampark nahi ho paa raha hai."
+            
+    except Exception as e:
+        reply = f"System Error: Backend unreachable. ({str(e)})"
 
     return jsonify({"reply": reply})
 
 if __name__ == '__main__':
-    # Debug mode on karke port 5000 par server chalana
     app.run(debug=True, port=5000)
     

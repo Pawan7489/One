@@ -150,13 +150,52 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- SEND MESSAGE ---
+        // --- SEND MESSAGE & VOICE LOGIC UPDATE ---
     function appendMessage(sender, text) {
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ${sender}-message`;
-        msgDiv.innerText = text;
+        msgDiv.innerHTML = text.replace(/\n/g, '<br>'); // Line breaks ko support karne ke liye
         chatBox.appendChild(msgDiv);
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+    }
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        // Chat start hote hi layout ko bada karna (Hologram chota hoga)
+        document.getElementById("chat-screen").classList.add("chat-active");
+
+        appendMessage("user", text);
+        userInput.value = "";
+
+        // UI Feedback: AI is typing/thinking
+        statusText.innerText = "A1 is thinking...";
+
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text, user: currentUser })
+            });
+            const data = await response.json();
+            
+            // Backend se aayi hui text ko UI par dikhana
+            let aiText = data.reply;
+            
+            // 🚨 Agar backend galti se "Commander AI:" bhej de, toh use UI se hatana
+            aiText = aiText.replace(/Commander AI:/gi, '').trim();
+            
+            appendMessage("ai", aiText);
+            
+            // 🚨 Voice engine ke liye saaf text taiyar karna (Stars, markdown hatana)
+            let speakText = aiText.replace(/[*#_`]/g, ''); 
+            speak(speakText);
+
+        } catch (error) {
+            appendMessage("ai", "Network error. AI Engine se sampark tut gaya.");
+            speak("Maaf kijiyega, network error hai.");
+        }
     }
 
     // 🛠️ UPGRADED MASTER ENGINE FUNCTION WITH DEBUG LOGS 🛠️

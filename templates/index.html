@@ -124,11 +124,114 @@
             <div class="chat-box" id="chat-box">
                 </div>
 
-            <div class="input-area">
-                <button id="mic-btn" class="mic-btn apple-btn">🎤</button>
-                <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
-                <button id="send-btn" class="send-btn apple-btn">Send</button>
+                        <div class="advanced-input-container">
+                
+                <div class="version-selector">
+                    <select id="ai-version">
+                        <option value="v1">A1 Core (Fast Chat)</option>
+                        <option value="v2">A1 Pro (Deep Search & Logic)</option>
+                        <option value="v3">A1 Vision (Images & Video)</option>
+                        <option value="v4">A1 Max (Coding & Finance)</option>
+                    </select>
+                </div>
+
+                <div class="input-wrapper">
+                    <div class="action-menu-wrapper">
+                        <button id="plus-btn" class="icon-btn plus-icon" title="More Options">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                        
+                        <div id="action-menu" class="action-menu hidden">
+                            <div class="menu-item">📷 Upload Photo/Video</div>
+                            <div class="menu-item">📁 Select Document</div>
+                            <div class="menu-item">☁️ Google Photos</div>
+                            <hr>
+                            <div class="menu-item">🎨 Generate Image</div>
+                            <div class="menu-item">🔍 Deep Web Search</div>
+                            <div class="menu-item">💻 Code & Finance Tools</div>
+                        </div>
+                    </div>
+
+                    <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+                    
+                    <button id="mic-btn" class="icon-btn mic-icon" title="Tap to keep Mic ON/OFF">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                    </button>
+
+                    <button id="send-btn" class="icon-btn send-arrow" title="Send">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
             </div>
+            ```
+
+---
+
+### 2. 🎨 CSS में बदलाव (`static/css/style.css`)
+अपनी `style.css` फ़ाइल के बिल्कुल अंत (नीचे) में यह डिज़ाइन कोड जोड़ दें। यह नए बटन्स, वर्ज़न ड्रॉपडाउन और `+` मेनू को खूबसूरत बनाएगा:
+
+```css
+/* --- ADVANCED INPUT AREA STYLES --- */
+.advanced-input-container {
+    display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-bottom: 5px;
+}
+
+.version-selector select {
+    background: transparent; border: none; color: var(--saffron-gold);
+    font-size: 12px; font-weight: 600; cursor: pointer; outline: none;
+    padding: 0 5px; appearance: none;
+}
+.version-selector select option { background: var(--bg-dark); color: white; }
+
+.input-wrapper {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+    border-radius: 25px; padding: 5px 10px; position: relative;
+}
+
+.input-wrapper input[type="text"] {
+    flex: 1; background: transparent; border: none; color: white;
+    font-size: 15px; outline: none; padding: 10px 5px; min-width: 0;
+}
+
+/* Icons & Buttons */
+.icon-btn {
+    display: flex; justify-content: center; align-items: center;
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: transparent; color: var(--text-muted); cursor: pointer;
+    transition: 0.3s var(--apple-ease); flex-shrink: 0;
+}
+.icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+.plus-icon { color: var(--text-main); }
+.send-arrow { background: var(--saffron-gold); color: #000; width: 38px; height: 38px; margin-left: 2px; }
+.send-arrow:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--saffron-glow); }
+
+/* Continuous Mic Active State */
+.mic-icon.active { 
+    background: rgba(239, 68, 68, 0.2); color: #ef4444; 
+    animation: continuousRecord 1.5s infinite; 
+}
+@keyframes continuousRecord { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+/* Floating Action Menu (+) */
+.action-menu-wrapper { position: relative; }
+.action-menu {
+    position: absolute; bottom: 50px; left: 0; width: 220px;
+    background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border); border-radius: 16px;
+    padding: 10px 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    z-index: 100; transition: 0.3s var(--apple-ease);
+    transform-origin: bottom left;
+}
+.action-menu.hidden { opacity: 0; transform: scale(0.9) translateY(10px); pointer-events: none; }
+.menu-item {
+    padding: 10px 20px; font-size: 13px; font-weight: 500; color: white;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px;
+}
+.menu-item:hover { background: rgba(255, 153, 51, 0.15); color: var(--saffron-gold); }
+.action-menu hr { border: none; border-top: 1px solid var(--glass-border); margin: 5px 0; }
+
 
             <div class="security-footer">
                 <span>🛡️ Private</span> • <span>🔒 No Data Stored</span> • <span class="text-green">🟢 Secure Link</span>

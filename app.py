@@ -23,11 +23,19 @@ PERSONAS = {
     }
 }
 
+# 🛠️ Fix: Error-proof Age Calculation
 def calculate_age(dob_string):
-    birth_date = datetime.strptime(dob_string, "%Y-%m-%d")
-    today = datetime.now()
-    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-    return age
+    try:
+        if not dob_string:
+            return 25  # Agar date na ho toh default 25 maan lein
+            
+        birth_date = datetime.strptime(dob_string, "%Y-%m-%d")
+        today = datetime.now()
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        return age
+    except Exception:
+        # Date me koi bhi gadbadi hone par crash hone se bachana
+        return 25
 
 def get_persona_mode(age):
     if age < 18:
@@ -44,35 +52,48 @@ def get_persona_mode(age):
 def home():
     return render_template('index.html')
 
-# Login API route (Ye Frontend se DOB aur Name lega)
+# Login API route 
 @app.route('/api/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    dob = data.get('dob')
-    name = data.get('name')
-    
-    age = calculate_age(dob)
-    persona = get_persona_mode(age)
-    
-    personalized_greeting = f"{name}, {persona['greeting']}"
-    
-    return jsonify({
-        "age": age,
-        "persona": persona,
-        "greeting": personalized_greeting
-    })
+    try:
+        # 🛠️ Fix: Agar JSON data na aaye toh empty dict lein
+        data = request.get_json() or {}
+        dob = data.get('dob', '')
+        name = data.get('name', 'User')
+        
+        age = calculate_age(dob)
+        persona = get_persona_mode(age)
+        
+        personalized_greeting = f"{name}, {persona['greeting']}"
+        
+        return jsonify({
+            "success": True,
+            "age": age,
+            "persona": persona,
+            "greeting": personalized_greeting
+        })
+    except Exception as e:
+        # Fallback agar koi aur error aaye
+        default_persona = PERSONAS["professional"]
+        return jsonify({
+            "success": True,
+            "age": 25,
+            "persona": default_persona,
+            "greeting": f"Namaskar {name}, Main A1 aapki sahayata ke liye taiyar hoon."
+        })
 
 # Chat API route
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    data = request.get_json()
+    # 🛠️ Fix: JSON handling ko safe banaya
+    data = request.get_json() or {}
     user_message = data.get('message', '')
     user_info = data.get('user', {})
     
     age = user_info.get('age', 25)
     name = user_info.get('name', 'User')
 
-    # Yahan AI ka deep logic aayega (Jaise LLM ya Web Search)
+    # AI Basic Logic (Baad me yahan asli LLM aayega)
     if age < 18:
         reply = f"Arey waah {name}, tumne poocha: '{user_message}'. Main iska jawab dhoondhta hoon!"
     elif age >= 56:
@@ -83,5 +104,6 @@ def chat():
     return jsonify({"reply": reply})
 
 if __name__ == '__main__':
+    # Debug mode on karke port 5000 par server chalana
     app.run(debug=True, port=5000)
     

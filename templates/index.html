@@ -11,34 +11,100 @@
     <div class="ambient-bg-glow"></div>
 
     <div class="main-wrapper">
+        <div class="main-wrapper">
         
-        <div id="login-screen" class="app-screen">
+        <div id="auth-screen" class="app-screen">
             <div class="login-content">
                 <div class="logo-box aura-glow">A1</div>
                 <h1 class="welcome-text">Swagat Hai</h1>
-                <p class="subtitle">Secure Digital Companion</p>
+                <p class="subtitle">Aapka Secure AI Companion</p>
                 
-                <form id="login-form">
+                <div class="auth-tabs">
+                    <button id="tab-login" class="auth-tab active">Login</button>
+                    <button id="tab-signup" class="auth-tab">Sign Up</button>
+                </div>
+
+                <form id="login-form" class="auth-form">
                     <div class="input-field">
-                        <label>Aapka Naam</label>
-                        <input type="text" id="user-name" required placeholder="Naam darj karein">
+                        <input type="text" id="login-username" required placeholder="Username ya Email">
                     </div>
                     <div class="input-field">
-                        <label>Date of Birth (Umar ke hisaab se logic)</label>
-                        <input type="date" id="user-dob" required>
+                        <input type="password" id="login-password" required placeholder="Password">
                     </div>
-                    <div class="input-field">
-                        <label>Awaaz (Voice Preference)</label>
-                        <select id="user-gender">
-                            <option value="male">Male (Purush)</option>
-                            <option value="female">Female (Mahila)</option>
-                        </select>
+                    <div class="forgot-links">
+                        <a href="#">Forgot Username?</a>
+                        <a href="#">Forgot Password?</a>
                     </div>
                     <button type="submit" class="btn-primary apple-btn">Secure Login</button>
                 </form>
-                <div class="trust-badge">🛡️ 256-bit Encrypted | 🇮🇳 Made in India</div>
+
+                <form id="signup-form" class="auth-form hidden">
+                    <div class="input-field">
+                        <input type="text" id="reg-name" required placeholder="Aapka Poora Naam">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-field w-50">
+                            <input type="date" id="reg-dob" required title="Date of Birth">
+                        </div>
+                        <div class="input-field w-50">
+                            <select id="reg-gender">
+                                <option value="male">Male (Purush)</option>
+                                <option value="female">Female (Mahila)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="reg-username" required placeholder="Naya Username banayein">
+                    </div>
+                    <div class="input-field">
+                        <input type="password" id="reg-password" required placeholder="Naya Password">
+                    </div>
+                    <button type="submit" class="btn-primary apple-btn">Create Account</button>
+                </form>
+
+                <div class="social-divider"><span>OR CONTINUE WITH</span></div>
+                <div class="social-logins">
+                    <button class="social-btn apple-btn">🌐 Google</button>
+                    <button class="social-btn apple-btn">🐙 GitHub</button>
+                    <button class="social-btn apple-btn">📱 Mobile OTP</button>
+                </div>
+
             </div>
         </div>
+
+        <div id="chat-screen" class="app-screen hidden">
+            <div class="header">
+                <div class="logo-text">A1</div>
+                <div class="mode-badge" id="persona-badge">Mode: Active</div>
+            </div>
+
+            <div class="hologram-stage">
+                <div class="hologram-container" id="hologram">
+                    <div class="aura-ring ring-1"></div>
+                    <div class="aura-ring ring-2"></div>
+                    <div class="hologram-core">A1</div>
+                </div>
+                <p id="status-text">Ready...</p>
+            </div>
+
+            <div class="chat-box" id="chat-box">
+                </div>
+
+            <div class="input-area">
+                <button id="mic-btn" class="mic-btn apple-btn">🎤</button>
+                <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+                <button id="send-btn" class="send-btn apple-btn">Send</button>
+            </div>
+
+            <div class="security-footer">
+                <span class="shield">🛡️ End-to-End Encrypted</span> • 
+                <span class="india">🇮🇳 Proudly Made in India</span> • 
+                <span class="text-green">🔒 100% Privacy</span>
+            </div>
+        </div>
+
+    </div>
+
 
         <div id="chat-screen" class="app-screen hidden">
             <div class="header">

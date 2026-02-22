@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let isContinuousMicOn = false;
     let recognition;
 
+    // --- 🚀 COMMANDER ADMIN PANEL URL (NEW) ---
+    const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
+
     // --- BROWSER AUDIO UNLOCK HACK (Mobile Fix) ---
     // Mobile browsers pehle user interaction par hi audio allow karte hain
     function unlockAudio() {
@@ -156,24 +159,47 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }
 
+    // 🛠️ UPGRADED MASTER ENGINE FUNCTION WITH DEBUG LOGS 🛠️
     async function sendMessage() {
         const text = userInput.value.trim();
         if (!text) return;
 
         appendMessage("user", text);
         userInput.value = "";
+        statusText.innerText = "A1 is thinking...";
+
+        // Debugging Logs - Mobile Console में देखने के लिए
+        console.log("LOG 1: Request started for: " + text);
 
         try {
-            const response = await fetch("/api/chat", {
+            console.log("LOG 2: Connecting to: " + ADMIN_PANEL_URL);
+            
+            const response = await fetch(ADMIN_PANEL_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: text, user: currentUser })
+                body: JSON.stringify({ query: text }) // सीधे Admin Panel को query भेज रहे हैं
             });
+
+            console.log("LOG 3: Response Status Code: " + response.status);
+
             const data = await response.json();
-            appendMessage("ai", data.reply);
-            speak(data.reply);
+            console.log("LOG 4: Data Received: ", data);
+
+            statusText.innerText = "Ready...";
+
+            if (data.status === "success") {
+                appendMessage("ai", data.answer);
+                speak(data.answer); // आपका AI बोलकर भी जवाब देगा!
+            } else {
+                console.error("LOG 5: Engine Error: ", data.message);
+                appendMessage("ai", "Engine Error: " + data.message);
+                speak("Engine offline hai.");
+            }
         } catch (error) {
-            appendMessage("ai", "Network error.");
+            console.error("CRITICAL ERROR (LOG 6): ", error);
+            statusText.innerText = "Connection Failed";
+            appendMessage("ai", "System Error: Backend unreachable. Console logs check karein.");
+            speak("Connection failed. Please check network.");
         }
     }
 

@@ -4,47 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - Premium Indian AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.0">
 </head>
 <body>
-
     <div class="ambient-bg-glow"></div>
 
     <div class="main-wrapper">
-        <div class="main-wrapper">
         
         <div id="auth-screen" class="app-screen">
             <div class="login-content">
                 <div class="logo-box aura-glow">A1</div>
                 <h1 class="welcome-text">Swagat Hai</h1>
-                <p class="subtitle">Aapka Secure AI Companion</p>
+                <p class="subtitle">Secure Digital Companion</p>
                 
                 <div class="auth-tabs">
-                    <button id="tab-login" class="auth-tab active">Login</button>
-                    <button id="tab-signup" class="auth-tab">Sign Up</button>
+                    <button id="tab-login" class="auth-tab">Login</button>
+                    <button id="tab-signup" class="auth-tab active">Sign Up</button>
                 </div>
 
-                <form id="login-form" class="auth-form">
-                    <div class="input-field">
-                        <input type="text" id="login-username" required placeholder="Username ya Email">
-                    </div>
-                    <div class="input-field">
-                        <input type="password" id="login-password" required placeholder="Password">
-                    </div>
-                    <div class="forgot-links">
-                        <a href="#">Forgot Username?</a>
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="btn-primary apple-btn">Secure Login</button>
-                </form>
-
-                <form id="signup-form" class="auth-form hidden">
+                <form id="signup-form" class="auth-form">
                     <div class="input-field">
                         <input type="text" id="reg-name" required placeholder="Aapka Poora Naam">
                     </div>
                     <div class="input-row">
                         <div class="input-field w-50">
-                            <input type="date" id="reg-dob" required title="Date of Birth">
+                            <input type="date" id="reg-dob" required>
                         </div>
                         <div class="input-field w-50">
                             <select id="reg-gender">
@@ -53,22 +37,29 @@
                             </select>
                         </div>
                     </div>
+                    <button type="submit" class="btn-primary apple-btn">Create Secure Account</button>
+                </form>
+
+                <form id="login-form" class="auth-form hidden">
                     <div class="input-field">
-                        <input type="text" id="reg-username" required placeholder="Naya Username banayein">
+                        <input type="text" required placeholder="Username ya Email">
                     </div>
                     <div class="input-field">
-                        <input type="password" id="reg-password" required placeholder="Naya Password">
+                        <input type="password" required placeholder="Password">
                     </div>
-                    <button type="submit" class="btn-primary apple-btn">Create Account</button>
+                    <div class="forgot-links">
+                        <a href="#">Forgot Username?</a>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn-primary apple-btn">Login</button>
                 </form>
 
                 <div class="social-divider"><span>OR CONTINUE WITH</span></div>
                 <div class="social-logins">
                     <button class="social-btn apple-btn">🌐 Google</button>
                     <button class="social-btn apple-btn">🐙 GitHub</button>
-                    <button class="social-btn apple-btn">📱 Mobile OTP</button>
+                    <button class="social-btn apple-btn">📱 OTP</button>
                 </div>
-
             </div>
         </div>
 
@@ -87,45 +78,9 @@
                 <p id="status-text">Ready...</p>
             </div>
 
-            <div class="chat-box" id="chat-box">
-                </div>
+            <div class="chat-box" id="chat-box"></div>
 
-            <div class="input-area">
-                <button id="mic-btn" class="mic-btn apple-btn">🎤</button>
-                <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
-                <button id="send-btn" class="send-btn apple-btn">Send</button>
-            </div>
-
-            <div class="security-footer">
-                <span class="shield">🛡️ End-to-End Encrypted</span> • 
-                <span class="india">🇮🇳 Proudly Made in India</span> • 
-                <span class="text-green">🔒 100% Privacy</span>
-            </div>
-        </div>
-
-    </div>
-
-
-        <div id="chat-screen" class="app-screen hidden">
-            <div class="header">
-                <div class="logo-text">A1</div>
-                <div class="mode-badge" id="persona-badge">Mode: Active</div>
-            </div>
-
-            <div class="hologram-stage">
-                <div class="hologram-container" id="hologram">
-                    <div class="aura-ring ring-1"></div>
-                    <div class="aura-ring ring-2"></div>
-                    <div class="hologram-core">A1</div>
-                </div>
-                <p id="status-text">Ready...</p>
-            </div>
-
-            <div class="chat-box" id="chat-box">
-                </div>
-
-                        <div class="advanced-input-container">
-                
+            <div class="advanced-input-container">
                 <div class="version-selector">
                     <select id="ai-version">
                         <option value="v1">A1 Core (Fast Chat)</option>
@@ -137,10 +92,9 @@
 
                 <div class="input-wrapper">
                     <div class="action-menu-wrapper">
-                        <button id="plus-btn" class="icon-btn plus-icon" title="More Options">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <button id="plus-btn" class="icon-btn plus-icon" type="button">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         </button>
-                        
                         <div id="action-menu" class="action-menu hidden">
                             <div class="menu-item">📷 Upload Photo/Video</div>
                             <div class="menu-item">📁 Select Document</div>
@@ -148,30 +102,29 @@
                             <hr>
                             <div class="menu-item">🎨 Generate Image</div>
                             <div class="menu-item">🔍 Deep Web Search</div>
-                            <div class="menu-item">💻 Code & Finance Tools</div>
+                            <div class="menu-item">💻 Code Generator</div>
                         </div>
                     </div>
 
-                    <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+                    <input type="text" id="user-input" placeholder="Message ya command..." autocomplete="off">
                     
-                    <button id="mic-btn" class="icon-btn mic-icon" title="Tap to keep Mic ON/OFF">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                    <button id="mic-btn" class="icon-btn mic-icon" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                     </button>
 
-                    <button id="send-btn" class="icon-btn send-arrow" title="Send">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <button id="send-btn" class="icon-btn send-arrow" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
             </div>
 
-
             <div class="security-footer">
-                <span>🛡️ Private</span> • <span>🔒 No Data Stored</span> • <span class="text-green">🟢 Secure Link</span>
+                <span class="shield">🛡️ End-to-End Encrypted</span> • 
+                <span class="india">🇮🇳 Made in India</span> • 
+                <span class="text-green">🔒 100% Privacy</span>
             </div>
         </div>
-
     </div>
-
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=3.0"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=4.0"></script>
 </body>
 </html>

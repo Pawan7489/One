@@ -142,37 +142,76 @@ document.addEventListener("DOMContentLoaded", () => {
         window.speechSynthesis.speak(utterance);
     }
 
-    // 3. MIC RECORDING
+        // ====================================================
+    // 3. CONTINUOUS MIC & PLUS BUTTON LOGIC
+    // ====================================================
+    const plusBtn = document.getElementById("plus-btn");
+    const actionMenu = document.getElementById("action-menu");
+    const aiVersion = document.getElementById("ai-version");
+    
+    // Plus Button Toggle
+    plusBtn.addEventListener("click", () => {
+        actionMenu.classList.toggle("hidden");
+    });
+    // Kahi aur click karne par menu band karna
+    document.addEventListener("click", (e) => {
+        if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) {
+            actionMenu.classList.add("hidden");
+        }
+    });
+
+    // Continuous Speech Recognition Logic
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let isContinuousMicOn = false; // Flag to track if user wants mic ON forever
+
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.lang = 'en-IN'; 
         recognition.interimResults = false;
 
         recognition.onstart = () => {
-            isListening = true;
             micBtn.classList.add("active");
             hologram.classList.remove("speaking");
             hologram.classList.add("listening");
-            statusText.innerText = "Listening to you...";
+            statusText.innerText = "Listening continuously...";
         };
 
         recognition.onresult = (event) => {
-            userInput.value = event.results[0][0].transcript;
-            sendMessage(); 
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            sendMessage(); // Automatically send
         };
 
         recognition.onend = () => {
-            isListening = false;
-            micBtn.classList.remove("active");
-            hologram.classList.remove("listening");
-            if(hologram.classList.length === 0) statusText.innerText = "A1 is ready...";
+            // MAGIC: Agar user ne manual band nahi kiya, toh auto-restart karo
+            if (isContinuousMicOn) {
+                try { recognition.start(); } catch(e) {}
+            } else {
+                micBtn.classList.remove("active");
+                hologram.classList.remove("listening");
+                if(hologram.classList.length === 0) statusText.innerText = "A1 is ready...";
+            }
         };
     }
 
     micBtn.addEventListener("click", () => {
-        if (isListening) recognition.stop();
-        else if (recognition) recognition.start();
+        if (isContinuousMicOn) {
+            // Turn OFF Manual
+            isContinuousMicOn = false;
+            recognition.stop();
+            micBtn.classList.remove("active");
+            statusText.innerText = "Mic stopped.";
+        } else {
+            // Turn ON Continuous
+            isContinuousMicOn = true;
+            micBtn.classList.add("active");
+            try { recognition.start(); } catch(e) {}
+        }
+    });
+
+    // AI Version change hone par backend ko batana (Future Logic)
+    aiVersion.addEventListener("change", (e) => {
+        appendMessage("ai", `Switched to ${e.target.options[e.target.selectedIndex].text} mode.`);
     });
 
     // 4. CHAT LOGIC

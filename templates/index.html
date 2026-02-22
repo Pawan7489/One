@@ -75,33 +75,6 @@
         </div>
         </div> ```
 
----
-
-### 2. CSS में बदलाव (`static/css/style.css`)
-
-इस नए Footer को खूबसूरत और एकदम असली (Corporate-style) दिखाने के लिए, अपनी `style.css` फाइल को खोलें और एकदम नीचे (सबसे आखिर में) यह डिज़ाइन कोड पेस्ट कर दें:
-
-```css
-/* --- Security Trust Badge Styles --- */
-.security-footer {
-    text-align: center;
-    font-size: 11px;
-    color: #888;
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    font-weight: 500;
-}
-
-.security-footer span {
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.5px;
-}
-    
     
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

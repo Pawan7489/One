@@ -126,5 +126,85 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}?v=4.0"></script>
+
+
+<script>
+    /* ==========================================================
+       COMMANDER AI CONFIGURATION
+       ========================================================== */
+    const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
+    const AI_DISPLAY_NAME = "Commander AI"; // यहाँ अपने AI का नाम लिखें
+
+    // यूज़र की नंबरिंग (Request Counter) ट्रैक करने के लिए
+    if (!localStorage.getItem('user_request_count')) {
+        localStorage.setItem('user_request_count', '0');
+    }
+
+    async function sendMessageToAI() {
+        const inputField = document.getElementById('user-input-field');
+        const chatDisplay = document.getElementById('chat-display');
+        const query = inputField.value.trim();
+        
+        if (!query) return;
+
+        // 1. यूज़र नंबरिंग अपडेट करना
+        let count = parseInt(localStorage.getItem('user_request_count')) + 1;
+        localStorage.setItem('user_request_count', count);
+
+        // UI में लोडिंग दिखाना
+        const loadingId = "load-" + Date.now();
+        chatDisplay.innerHTML += `<div id="${loadingId}" style="color: #888; font-size: 0.9em;">Request #${count} processing...</div>`;
+        inputField.value = ""; // इनपुट बॉक्स तुरंत साफ़ करें
+
+        try {
+            // 2. एडमिन पैनल (Engine Router) को डेटा भेजना
+            const response = await fetch(ADMIN_PANEL_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    query: query,
+                    request_id: count // बैकएंड ट्रैकिंग के लिए
+                })
+            });
+
+            const data = await response.json();
+
+            // लोडिंग मैसेज हटाना
+            document.getElementById(loadingId).remove();
+
+            if (data.status === "success") {
+                // 3. केवल रिजल्ट दिखाना (Engine का नाम छिपा दिया गया है)
+                chatDisplay.innerHTML += `
+                    <div class="ai-response-container" style="margin-bottom: 20px;">
+                        <span style="font-weight: bold; color: #00d2ff;">${AI_DISPLAY_NAME}:</span>
+                        <div class="result-text" style="line-height: 1.6; margin-top: 5px;">
+                            ${data.answer}
+                        </div>
+                        <small style="color: #444; font-size: 0.7em;">ID: REQ-${count}</small>
+                    </div>
+                `;
+                
+                // स्क्रीन को नीचे स्क्रॉल करना
+                chatDisplay.scrollTop = chatDisplay.scrollHeight;
+            } else {
+                chatDisplay.innerHTML += `<div style="color: red;">Commander, System Error: ${data.message}</div>`;
+            }
+        } catch (error) {
+            document.getElementById(loadingId).remove();
+            chatDisplay.innerHTML += `<div style="color: red;">System Offline. Connection Failed.</div>`;
+        }
+    }
+
+    // Enter Key दबाने पर भी मैसेज जाए
+    document.getElementById('user-input-field').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessageToAI();
+        }
+    });
+</script>
+
+
+
+
 </body>
 </html>

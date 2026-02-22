@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm & Secure Dark Theme for Indian Audience */
+    --background: 20 14% 4%; /* Deep warm earthy dark instead of cold black */
+    --foreground: 30 10% 90%; /* Soft warm text */
+    --card: 20 10% 6%;
+    --card-foreground: 30 10% 90%;
+    --popover: 20 10% 6%;
+    --popover-foreground: 30 10% 90%;
+    
+    /* Deep Saffron / Warm Orange for Trust and Energy */
+    --primary: 28 90% 55%; 
+    --primary-foreground: 0 0% 10%;
+    
+    --secondary: 20 10% 12%;
+    --secondary-foreground: 30 10% 85%;
+    --muted: 20 10% 14%;
+    --muted-foreground: 25 10% 55%;
+    --accent: 28 90% 55%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 10% 16%;
+    --input: 20 10% 16%;
+    --ring: 28 90% 55%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Warm Secure Glass Panels (Replacing Cold Glass) */
+@layer utilities {
+  .glass-panel {
+    background: rgba(255, 245, 235, 0.03); /* Soft warm tint */
+    border: 1px solid rgba(255, 245, 235, 0.08);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+  }
+  .glass-panel-strong {
+    background: rgba(255, 245, 235, 0.06);
+    border: 1px solid rgba(255, 245, 235, 0.12);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
+  }
+  
+  /* Indian Inspired Glow Effects */
+  .glow-saffron {
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.15), 0 0 80px rgba(249, 115, 22, 0.05);
+  }
+  .glow-green {
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.15), 0 0 80px rgba(34, 197, 94, 0.05);
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+    }
+  

@@ -3,14 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project A1 - Secure Indian AI</title>
+    <title>Project A1 - The Indian Super-AI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="main-container">
+    <div id="login-screen" class="main-container auth-glass glow-saffron">
+        <div class="text-center">
+            <div class="logo-box">A1</div>
+            <h2>Swagat Hai</h2>
+            <p>Aapka Secure AI Companion</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <label>Aapka Naam</label>
+                <input type="text" id="user-name" required placeholder="Naam darj karein">
+            </div>
+            <div class="input-group">
+                <label>Date of Birth</label>
+                <input type="date" id="user-dob" required>
+            </div>
+            <div class="input-group">
+                <label>Gender (Voice Mode)</label>
+                <select id="user-gender">
+                    <option value="male">Male (Purush)</option>
+                    <option value="female">Female (Mahila)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Secure Login</button>
+        </form>
+        <div class="trust-badge">🔒 Made in India | Secure & Encrypted</div>
+    </div>
+
+    <div id="chat-screen" class="main-container hidden">
         <div class="header">
             <h1 class="logo">A1</h1>
-            <div class="mode-badge">Secure Mode: Active</div>
+            <div id="persona-badge" class="mode-badge">Mode: Loading...</div>
         </div>
 
         <div class="hologram-container">
@@ -21,12 +49,11 @@
         </div>
 
         <div id="chat-box" class="chat-box">
-            <div class="message ai-message">Namaskar Commander, main aapki kya madad kar sakta hoon?</div>
-        </div>
+            </div>
 
         <div class="input-area">
             <button id="mic-btn" class="mic-btn">🎤</button>
-            <input type="text" id="user-input" placeholder="Apna message type karein ya bol kar batayein..." autocomplete="off">
+            <input type="text" id="user-input" placeholder="Message type karein..." autocomplete="off">
             <button id="send-btn" class="send-btn">Send</button>
         </div>
     </div>

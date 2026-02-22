@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project A1 - Secure Indian AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1 class="logo">A1</h1>
+            <div class="mode-badge">Secure Mode: Active</div>
+        </div>
+
+        <div class="hologram-container">
+            <div id="hologram" class="hologram idle">
+                <span id="hologram-text">A1</span>
+            </div>
+            <p id="status-text">AI is ready...</p>
+        </div>
+
+        <div id="chat-box" class="chat-box">
+            <div class="message ai-message">Namaskar Commander, main aapki kya madad kar sakta hoon?</div>
+        </div>
+
+        <div class="input-area">
+            <button id="mic-btn" class="mic-btn">🎤</button>
+            <input type="text" id="user-input" placeholder="Apna message type karein ya bol kar batayein..." autocomplete="off">
+            <button id="send-btn" class="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

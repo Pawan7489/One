@@ -83,10 +83,10 @@
             <div class="advanced-input-container">
                 <div class="version-selector">
                     <select id="ai-version">
-                        <option value="v1">A1 Core (Fast Chat)</option>
-                        <option value="v2">A1 Pro (Deep Search & Logic)</option>
+                        <option value="llama3-8b-8192">A1 Core (Fast Chat)</option>
+                        <option value="mixtral-8x7b-32768">A1 Pro (Deep Search & Logic)</option>
                         <option value="v3">A1 Vision (Images & Video)</option>
-                        <option value="v4">A1 Max (Coding & Finance)</option>
+                        <option value="mixtral-8x7b-32768">A1 Max (Coding & Finance)</option>
                     </select>
                 </div>
 
@@ -112,7 +112,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                     </button>
 
-                    <button id="send-btn" class="icon-btn send-arrow" type="button">
+                    <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
@@ -130,81 +130,92 @@
 
 <script>
     /* ==========================================================
-       COMMANDER AI CONFIGURATION
+       COMMANDER AI CONFIGURATION (CONNECTED)
        ========================================================== */
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
-    const AI_DISPLAY_NAME = "Commander AI"; // यहाँ अपने AI का नाम लिखें
+    const AI_DISPLAY_NAME = "Commander AI";
 
-    // यूज़र की नंबरिंग (Request Counter) ट्रैक करने के लिए
-    if (!localStorage.getItem('user_request_count')) {
+    // Request Counter Setup
+    let rawCount = localStorage.getItem('user_request_count');
+    if (!rawCount || isNaN(rawCount)) {
         localStorage.setItem('user_request_count', '0');
     }
 
     async function sendMessageToAI() {
-        const inputField = document.getElementById('user-input-field');
-        const chatDisplay = document.getElementById('chat-display');
+        const inputField = document.getElementById('user-input');
+        const chatDisplay = document.getElementById('chat-box');
+        const aiVersion = document.getElementById('ai-version').value;
         const query = inputField.value.trim();
         
         if (!query) return;
 
-        // 1. यूज़र नंबरिंग अपडेट करना
+        // 1. Update Counter
         let count = parseInt(localStorage.getItem('user_request_count')) + 1;
         localStorage.setItem('user_request_count', count);
 
-        // UI में लोडिंग दिखाना
+        // UI Loading State
         const loadingId = "load-" + Date.now();
-        chatDisplay.innerHTML += `<div id="${loadingId}" style="color: #888; font-size: 0.9em;">Request #${count} processing...</div>`;
-        inputField.value = ""; // इनपुट बॉक्स तुरंत साफ़ करें
+        chatDisplay.innerHTML += `<div id="${loadingId}" style="color: #00d2ff; font-size: 0.8em; margin: 10px 0;">A1 is thinking (Req #${count})...</div>`;
+        inputField.value = ""; 
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
         try {
-            // 2. एडमिन पैनल (Engine Router) को डेटा भेजना
+            // 2. Sending Data to Admin Panel
             const response = await fetch(ADMIN_PANEL_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
                     query: query,
-                    request_id: count // बैकएंड ट्रैकिंग के लिए
+                    engine: aiVersion, // Pass version to engine_router
+                    request_id: count 
                 })
             });
 
             const data = await response.json();
-
-            // लोडिंग मैसेज हटाना
             document.getElementById(loadingId).remove();
 
             if (data.status === "success") {
-                // 3. केवल रिजल्ट दिखाना (Engine का नाम छिपा दिया गया है)
+                // 3. Display Clean Result
                 chatDisplay.innerHTML += `
-                    <div class="ai-response-container" style="margin-bottom: 20px;">
+                    <div class="message ai-msg" style="margin-bottom: 20px; animation: fadeIn 0.3s ease;">
                         <span style="font-weight: bold; color: #00d2ff;">${AI_DISPLAY_NAME}:</span>
-                        <div class="result-text" style="line-height: 1.6; margin-top: 5px;">
+                        <div style="line-height: 1.6; margin-top: 5px; color: #fff;">
                             ${data.answer}
                         </div>
-                        <small style="color: #444; font-size: 0.7em;">ID: REQ-${count}</small>
+                        <div style="color: #444; font-size: 0.6em; margin-top: 5px;">REQ-ID: ${count}</div>
                     </div>
                 `;
-                
-                // स्क्रीन को नीचे स्क्रॉल करना
                 chatDisplay.scrollTop = chatDisplay.scrollHeight;
             } else {
-                chatDisplay.innerHTML += `<div style="color: red;">Commander, System Error: ${data.message}</div>`;
+                chatDisplay.innerHTML += `<div style="color: #ff4757; font-size: 0.8em;">Error: ${data.message}</div>`;
             }
         } catch (error) {
-            document.getElementById(loadingId).remove();
-            chatDisplay.innerHTML += `<div style="color: red;">System Offline. Connection Failed.</div>`;
+            if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+            chatDisplay.innerHTML += `<div style="color: #ff4757; font-size: 0.8em;">Commander, check your connection. Server unreachable.</div>`;
         }
     }
 
-    // Enter Key दबाने पर भी मैसेज जाए
-    document.getElementById('user-input-field').addEventListener('keypress', function (e) {
+    // Enter Key Support
+    document.getElementById('user-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             sendMessageToAI();
         }
     });
+
+    // Simple Tab Switcher for Auth (Design preservation)
+    document.getElementById('tab-login')?.addEventListener('click', () => {
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('signup-form').classList.add('hidden');
+        document.getElementById('tab-login').classList.add('active');
+        document.getElementById('tab-signup').classList.remove('active');
+    });
+    document.getElementById('tab-signup')?.addEventListener('click', () => {
+        document.getElementById('signup-form').classList.remove('hidden');
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('tab-signup').classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+    });
 </script>
-
-
-
 
 </body>
 </html>

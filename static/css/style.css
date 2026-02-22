@@ -1,0 +1,182 @@
+/* ====================================================
+   PROJECT A1 - PREMIUM INDIAN TECH VIBE (iOS/MacBook)
+==================================================== */
+
+:root {
+    /* Deep Midnight Navy - Trust, Security, Premium */
+    --bg-dark: #0a0f1c; 
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    
+    /* Golden Saffron & Emerald - Indian Identity */
+    --saffron-gold: #f59e0b; 
+    --saffron-glow: rgba(245, 158, 11, 0.4);
+    --emerald-green: #10b981;
+    --emerald-glow: rgba(16, 185, 129, 0.4);
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+
+    /* Apple Butter Smooth Timing */
+    --apple-ease: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    height: 100dvh; /* Mobile screen fix */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Background Ambient Glow (MacBook Style) */
+.ambient-bg-glow {
+    position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+    width: 60vw; height: 60vw; border-radius: 50%;
+    background: radial-gradient(circle, var(--saffron-glow) 0%, transparent 70%);
+    filter: blur(80px); z-index: 0; opacity: 0.5; pointer-events: none;
+}
+
+/* --- Responsive Main Wrapper --- */
+.main-wrapper {
+    position: relative; z-index: 1;
+    width: 100%; height: 100dvh;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    display: flex; flex-direction: column; overflow: hidden;
+}
+
+.app-screen {
+    width: 100%; height: 100%; display: flex; flex-direction: column; padding: 20px;
+    transition: opacity 0.6s var(--apple-ease), transform 0.6s var(--apple-ease);
+}
+.app-screen.hidden { opacity: 0; pointer-events: none; position: absolute; transform: scale(0.95); }
+
+/* --- Login Screen --- */
+.login-content { margin: auto; width: 100%; max-width: 360px; text-align: center; }
+.logo-box {
+    width: 80px; height: 80px; margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--saffron-gold), #d97706);
+    border-radius: 24px; display: flex; justify-content: center; align-items: center;
+    font-size: 32px; font-weight: bold; color: #fff;
+    box-shadow: 0 10px 30px var(--saffron-glow);
+}
+.welcome-text { font-size: 28px; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
+.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
+
+.input-field { margin-bottom: 18px; text-align: left; }
+.input-field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.input-field input, .input-field select {
+    width: 100%; padding: 16px; border-radius: 14px;
+    background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+    color: white; font-size: 16px; outline: none; transition: 0.3s var(--apple-ease);
+}
+.input-field input:focus, .input-field select:focus { border-color: var(--saffron-gold); background: rgba(245, 158, 11, 0.05); }
+
+/* --- Apple Buttons --- */
+.apple-btn {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    cursor: pointer; font-family: inherit;
+}
+.apple-btn:active { transform: scale(0.92); }
+
+.btn-primary {
+    width: 100%; padding: 18px; border-radius: 14px; border: none;
+    background: var(--saffron-gold); color: #000; font-size: 16px; font-weight: 600;
+    box-shadow: 0 8px 20px var(--saffron-glow); margin-top: 10px;
+}
+.trust-badge { margin-top: 25px; font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+/* --- Chat Header --- */
+.header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+.logo-text { font-size: 22px; font-weight: 800; color: var(--saffron-gold); }
+.mode-badge { background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+/* --- 🌟 NEW UNIQUE HOLOGRAM (Aura / Chakra Ripple) --- */
+.hologram-stage { display: flex; flex-direction: column; align-items: center; margin: 25px 0; }
+.hologram-container { position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; }
+
+/* The Center Circle */
+.hologram-core {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #1e293b; color: #fff; font-weight: bold; font-size: 18px;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 3; transition: all 0.5s var(--apple-ease);
+    border: 2px solid var(--glass-border);
+}
+
+/* The Expanding Rings (Hidden by default) */
+.aura-ring {
+    position: absolute; border-radius: 50%; width: 100%; height: 100%;
+    border: 2px solid transparent; z-index: 1; opacity: 0;
+}
+
+/* State: Listening (Green Breathe) */
+.hologram-container.listening .hologram-core {
+    background: var(--emerald-green); color: #000; box-shadow: 0 0 30px var(--emerald-glow);
+    animation: coreBreathe 1.5s infinite alternate;
+}
+
+/* State: Speaking (Golden Ripples/Aura) */
+.hologram-container.speaking .hologram-core { background: var(--saffron-gold); color: #000; }
+.hologram-container.speaking .ring-1 {
+    border-color: var(--saffron-gold);
+    animation: auraRipple 1.5s cubic-bezier(0.21, 0.53, 0.56, 0.8) infinite;
+}
+.hologram-container.speaking .ring-2 {
+    border-color: var(--saffron-gold);
+    animation: auraRipple 1.5s cubic-bezier(0.21, 0.53, 0.56, 0.8) infinite 0.75s; /* Delay for 2nd wave */
+}
+
+@keyframes coreBreathe { from { transform: scale(0.95); } to { transform: scale(1.05); } }
+@keyframes auraRipple {
+    0% { transform: scale(0.8); opacity: 0.8; border-width: 4px; }
+    100% { transform: scale(1.8); opacity: 0; border-width: 1px; }
+}
+#status-text { font-size: 12px; color: var(--text-muted); margin-top: 15px; font-weight: 500; letter-spacing: 0.5px; }
+
+/* --- Chat Box (iMessage Bubbles) --- */
+.chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; padding-bottom: 10px; }
+.chat-box::-webkit-scrollbar { display: none; }
+.message { 
+    max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; 
+    animation: slideUpFade 0.4s var(--apple-ease) forwards; transform-origin: bottom center;
+}
+@keyframes slideUpFade { 0% { opacity: 0; transform: translateY(20px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+.user-message { align-self: flex-end; background: var(--saffron-gold); color: #000; font-weight: 500; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px var(--saffron-glow); }
+.ai-message { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
+
+/* --- Input Area --- */
+.input-area { display: flex; gap: 10px; align-items: center; padding: 10px 0; }
+.mic-btn { width: 50px; height: 50px; flex-shrink: 0; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; font-size: 20px; display: flex; justify-content: center; align-items: center; }
+.mic-btn.active { background: var(--emerald-green); color: black; border-color: var(--emerald-green); box-shadow: 0 0 20px var(--emerald-glow); }
+input[type="text"] { flex: 1; height: 50px; border-radius: 25px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; padding: 0 20px; font-size: 16px; outline: none; transition: 0.3s; }
+input[type="text"]:focus { border-color: var(--saffron-gold); }
+.send-btn { height: 50px; padding: 0 20px; border-radius: 25px; background: var(--text-main); color: var(--bg-dark); font-weight: 700; border: none; }
+
+.security-footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 5px; font-weight: 500; }
+.text-green { color: var(--emerald-green); }
+
+/* ====================================================
+   TABLET & DESKTOP (100% Responsive Adjustments)
+==================================================== */
+@media (min-width: 768px) {
+    .main-wrapper { max-width: 600px; height: 90vh; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+    .message { max-width: 75%; font-size: 16px; }
+    .hologram-container { width: 100px; height: 100px; }
+    .hologram-core { width: 70px; height: 70px; font-size: 20px; }
+}
+@media (min-width: 1024px) {
+    .main-wrapper { max-width: 800px; height: 85vh; padding: 20px 40px; }
+    .chat-box { gap: 20px; }
+    .input-area { gap: 15px; margin-top: 20px; }
+    .mic-btn { width: 55px; height: 55px; font-size: 22px; }
+    input[type="text"] { height: 55px; font-size: 17px; }
+    .send-btn { height: 55px; padding: 0 30px; font-size: 17px; }
+                    }
+  

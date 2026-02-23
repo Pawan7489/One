@@ -1,51 +1,36 @@
-/* ====================================================
-   PROJECT A1 - MASTER CSS (V13.0)
-   Combining all Modular CSS via Imports
-==================================================== */
+/* Project A1 - Master Layout Guard */
 
-/* 1. 🔗 Importing All Modules */
-@import url('signup.css');
-@import url('login.css');
-@import url('userprofile.css');
-@import url('menusidebar.css');
-@import url('chatroom.css');
-@import url('bottom.css');
-@import url('voice.css');
-@import url('animation.css');
-@import url('heptic.css');
-
-/* 2. 🚨 THE "BLACK SCREEN" FIX: Display Logic */
-:root {
-    --bg-dark: #070b14;
-    --saffron: #ff9933;
-}
-
-body { background: var(--bg-dark); margin: 0; overflow: hidden; }
-
-/* 🛡️ CRITICAL BUG FIX: Buttons Overlapping Solution */
-.app-screen {
-    width: 100%;
-    height: 100dvh;
-    display: none; /* डिफ़ॉल्ट रूप से सब बंद */
+/* 1. छुपाने का पक्का इंतज़ाम */
+.app-screen, .custom-modal {
+    display: none !important; /* डिफ़ॉल्ट रूप से सब गायब */
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.4s ease;
-    flex-direction: column;
 }
 
-/* केवल 'Active' स्क्रीन ही दिखेगी */
-.app-screen:not(.hidden) {
+/* 2. दिखने का पक्का इंतज़ाम (केवल यही क्लास दिखेगी) */
+.active-screen {
     display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-.hidden { 
-    display: none !important; 
-    pointer-events: none !important; 
+/* 3. सिक्योरिटी फूटर (Made in India) */
+.security-badge-footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    color: #64748b;
+    z-index: 50;
+    pointer-events: none;
 }
 
-/* 3. Global Dashboard Layout */
-.full-layout { flex-direction: row !important; }
-.main-wrapper { position: relative; width: 100%; height: 100%; }
+.security-badge-footer span { margin: 0 8px; font-weight: 600; }
+.shield { color: #38bdf8; }
+.india { color: #f97316; }
+.lock { color: #10b981; }
 
-.chat-area { flex: 1; display: flex; flex-direction: column; position: relative; }
+/* 4. Modals Layering (Z-Index fix) */
+.custom-modal { z-index: 9999 !important; background: rgba(0,0,0,0.85); }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -110,7 +110,7 @@
                             </li>
                         </ul>
                         <button id="history-settings-btn" class="btn-secondary apple-btn mt-10" type="button" style="padding: 10px; font-size: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                            ⚙️ Chat Room History Setting
+                            ⚙️ Chat History Setting
                         </button>
                     </div>
 
@@ -171,7 +171,7 @@
                 <div id="ai-thinking-indicator" class="ai-thinking-box hidden">
                     <div class="spinner"></div>
                     <div class="thinking-steps">
-                        <span class="step step-1">🔍 Checking Database for fast reply...</span>
+                        <span class="step step-1">🔍 Checking Database...</span>
                         <span class="step step-2 hidden">🧠 Applying AI Logic...</span>
                         <span class="step step-3 hidden">🌐 Deep Web Search...</span>
                         <span class="step step-4 hidden">✨ Generating Answer...</span>
@@ -191,15 +191,13 @@
                             <label class="toggle-pill"><input type="checkbox" id="toggle-search"> <span>🌐 Web Search</span></label>
                             <label class="toggle-pill"><input type="checkbox" id="toggle-reasoning"> <span>🧠 Deep Think</span></label>
                         </div>
-                        
                         <div id="active-tool-indicator" class="active-tool-indicator hidden">
                             <span id="tool-icon">🎨</span> <span id="tool-text">Image Mode</span>
                             <button id="close-tool-btn" type="button">✖</button>
                         </div>
                     </div>
 
-                    <div id="attachment-preview" class="attachment-preview hidden">
-                        </div>
+                    <div id="attachment-preview" class="attachment-preview hidden"></div>
 
                     <div class="input-wrapper">
                         <div class="action-menu-wrapper">
@@ -238,10 +236,7 @@
                 </div>
             </main>
         </div>
-
-    </div>
-
-    <div id="settings-modal" class="custom-modal hidden">
+    </div> <div id="settings-modal" class="custom-modal hidden">
         <div class="modal-content">
             <h2>⚙️ AI Logic & Settings</h2>
             <div class="input-field">
@@ -328,4 +323,4 @@
     </div>
 
     <div id="live-voice-overlay" class="custom-modal hidden" style="backdrop-filter: blur(20px);">
-        <div class="live-voic
+        <div class="live-voice-container" style="display: flex; flex-direction: column; align-items: cent

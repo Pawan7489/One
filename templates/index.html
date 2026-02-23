@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Project A1 - Modular Master</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Project A1 - Master V13.0</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
-    <div id="a1-animation-assets"></div> <div class="main-wrapper">
-        
-        <div id="auth-section">
+    <div id="a1-animation-assets"></div>
+
+    <div class="main-wrapper">
+        <section id="auth-module">
             <div id="signup-screen" class="app-screen">
                 </div>
             <div id="login-screen" class="app-screen hidden">
                 </div>
-        </div>
+        </section>
 
-        <div id="chat-screen" class="app-screen hidden full-layout">
-            
-            <aside class="sidebar" id="app-sidebar">
-                </aside>
+        <section id="chat-screen" class="app-screen hidden full-layout">
+            <div id="sidebar-container"></div> 
 
             <main class="chat-area">
                 <header class="chat-header">
                     <button id="menu-toggle" class="icon-btn">☰</button>
-                    <div class="mini-hologram">A1</div>
+                    <div class="mini-hologram" id="mini-hologram">A1</div>
                     <div class="right-header">
                         <button id="live-voice-mode-btn">🎙️ Live Chat</button>
                         <button id="profile-btn">👤</button>
@@ -39,21 +38,20 @@
                 <div id="ai-thinking-indicator" class="ai-thinking-box hidden">
                     <div class="spinner"></div>
                     <div class="thinking-steps">
-                        <span class="step step-1">🔍 Cache Database Check...</span>
+                        <span class="step step-1">🔍 Analyzing Command...</span>
                     </div>
                 </div>
 
-                <div class="bottom-assembly">
-                    </div>
+                <div id="input-section"></div>
             </main>
-        </div>
+        </section>
     </div>
 
-    <div id="modals-container">
+    <div id="global-modals">
         </div>
 
-    <script src="../static/js/heptic.js"></script>
-    <script src="../static/js/animation.js"></script>
-    <script src="../static/js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/heptic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=13.0"></script>
 </body>
 </html>

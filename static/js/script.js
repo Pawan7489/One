@@ -1,14 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
-    // 📱 1. HAPTIC ENGINE (Vibration)
+    // 📱 1. HAPTIC ENGINE (Apple/Samsung Vibe)
     // ==========================================
     function triggerHaptic(type = "light") {
         if (!navigator.vibrate) return;
         if (type === "light") navigator.vibrate(30); 
-        if (type === "medium") navigator.vibrate(60); 
+        if (type === "medium") navigator.vibrate(50); 
         if (type === "heavy") navigator.vibrate([40, 50, 40]); 
     }
-    document.querySelectorAll('button, .action-icon, .chat-item').forEach(btn => {
+    
+    // Add haptic feedback to all interactive elements
+    document.querySelectorAll('button, .action-icon, .chat-item, .suggestion-chip').forEach(btn => {
         btn.addEventListener('click', () => triggerHaptic("light"));
     });
 
@@ -29,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatBox = document.getElementById("chat-box");
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
+    const stopBtn = document.getElementById("stop-btn"); // NEW: Stop Button
     const micBtn = document.getElementById("mic-btn");
     const plusBtn = document.getElementById("plus-btn");
     const actionMenu = document.getElementById("action-menu");
@@ -38,15 +41,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const newChatBtn = document.getElementById("new-chat-btn");
     const aiThinkingIndicator = document.getElementById("ai-thinking-indicator");
     
-    // Tools
+    // Tools & Prompts
     const aiTools = document.querySelectorAll(".ai-tools-list li");
     const activeToolIndicator = document.getElementById("active-tool-indicator");
     const toolIcon = document.getElementById("tool-icon");
     const toolText = document.getElementById("tool-text");
     const closeToolBtn = document.getElementById("close-tool-btn");
+    const suggestionChips = document.querySelectorAll(".suggestion-chip"); // NEW
+    
     let currentAIMode = "chat";
+    let currentAbortController = null; // NEW: To stop API requests
+    let isGenerating = false; // NEW: Flag for typing status
 
-    // 🚨 FIX: Added History Modal to the Modals Object
     const modals = {
         profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
         settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
@@ -74,13 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 💾 3. PERSISTENT LOGIN (THE BUG FIX)
+    // 💾 3. PERSISTENT LOGIN (100% Crash-Free)
     // ==========================================
+    window.speakText = function(text) { speak(text); triggerHaptic("light"); };
+
     function checkLoginState() {
         try {
             const savedUser = localStorage.getItem("a1_indian_user");
             if (savedUser) {
-                // 🚨 BIG FIX: Changed JSON.JSON.parse to JSON.parse
                 currentUser = JSON.parse(savedUser);
                 
                 signupScreen.classList.add("hidden");
@@ -94,12 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error("Login Cache Error Fixed: ", error);
-            localStorage.removeItem("a1_indian_user"); // Clear corrupted data
+            localStorage.removeItem("a1_indian_user"); 
         }
     }
-    
-    // Speak function needs to be defined before calling it in checkLoginState
-    window.speakText = function(text) { speak(text); triggerHaptic("light"); };
 
     function speak(text) {
         if (!window.speechSynthesis) return;
@@ -111,7 +115,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
         utterance.voice = selectedVoice;
         
-        const voicePref = document.getElementById("setting-voice").value;
+        // 26+ Voice Logic (Age Logic Mapping)
+        const voicePref = document.getElementById("setting-voice").value || "";
         if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
         else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
         else if (voicePref.includes("deep") || voicePref.includes("adult-male-2")) { utterance.pitch = 0.6; utterance.rate = 0.95; } 
@@ -132,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.speechSynthesis.speak(utterance);
     }
 
-    // Now run login check safely
     checkLoginState(); 
 
     function switchScreen(hideElem, showElem) {
@@ -196,11 +200,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    plusBtn.addEventListener("click", () => { actionMenu.classList.toggle("hidden"); actionMenu.style.display = actionMenu.classList.contains("hidden") ? "none" : "block"; });
-    document.addEventListener("click", (e) => { if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) { actionMenu.classList.add("hidden"); actionMenu.style.display = "none"; } });
+    plusBtn.addEventListener("click", () => { 
+        actionMenu.classList.toggle("hidden"); 
+        actionMenu.style.display = actionMenu.classList.contains("hidden") ? "none" : "block"; 
+        triggerHaptic("light");
+    });
+    
+    document.addEventListener("click", (e) => { 
+        if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) { 
+            actionMenu.classList.add("hidden"); actionMenu.style.display = "none"; 
+        } 
+    });
 
     newChatBtn.addEventListener("click", () => {
         triggerHaptic("medium");
+        
+        // Stop any ongoing generation
+        if (isGenerating && currentAbortController) {
+            currentAbortController.abort();
+            resetInputUI();
+        }
+
         chatBox.innerHTML = ""; 
         chatBox.appendChild(welcomeBanner);
         welcomeBanner.style.display = "flex";
@@ -209,7 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
         speakText("Naya chat room shuru ho gaya hai. Boliye?");
     });
 
-    // Chat History Context Menu (⋮)
     document.querySelectorAll(".chat-options-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -224,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
     });
 
-    // AI Super Powers Selection
     aiTools.forEach(item => {
         item.addEventListener("click", () => {
             triggerHaptic("light");
@@ -251,12 +269,13 @@ document.addEventListener("DOMContentLoaded", () => {
         activeToolIndicator.classList.add("hidden");
         setTimeout(()=> activeToolIndicator.style.display = "none", 300);
         aiTools.forEach(i => i.classList.remove("active"));
-        aiTools[0].classList.add("active"); 
+        if(aiTools[0]) aiTools[0].classList.add("active"); 
         currentAIMode = "chat";
     });
 
+
     // ==========================================
-    // ✍️ 5. SMART TEXTAREA
+    // ✍️ 5. SMART TEXTAREA & PROMPT CHIPS
     // ==========================================
     userInput.addEventListener("input", function() {
         this.style.height = "auto";
@@ -269,6 +288,16 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault(); 
             sendMessageToAI();
         }
+    });
+
+    // Handle Prompt Suggestion Chips
+    suggestionChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            triggerHaptic("medium");
+            userInput.value = chip.innerText.replace(/[📝📊🐍]/g, '').trim(); 
+            userInput.style.height = "auto";
+            sendMessageToAI();
+        });
     });
 
     // ==========================================
@@ -319,11 +348,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     micBtn.addEventListener("click", () => {
+        triggerHaptic("light");
         if (micBtn.classList.contains("active")) { isContinuousMicOn = false; recognition.stop(); } 
         else { isContinuousMicOn = true; try { recognition.start(); } catch(e) {} }
     });
 
     liveVoiceBtn.addEventListener("click", () => {
+        triggerHaptic("heavy");
         isLiveVoiceMode = true;
         liveVoiceOverlay.classList.remove("hidden");
         liveVoiceText.innerText = "(Bolna shuru karein...)";
@@ -331,6 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     closeLiveVoice.addEventListener("click", () => {
+        triggerHaptic("light");
         isLiveVoiceMode = false;
         recognition.stop();
         window.speechSynthesis.cancel();
@@ -338,8 +370,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🧠 7. AI ENGINE & THINKING ANIMATION
+    // 🧠 7. AI ENGINE, ABORT LOGIC & TYPING
     // ==========================================
+    function toggleInputUI(generating) {
+        isGenerating = generating;
+        if (generating) {
+            sendBtn.classList.add("hidden");
+            stopBtn.classList.remove("hidden");
+        } else {
+            sendBtn.classList.remove("hidden");
+            stopBtn.classList.add("hidden");
+        }
+    }
+
     async function showThinkingSteps() {
         chatBox.appendChild(aiThinkingIndicator);
         aiThinkingIndicator.classList.remove("hidden");
@@ -353,12 +396,40 @@ document.addEventListener("DOMContentLoaded", () => {
         await new Promise(r => setTimeout(r, 800));
     }
 
+    // Edit user message function
+    window.editUserMessage = function(text) {
+        triggerHaptic("medium");
+        userInput.value = text;
+        userInput.focus();
+        userInput.dispatchEvent(new Event('input'));
+    };
+
     function appendUserMessage(text) {
         welcomeBanner.style.display = "none"; 
+        const msgContainer = document.createElement("div");
+        msgContainer.style.display = "flex";
+        msgContainer.style.flexDirection = "column";
+        msgContainer.style.alignSelf = "flex-end";
+        msgContainer.style.maxWidth = "85%";
+        
         const msgDiv = document.createElement("div");
         msgDiv.className = `message user-message`;
         msgDiv.innerText = text;
-        chatBox.appendChild(msgDiv);
+        msgDiv.style.maxWidth = "100%";
+        
+        const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
+        // NEW: User actions (Edit & Listen)
+        const userActions = document.createElement("div");
+        userActions.className = "user-actions";
+        userActions.innerHTML = `
+            <button class="user-action-icon" onclick="speakText('${safeText}')" title="Listen">🔊</button>
+            <button class="user-action-icon" onclick="editUserMessage('${safeText}')" title="Edit">✏️</button>
+        `;
+
+        msgContainer.appendChild(msgDiv);
+        msgContainer.appendChild(userActions);
+        chatBox.appendChild(msgContainer);
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }
 
@@ -372,12 +443,16 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 0;
         
         function typeWriter() {
+            // Stop typing if aborted
+            if (!isGenerating) return; 
+
             if (i < words.length) {
                 msgDiv.innerHTML += words[i] + ' ';
                 i++;
                 chatBox.scrollTo({ top: chatBox.scrollHeight });
                 setTimeout(typeWriter, Math.floor(Math.random() * 20) + 15); 
             } else {
+                toggleInputUI(false);
                 if(!isError) addActionBar(msgDiv, text);
             }
         }
@@ -398,13 +473,24 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="action-icon" onclick="speakText('${safeText}')" title="Read">🔊</button>
             <button class="action-icon">👍</button>
             <button class="action-icon">👎</button>
-            <span class="sources-badge">🔗 Cache Verified</span>
+            <span class="mode-badge" style="padding: 4px 10px; font-size: 10px; margin-left:auto;">${currentAIMode.toUpperCase()}</span>
         `;
         actionBar.style.opacity = "0";
         container.appendChild(actionBar);
         setTimeout(() => actionBar.style.opacity = "1", 100);
         triggerHaptic("light"); 
     }
+
+    // NEW: Stop Generation Event
+    stopBtn.addEventListener("click", () => {
+        triggerHaptic("heavy");
+        if (currentAbortController) {
+            currentAbortController.abort(); // Cancel API request
+        }
+        toggleInputUI(false);
+        window.speechSynthesis.cancel(); // Stop speaking
+        aiThinkingIndicator.classList.add("hidden");
+    });
 
     window.sendMessageToAI = async function() {
         const text = userInput.value.trim();
@@ -415,10 +501,15 @@ document.addEventListener("DOMContentLoaded", () => {
         
         userInput.value = "";
         userInput.style.height = "auto"; 
-
-        const deepSearchON = document.getElementById('toggle-search').checked;
+        
+        toggleInputUI(true); // Show Stop Button
+        const deepSearchON = document.getElementById('toggle-search')?.checked || false;
         
         showThinkingSteps(); 
+
+        // Setup AbortController for Stop Button
+        currentAbortController = new AbortController();
+        const signal = currentAbortController.signal;
 
         try {
             const response = await fetch(ADMIN_PANEL_URL, {
@@ -429,47 +520,58 @@ document.addEventListener("DOMContentLoaded", () => {
                     mode: currentAIMode,
                     web_search: deepSearchON,
                     check_database_cache: true 
-                })
+                }),
+                signal: signal // Attach signal here
             });
 
             const data = await response.json();
-            if (data.status === "success") {
-                let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
+            
+            if (!isGenerating) return; // If stopped during fetch
+
+            if (data.status === "success" || data.answer) {
+                let aiResponse = (data.answer || "No response generated.").replace(/Commander AI:/gi, '').trim();
                 appendTypingAI(aiResponse);
                 speak(aiResponse);
             } else {
-                appendTypingAI("Engine Error: " + data.message, true);
+                appendTypingAI("Engine Error: " + (data.message || "Unknown error"), true);
+                toggleInputUI(false);
             }
         } catch (error) {
-            appendTypingAI("System Error: Network unreachable. Database fallback failed.", true);
+            if (error.name === 'AbortError') {
+                console.log("Generation stopped by user.");
+            } else {
+                if (isGenerating) {
+                    appendTypingAI("System Error: Network unreachable. Database fallback failed.", true);
+                    toggleInputUI(false);
+                }
+            }
         }
     };
 
     async function processLiveVoiceQuery(text) {
-    try {
-        const response = await fetch(ADMIN_PANEL_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/
-json" },
-            body: JSON.stringify({ query: text,
-check_database_cache: true })
-        });
-        const data = await response.json();
-        let aiResponse = data.answer.replace(/Commander
-AI:/gi, '').trim();
-        liveVoiceText.innerText = aiResponse;
-        speak(aiResponse);
-    } catch(e) {
-        liveVoiceText.innerText = "Connection lost. Please
-try again.";
-        setTimeout(() => { try{ recognition.start(); }
-catch(e){} }, 2000);
+        currentAbortController = new AbortController();
+        try {
+            const response = await fetch(ADMIN_PANEL_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: text, check_database_cache: true }),
+                signal: currentAbortController.signal
+            });
+            const data = await response.json();
+            let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
+            liveVoiceText.innerText = aiResponse;
+            speak(aiResponse);
+        } catch(e) {
+            if (e.name !== 'AbortError') {
+                liveVoiceText.innerText = "Connection lost. Please try again.";
+                setTimeout(() => { try{ recognition.start(); } catch(err){} }, 2000);
+            }
+        }
     }
-}
 
-sendBtn.addEventListener("click", sendMessageToAI);
+    sendBtn.addEventListener("click", sendMessageToAI);
 
-});
+}); // End of DOMContentLoaded
+            
 
-
-              
+                          

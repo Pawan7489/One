@@ -1,79 +1,4 @@
-                </p>
-    bottom">
-                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ Settings & Logic</button>
-                </div>
-            </aside>
-
-            <main class="chat-area">
-                <header class="chat-header">
-                    <div class="left-header">
-                        <div class="mini-hologram" id="mini-hologram">
-                            <div class="mini-ring"></div>
-                            <div class="mini-core">A1</div>
-                        </div>
-                        <div class="mode-badge" id="persona-badge">Mode: Active</div>
-                    </div>
-                    <div class="right-header">
-                        <button id="profile-btn" class="profile-btn apple-btn">👤</button>
-                    </div>
-                </header>
-
-                <div class="chat-box" id="chat-box">
-                    </div>
-
-                <div class="advanced-input-container">
-                    <div class="input-wrapper">
-                        
-                        <div class="action-menu-wrapper">
-                            <button id="plus-btn" class="icon-btn plus-icon" type="button" title="Upload & Tools">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            </button>
-                            <div id="action-menu" class="action-menu hidden">
-                                <div class="menu-item">📸 Camera (Take Photo)</div>
-                                <div class="menu-item">📷 Upload Photo/Video</div>
-                                <div class="menu-item">📁 Select File/Document</div>
-                                <div class="menu-item">☁️ Google Photos</div>
-                            </div>
-                        </div>
-
-                        <button id="mic-btn" class="icon-btn mic-icon" type="button" title="Voice Mic">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-                        </button>
-
-                        <input type="text" id="user-input" placeholder="Message ya command..." autocomplete="off">
-
-                        <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="security-footer">
-                    <span class="shield">🛡️ End-to-End Encrypted</span> • 
-                    <span class="india">🇮🇳 Made in India</span> • 
-                    <span class="text-green">🔒 100% Privacy</span>
-                </div>
-            </main>
-        </div>
-
-    </div>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6.0">
-</head>
-<body>
-    <div class="ambient-bg-glow"></div>
-
-    <div class="main-wrapper">
-        
-        <div id="signup-screen" class="app-screen">
-            <div class="login-content">
-                <div class="logo-box aura-glow">A1</div>
+="logo-box aura-glow">A1</div>
                 <h1 class="welcome-text">Create Account</h1>
                 <p class="subtitle">Naya Secure Account Banayein</p>
                 
@@ -282,42 +207,270 @@
             <h2>👤 Profile Setup</h2>
             
             <div class="avatar-upload-box">
-                <div class="avatar-circle">📷</div>
-                <p>Change Photo</p>
-            </div>
 
-            <div class="input-field">
-                <label>Update Name</label>
-                <input type="text" id="prof-name" placeholder="Aapka Naam">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Project A1 - The Indian Super-AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7.0">
+</head>
+<body>
+    <div class="ambient-bg-glow"></div>
+
+    <div class="main-wrapper">
+        
+        <div id="signup-screen" class="app-screen">
+            <div class="login-content">
+                <div class="logo-box aura-glow">A1</div>
+                <h1 class="welcome-text">Namaste! 🙏</h1>
+                <p class="subtitle">Aapka Apna Secure AI Companion</p>
+                
+                <form id="signup-form" class="auth-form">
+                    <div class="input-field"><input type="text" id="reg-name" required placeholder="Aapka Poora Naam"></div>
+                    <div class="input-field"><input type="text" id="reg-username" required placeholder="Username banayein"></div>
+                    <div class="input-row">
+                        <div class="input-field w-50"><input type="password" id="reg-password" required placeholder="Password"></div>
+                        <div class="input-field w-50"><input type="password" id="reg-confirm" required placeholder="Confirm Password"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-field w-50"><input type="date" id="reg-dob" required></div>
+                        <div class="input-field w-50">
+                            <select id="reg-gender">
+                                <option value="male">Male (Purush)</option>
+                                <option value="female">Female (Mahila)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary apple-btn">Create Secure Account</button>
+                    <button type="button" id="guest-btn" class="btn-secondary apple-btn mt-10">👤 Continue as Guest</button>
+                </form>
+
+                <div class="social-divider"><span>OR SIGN UP WITH</span></div>
+                <div class="social-logins grid-socials">
+                    <button class="social-btn apple-btn">🌐 Google</button>
+                    <button class="social-btn apple-btn">📱 Mobile OTP</button>
+                    <button class="social-btn apple-btn">🐙 GitHub</button>
+                    <button class="social-btn apple-btn">📘 Facebook</button>
+                    <button class="social-btn apple-btn">📸 Instagram</button>
+                    <button class="social-btn apple-btn">📞 Truecaller</button>
+                </div>
+                
+                <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+                    Pehle se account hai? <a href="#" id="go-to-login" style="color: var(--saffron-gold); font-weight: bold;">Login Karein</a>
+                </p>
             </div>
-            <div class="input-field">
-                <label>Update Date of Birth</label>
-                <input type="date" id="prof-dob">
+        </div>
+
+        <div id="login-screen" class="app-screen hidden">
+            <div class="login-content">
+                <div class="logo-box aura-glow">A1</div>
+                <h1 class="welcome-text">Welcome Back</h1>
+                <p class="subtitle">Securely login to your AI Dashboard</p>
+                
+                <form id="login-form" class="auth-form">
+                    <div class="input-field"><input type="text" required placeholder="Username ya Email"></div>
+                    <div class="input-field"><input type="password" required placeholder="Password"></div>
+                    <div class="forgot-links">
+                        <a href="#">Forgot Username?</a>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn-primary apple-btn">Secure Login</button>
+                </form>
+
+                <div class="social-divider"><span>OR LOGIN WITH</span></div>
+                <div class="social-logins grid-socials">
+                    <button class="social-btn apple-btn">🌐 Google</button>
+                    <button class="social-btn apple-btn">📱 Mobile OTP</button>
+                    <button class="social-btn apple-btn">🐙 GitHub</button>
+                    <button class="social-btn apple-btn">📘 Facebook</button>
+                    <button class="social-btn apple-btn">📸 Instagram</button>
+                    <button class="social-btn apple-btn">📞 Truecaller</button>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+                    Naya user hain? <a href="#" id="go-to-signup" style="color: var(--saffron-gold); font-weight: bold;">Sign Up Karein</a>
+                </p>
             </div>
+        </div>
+
+        <div id="chat-screen" class="app-screen hidden full-layout">
             
+            <aside class="sidebar" id="app-sidebar">
+                <button class="new-chat-btn apple-btn"><span>+</span> Naya Chat Room</button>
+                
+                <div class="sidebar-scroll-area">
+                    <div class="menu-section">
+                        <h3>🕒 Recent Chats</h3>
+                        <ul class="chat-history-list">
+                            <li>Tax Planning 2026</li>
+                            <li>Python Machine Learning...</li>
+                            <li>Health & Diet Plan</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section mt-15">
+                        <h3>⚡ AI Super Powers</h3>
+                        <ul class="ai-tools-list">
+                            <li class="active">💬 AI Chat (A1 Core)</li>
+                            <li>🎨 Image Generation</li>
+                            <li>🎬 Video Generation</li>
+                            <li>💻 Coding & Debugging</li>
+                            <li>🌐 Web Design</li>
+                            <li>🔍 Deep Web Search</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section mt-15 upcoming-section">
+                        <h3>🚀 Upcoming Features</h3>
+                        <ul class="upcoming-list">
+                            <li><span class="beta-tag">BETA</span> 📞 Voice Call with A1</li>
+                            <li><span class="beta-tag">SOON</span> 📱 WhatsApp Integration</li>
+                            <li><span class="beta-tag">SOON</span> 🧠 Custom AI Agents</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-bottom">
+                    <button id="support-btn" class="settings-btn apple-btn" style="margin-bottom: 8px;">🆘 Help & Support</button>
+                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ Settings & Logic</button>
+                </div>
+            </aside>
+
+            <main class="chat-area">
+                <header class="chat-header">
+                    <div class="left-header">
+                        <button id="menu-toggle" class="icon-btn menu-btn">☰</button>
+                        <div class="mini-hologram" id="mini-hologram">
+                            <div class="mini-ring"></div>
+                            <div class="mini-core">A1</div>
+                        </div>
+                        <div class="mode-badge" id="persona-badge">Mode: Active</div>
+                    </div>
+                    <div class="right-header">
+                        <button id="profile-btn" class="profile-btn apple-btn" title="Your Profile">👤</button>
+                    </div>
+                </header>
+
+                <div class="chat-box" id="chat-box">
+                    </div>
+
+                <div class="advanced-input-container">
+                    
+                    <div class="quick-toggles">
+                        <label class="toggle-pill"><input type="checkbox"> <span>🌐 Web Search</span></label>
+                        <label class="toggle-pill"><input type="checkbox"> <span>🧠 Deep Think</span></label>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <div class="action-menu-wrapper">
+                            <button id="plus-btn" class="icon-btn plus-icon" type="button" title="Upload & Tools">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                            <div id="action-menu" class="action-menu hidden">
+                                <div class="menu-item">📸 Camera (Take Photo)</div>
+                                <div class="menu-item">📷 Upload Photo/Video</div>
+                                <div class="menu-item">📁 Select File/Document</div>
+                                <div class="menu-item">☁️ Google Photos</div>
+                            </div>
+                        </div>
+
+                        <button id="mic-btn" class="icon-btn mic-icon" type="button" title="Voice Mode">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        </button>
+
+                        <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+
+                        <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="security-footer">
+                    <span class="shield">🛡️ End-to-End Encrypted</span> • 
+                    <span class="india">🇮🇳 Made in India</span> • 
+                    <span class="text-green">🔒 100% Privacy</span>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <div id="settings-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>⚙️ AI Logic & Settings</h2>
+            <div class="input-field">
+                <label>Language Model (Bhasha)</label>
+                <select id="setting-lang">
+                    <option value="hinglish">Hinglish (Default)</option>
+                    <option value="hindi">Pure Hindi</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label>Voice Preference (Awaaz)</label>
+                <select id="setting-voice">
+                    <option value="male">Male (Purush)</option>
+                    <option value="female">Female (Mahila)</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label>Age Logic Selector (AI Mode)</label>
+                <select id="setting-logic">
+                    <option value="10-15">10-15 saal (Teens/School)</option>
+                    <option value="18-25">18-25 saal (College/Youth) - Active</option>
+                    <option value="30-40">30-40 saal (Adults)</option>
+                    <option value="50+">50+ saal (Seniors/Respectful)</option>
+                </select>
+            </div>
+            <button id="close-settings" class="btn-primary apple-btn mt-10">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>👤 Profile Setup</h2>
+            <div class="avatar-upload-box"><div class="avatar-circle">📷</div><p>Change Photo</p></div>
+            <div class="input-field"><label>Update Name</label><input type="text" id="prof-name" placeholder="Aapka Naam"></div>
             <div class="input-field">
                 <label>Email ID Verification</label>
-                <div class="verify-row">
-                    <input type="email" id="prof-email" placeholder="email@example.com">
-                    <button class="btn-verify apple-btn">Verify</button>
-                </div>
+                <div class="verify-row"><input type="email" placeholder="email@example.com"><button class="btn-verify apple-btn">Verify</button></div>
             </div>
-
             <div class="input-field">
                 <label>Mobile Verification</label>
-                <div class="verify-row">
-                    <input type="tel" id="prof-mobile" placeholder="+91 XXXXX XXXXX">
-                    <button class="btn-verify apple-btn">Verify</button>
-                </div>
+                <div class="verify-row"><input type="tel" placeholder="+91 XXXXX XXXXX"><button class="btn-verify apple-btn">Verify</button></div>
             </div>
-            
             <button id="close-profile" class="btn-primary apple-btn mt-10">Save Profile</button>
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=6.0"></script>
+    <div id="support-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>🆘 Sahayata (Support)</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px; text-align: center;">Agar aapko AI use karne mein koi samasya aa rahi hai, toh hume batayein.</p>
+            <div class="input-field">
+                <label>Aapki Samasya (Issue)</label>
+                <select>
+                    <option>Voice kaam nahi kar rahi</option>
+                    <option>AI galat jawab de raha hai</option>
+                    <option>Login problem</option>
+                    <option>Other / Anya</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <textarea rows="4" style="width: 100%; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white;" placeholder="Apni samasya yahan likhein..."></textarea>
+            </div>
+            <button id="close-support" class="btn-primary apple-btn mt-10">Submit Ticket</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=7.0"></script>
 
 
+
+              
 
 <script>
 

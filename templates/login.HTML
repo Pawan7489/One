@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A1 - Login</title>
+    <link rel="stylesheet" href="../static/css/login.css">
+</head>
+<body>
+    <div class="ambient-bg"></div>
+    <div class="auth-container">
+        <div class="logo-box">A1</div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Dobara Milkar Khushi Hui</p>
+
+        <form id="login-form">
+            <div class="input-group">
+                <input type="text" id="login-user" placeholder="Username / Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-pass" placeholder="Password" required>
+            </div>
+            <div class="remember-box">
+                <label><input type="checkbox" id="remember"> Remember Me</label>
+            </div>
+            <button type="submit" class="btn-main">Secure Login</button>
+        </form>
+
+        <div class="social-box">
+            <span>OR LOGIN WITH</span>
+            <div class="social-grid">
+                <button class="s-btn">Google</button>
+                <button class="s-btn">OTP</button>
+                <button class="s-btn">GitHub</button>
+            </div>
+        </div>
+        <p class="footer-link">Account nahi hai? <a href="signup.HTML">Sign Up</a></p>
+    </div>
+    <script src="../static/js/login.js"></script>
+</body>
+</html>

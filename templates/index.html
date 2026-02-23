@@ -1,11 +1,11 @@
-                
+                                        
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -89,32 +89,31 @@
         <div id="chat-screen" class="app-screen hidden full-layout">
             
             <aside class="sidebar" id="app-sidebar">
-                <button class="new-chat-btn apple-btn"><span>+</span> Naya Chat Room</button>
+                <button id="new-chat-btn" class="new-chat-btn apple-btn"><span>+</span> Naya Chat Room</button>
                 
                 <div class="sidebar-scroll-area">
                     <div class="menu-section">
                         <h3>🕒 Recent Chats</h3>
-                        <ul class="chat-history-list">
+                        <ul class="chat-history-list" id="chat-history-list">
                             <li>Tax Planning 2026</li>
                             <li>Python Machine Learning...</li>
                             <li>Health & Diet Plan</li>
                         </ul>
                     </div>
 
-                                        <div class="menu-section mt-15">
+                    <div class="menu-section mt-15">
                         <h3>⚡ AI Super Powers</h3>
-                        <ul class="ai-tools-list">
-                            <li class="active">💬 AI Chat (A1 Core)</li>
-                            <li>🎨 Image Generation</li>
-                            <li>🎬 Video Generation</li>
-                            <li>💻 Coding & Debugging</li>
-                            <li>🌐 Web Design & Generate</li>
-                            <li>🖼️ Photo Design</li>
-                            <li>🖌️ Canvas Style Design</li>
-                            <li>🔍 Deep Web Search</li>
+                        <ul class="ai-tools-list" id="ai-tools-list">
+                            <li class="active" data-mode="chat">💬 AI Chat (A1 Core)</li>
+                            <li data-mode="image">🎨 Image Generation</li>
+                            <li data-mode="video">🎬 Video Generation</li>
+                            <li data-mode="coding">💻 Coding & Debugging</li>
+                            <li data-mode="web">🌐 Web Design & Generate</li>
+                            <li data-mode="photo">🖼️ Photo Design</li>
+                            <li data-mode="canvas">🖌️ Canvas Style Design</li>
+                            <li data-mode="search">🔍 Deep Web Search</li>
                         </ul>
                     </div>
-
 
                     <div class="menu-section mt-15 upcoming-section">
                         <h3>🚀 Upcoming Features</h3>
@@ -153,8 +152,13 @@
                 <div class="advanced-input-container">
                     
                     <div class="quick-toggles">
-                        <label class="toggle-pill"><input type="checkbox"> <span>🌐 Web Search</span></label>
-                        <label class="toggle-pill"><input type="checkbox"> <span>🧠 Deep Think</span></label>
+                        <label class="toggle-pill"><input type="checkbox" id="toggle-search"> <span>🌐 Web Search</span></label>
+                        <label class="toggle-pill"><input type="checkbox" id="toggle-reasoning"> <span>🧠 Deep Think</span></label>
+                    </div>
+
+                    <div id="active-tool-indicator" class="active-tool-indicator hidden">
+                        <span id="tool-icon">🎨</span> <span id="tool-text">Image Generation Mode</span>
+                        <button id="close-tool-btn">✖</button>
                     </div>
 
                     <div class="input-wrapper">
@@ -174,9 +178,9 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                         </button>
 
-                        <input type="text" id="user-input" placeholder="Message ya command dijiye..." autocomplete="off">
+                        <textarea id="user-input" placeholder="Message ya command dijiye... (Shift+Enter for new line)" rows="1" autocomplete="off"></textarea>
 
-                        <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
+                        <button id="send-btn" class="icon-btn send-arrow" type="button">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </div>
@@ -227,7 +231,23 @@
         <div class="modal-content">
             <h2>👤 Profile Setup</h2>
             <div class="avatar-upload-box"><div class="avatar-circle">📷</div><p>Change Photo</p></div>
+            
             <div class="input-field"><label>Update Name</label><input type="text" id="prof-name" placeholder="Aapka Naam"></div>
+            
+            <div class="input-row">
+                <div class="input-field w-50">
+                    <label>Date of Birth</label>
+                    <input type="date" id="prof-dob">
+                </div>
+                <div class="input-field w-50">
+                    <label>Gender</label>
+                    <select id="prof-gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="input-field">
                 <label>Email ID Verification</label>
                 <div class="verify-row"><input type="email" placeholder="email@example.com"><button class="btn-verify apple-btn">Verify</button></div>
@@ -260,11 +280,7 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=7.0"></script>
-</body>
-  </html>
-  
-
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=8.0"></script>
               
 
 <script>

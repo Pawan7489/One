@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=11.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -60,12 +60,16 @@
                 <p class="subtitle">Securely login to your AI Dashboard</p>
                 
                 <form id="login-form" class="auth-form">
-                    <div class="input-field"><input type="text" required placeholder="Username ya Email"></div>
-                    <div class="input-field"><input type="password" required placeholder="Password"></div>
-                    <div class="forgot-links">
-                        <a href="#">Forgot Username?</a>
-                        <a href="#">Forgot Password?</a>
+                    <div class="input-field"><input type="text" id="login-id" required placeholder="Username ya Email"></div>
+                    <div class="input-field"><input type="password" id="login-pass" required placeholder="Password"></div>
+                    
+                    <div class="remember-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 12px;">
+                        <label style="display: flex; align-items: center; gap: 5px; color: var(--text-muted); cursor: pointer;">
+                            <input type="checkbox" id="remember-me" checked> Keep me logged in
+                        </label>
+                        <a href="#" style="color: var(--saffron-gold); text-decoration: none;">Forgot Password?</a>
                     </div>
+
                     <button type="submit" class="btn-primary apple-btn">Secure Login</button>
                 </form>
 
@@ -104,10 +108,6 @@
                                     <button class="menu-action">⬇️ Move Down</button>
                                     <button class="menu-action text-danger">🗑️ Delete</button>
                                 </div>
-                            </li>
-                            <li class="chat-item" data-id="chat-2" draggable="true">
-                                <span class="chat-title">Python ML Code</span>
-                                <button class="chat-options-btn">⋮</button>
                             </li>
                         </ul>
                         <button id="history-settings-btn" class="btn-secondary apple-btn mt-10" style="padding: 10px; font-size: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
@@ -155,13 +155,31 @@
                         </div>
                         <div class="mode-badge" id="persona-badge">Mode: Active</div>
                     </div>
-                    <div class="right-header">
+                    <div class="right-header" style="display: flex; gap: 10px; align-items: center;">
+                        <button id="live-voice-mode-btn" class="live-voice-btn apple-btn" title="Start Live Voice Chat">🎙️ Live Chat</button>
                         <button id="profile-btn" class="profile-btn apple-btn" title="Your Profile">👤</button>
                     </div>
                 </header>
 
                 <div class="chat-box" id="chat-box">
+                    
+                    <div id="welcome-banner" class="welcome-banner">
+                        <div class="welcome-logo aura-glow">A1</div>
+                        <h2 id="welcome-user-name">Welcome back, Commander!</h2>
+                        <p>Aaj main aapki kya madad kar sakta hoon?</p>
                     </div>
+
+                    </div>
+
+                <div id="ai-thinking-indicator" class="ai-thinking-box hidden">
+                    <div class="spinner"></div>
+                    <div class="thinking-steps">
+                        <span class="step step-1">🔍 Checking Database for fast reply...</span>
+                        <span class="step step-2 hidden">🧠 Applying AI Logic...</span>
+                        <span class="step step-3 hidden">🌐 Deep Web Search...</span>
+                        <span class="step step-4 hidden">✨ Generating Answer...</span>
+                    </div>
+                </div>
 
                 <div class="advanced-input-container">
                     
@@ -188,7 +206,7 @@
                             </div>
                         </div>
 
-                        <button id="mic-btn" class="icon-btn mic-icon" type="button" title="Voice Mode">
+                        <button id="mic-btn" class="icon-btn mic-icon" type="button" title="Voice Typing">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                         </button>
 
@@ -302,14 +320,8 @@
                 </div>
             </div>
 
-            <div class="input-field">
-                <label>Email ID Verification</label>
-                <div class="verify-row"><input type="email" placeholder="email@example.com"><button class="btn-verify apple-btn">Verify</button></div>
-            </div>
-            <div class="input-field">
-                <label>Mobile Verification</label>
-                <div class="verify-row"><input type="tel" placeholder="+91 XXXXX XXXXX"><button class="btn-verify apple-btn">Verify</button></div>
-            </div>
+            <div class="input-field"><label>Email ID Verification</label><div class="verify-row"><input type="email" placeholder="email@example.com"><button class="btn-verify apple-btn">Verify</button></div></div>
+            <div class="input-field"><label>Mobile Verification</label><div class="verify-row"><input type="tel" placeholder="+91 XXXXX XXXXX"><button class="btn-verify apple-btn">Verify</button></div></div>
             <button id="close-profile" class="btn-primary apple-btn mt-10">Save Profile</button>
         </div>
     </div>
@@ -321,26 +333,4 @@
             <div class="input-field">
                 <label>Aapki Samasya (Issue)</label>
                 <select>
-                    <option>Voice kaam nahi kar rahi</option>
-                    <option>AI galat jawab de raha hai</option>
-                    <option>Chat history delete ho gayi</option>
-                    <option>Other / Anya</option>
-                </select>
-            </div>
-            <div class="input-field">
-                <textarea rows="4" style="width: 100%; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white;" placeholder="Apni samasya yahan likhein..."></textarea>
-            </div>
-            <button id="close-support" class="btn-primary apple-btn mt-10">Submit Ticket</button>
-        </div>
-    </div>
-
-    <div id="history-modal" class="custom-modal hidden">
-        <div class="modal-content" style="max-width: 500px;">
-            <h2 style="margin-bottom: 15px;">🗂️ Chat History Settings</h2>
-            
-            <div class="auth-tabs" style="margin-bottom: 15px;">
-                <button id="tab-active-chats" class="auth-tab active">Active Chats</button>
-                <button id="tab-trash-chats" class="auth-tab">Trash (Deleted)</button>
-            </div>
-
-            <div class="history-list-container" 
+                    <option>Voice ka

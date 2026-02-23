@@ -1,11 +1,10 @@
-                                        
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=9.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -95,10 +94,13 @@
                     <div class="menu-section">
                         <h3>🕒 Recent Chats</h3>
                         <ul class="chat-history-list" id="chat-history-list">
-                            <li>Tax Planning 2026</li>
-                            <li>Python Machine Learning...</li>
-                            <li>Health & Diet Plan</li>
+                            <li class="chat-item active" data-id="chat-1">Tax Planning 2026</li>
+                            <li class="chat-item" data-id="chat-2">Python Machine Learning...</li>
+                            <li class="chat-item" data-id="chat-3">Health & Diet Plan</li>
                         </ul>
+                        <button id="history-settings-btn" class="btn-secondary apple-btn mt-10" style="padding: 10px; font-size: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            ⚙️ Chat Room History Setting
+                        </button>
                     </div>
 
                     <div class="menu-section mt-15">
@@ -207,13 +209,19 @@
                     <option value="english">English</option>
                 </select>
             </div>
+            
             <div class="input-field">
                 <label>Voice Preference (Awaaz)</label>
                 <select id="setting-voice">
-                    <option value="male">Male (Purush)</option>
-                    <option value="female">Female (Mahila)</option>
+                    <option value="male-1">Male - Standard</option>
+                    <option value="male-2">Male - Deep (Mature)</option>
+                    <option value="female-1">Female - Standard</option>
+                    <option value="female-2">Female - Soft & Caring</option>
+                    <option value="kid">Kid - Playful (Chote Dost)</option>
+                    <option value="senior">Senior Citizen - Respectful</option>
                 </select>
             </div>
+
             <div class="input-field">
                 <label>Age Logic Selector (AI Mode)</label>
                 <select id="setting-logic">
@@ -235,10 +243,7 @@
             <div class="input-field"><label>Update Name</label><input type="text" id="prof-name" placeholder="Aapka Naam"></div>
             
             <div class="input-row">
-                <div class="input-field w-50">
-                    <label>Date of Birth</label>
-                    <input type="date" id="prof-dob">
-                </div>
+                <div class="input-field w-50"><label>Date of Birth</label><input type="date" id="prof-dob"></div>
                 <div class="input-field w-50">
                     <label>Gender</label>
                     <select id="prof-gender">
@@ -280,98 +285,46 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=8.0"></script>
-              
+    <div id="history-modal" class="custom-modal hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="margin-bottom: 15px;">🗂️ Chat History Settings</h2>
+            
+            <div class="auth-tabs" style="margin-bottom: 15px;">
+                <button id="tab-active-chats" class="auth-tab active">Active Chats</button>
+                <button id="tab-trash-chats" class="auth-tab">Trash (Deleted)</button>
+            </div>
 
-<script>
-
-    /* ==========================================================
-       COMMANDER AI CONFIGURATION (CONNECTED)
-       ========================================================== */
-    const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
-    const AI_DISPLAY_NAME = "Commander AI";
-
-    // Request Counter Setup
-    let rawCount = localStorage.getItem('user_request_count');
-    if (!rawCount || isNaN(rawCount)) {
-        localStorage.setItem('user_request_count', '0');
-    }
-
-    async function sendMessageToAI() {
-        const inputField = document.getElementById('user-input');
-        const chatDisplay = document.getElementById('chat-box');
-        const aiVersion = document.getElementById('ai-version').value;
-        const query = inputField.value.trim();
-        
-        if (!query) return;
-
-        // 1. Update Counter
-        let count = parseInt(localStorage.getItem('user_request_count')) + 1;
-        localStorage.setItem('user_request_count', count);
-
-        // UI Loading State
-        const loadingId = "load-" + Date.now();
-        chatDisplay.innerHTML += `<div id="${loadingId}" style="color: #00d2ff; font-size: 0.8em; margin: 10px 0;">A1 is thinking (Req #${count})...</div>`;
-        inputField.value = ""; 
-        chatDisplay.scrollTop = chatDisplay.scrollHeight;
-
-        try {
-            // 2. Sending Data to Admin Panel
-            const response = await fetch(ADMIN_PANEL_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    query: query,
-                    engine: aiVersion, // Pass version to engine_router
-                    request_id: count 
-                })
-            });
-
-            const data = await response.json();
-            document.getElementById(loadingId).remove();
-
-            if (data.status === "success") {
-                // 3. Display Clean Result
-                chatDisplay.innerHTML += `
-                    <div class="message ai-msg" style="margin-bottom: 20px; animation: fadeIn 0.3s ease;">
-                        <span style="font-weight: bold; color: #00d2ff;">${AI_DISPLAY_NAME}:</span>
-                        <div style="line-height: 1.6; margin-top: 5px; color: #fff;">
-                            ${data.answer}
-                        </div>
-                        <div style="color: #444; font-size: 0.6em; margin-top: 5px;">REQ-ID: ${count}</div>
+            <div class="history-list-container" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
+                
+                <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 5px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Legal Advice AI</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">Deleted: 2 days ago</span>
                     </div>
-                `;
-                chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            } else {
-                chatDisplay.innerHTML += `<div style="color: #ff4757; font-size: 0.8em;">Error: ${data.message}</div>`;
-            }
-        } catch (error) {
-            if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
-            chatDisplay.innerHTML += `<div style="color: #ff4757; font-size: 0.8em;">Commander, check your connection. Server unreachable.</div>`;
-        }
-    }
+                    <div style="display: flex; gap: 8px;">
+                        <button class="action-icon apple-btn" title="Recover Chat" style="padding: 6px; font-size: 14px;">♻️</button>
+                        <button class="action-icon apple-btn" title="Permanent Delete" style="padding: 6px; font-size: 14px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">🗑️</button>
+                    </div>
+                </div>
 
-    // Enter Key Support
-    document.getElementById('user-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            sendMessageToAI();
-        }
-    });
+                <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 5px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Space Exploration Info</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">Deleted: 5 days ago</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="action-icon apple-btn" title="Recover Chat" style="padding: 6px; font-size: 14px;">♻️</button>
+                        <button class="action-icon apple-btn" title="Permanent Delete" style="padding: 6px; font-size: 14px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">🗑️</button>
+                    </div>
+                </div>
 
-    // Simple Tab Switcher for Auth (Design preservation)
-    document.getElementById('tab-login')?.addEventListener('click', () => {
-        document.getElementById('login-form').classList.remove('hidden');
-        document.getElementById('signup-form').classList.add('hidden');
-        document.getElementById('tab-login').classList.add('active');
-        document.getElementById('tab-signup').classList.remove('active');
-    });
-    document.getElementById('tab-signup')?.addEventListener('click', () => {
-        document.getElementById('signup-form').classList.remove('hidden');
-        document.getElementById('login-form').classList.add('hidden');
-        document.getElementById('tab-signup').classList.add('active');
-        document.getElementById('tab-login').classList.remove('active');
-    });
-</script>
+            </div>
+            
+            <button id="close-history" class="btn-primary apple-btn">Done</button>
+        </div>
+    </div>
 
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=9.0"></script>
 </body>
-</html>
+                          </html>
+                          

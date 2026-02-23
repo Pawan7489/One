@@ -1,0 +1,49 @@
+<div id="chatroom-container" class="chatroom-wrapper">
+    
+    <div id="chat-messages" class="chat-messages-area">
+        </div>
+
+    <div id="ai-logic-overlay" class="logic-viewer hidden">
+        <div class="logic-dot"></div>
+        <span id="logic-text">Deep Searching...</span>
+    </div>
+
+</div>
+
+<template id="user-msg-template">
+    <div class="message-row user-row">
+        <div class="message-bubble user-bubble">
+            <div class="text-content"></div>
+            <div class="message-actions">
+                <button class="msg-act-btn reader" title="Listen">🔊</button>
+                <button class="msg-act-btn edit" title="Edit Message">✏️</button>
+                <button class="msg-act-btn copy" title="Copy">📋</button>
+                <button class="msg-act-btn share" title="Share">🔗</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="ai-msg-template">
+    <div class="message-row ai-row">
+        <div class="message-bubble ai-bubble">
+            <div class="text-content"></div>
+            
+            <div class="ai-footer">
+                <div class="sources-badge" onclick="toggleSourcesList(this)">
+                    🔍 Sources Found: <span class="source-count">0</span>
+                </div>
+                <div class="ai-actions">
+                    <button class="msg-act-btn reader-forced" title="Force AI to Speak">🔊 Listen</button>
+                    <button class="msg-act-btn copy" title="Copy">📋</button>
+                    <button class="msg-act-btn feedback-up">👍</button>
+                    <button class="msg-act-btn feedback-down">👎</button>
+                    <button class="msg-act-btn share">🔗</button>
+                </div>
+                <div class="sources-list hidden">
+                    <ul class="source-links"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,79 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ======================================================
-    // 🛠️ 0. RESTORE MISSING BLUEPRINT ITEMS (VIA JS INJECTION)
-    // ======================================================
-    // कमांडर, चूँकि HTML नहीं बदलना था, इसलिए जो ऑप्शन्स लिस्ट से गायब थे,
-    // उन्हें मैं यहाँ JavaScript के ज़रिए वापस ला रहा हूँ ताकि ब्लूप्रिंट पूरा हो जाए।
-
-    function restoreBlueprintOptions() {
-        // 1. Restore 26+ Voice Models
-        const voiceSelect = document.getElementById("setting-voice");
-        if (voiceSelect) {
-            voiceSelect.innerHTML = `
-                <optgroup label="👦👧 Kids (Simple & Playful)">
-                    <option value="kid-boy-1">Boy - Playful</option><option value="kid-boy-2">Boy - Energetic</option>
-                    <option value="kid-girl-1">Girl - Sweet</option><option value="kid-girl-2">Girl - Smart</option>
-                </optgroup>
-                <optgroup label="🎒🎓 Youth (Cool & Casual) - Active">
-                    <option value="youth-boy-1">Boy - Cool Dude</option><option value="youth-boy-2" selected>Boy - Friendly (Default)</option>
-                    <option value="youth-girl-1">Girl - Cheerful</option><option value="youth-girl-2">Girl - Confident</option>
-                </optgroup>
-                <optgroup label="👨👩 Adults (Professional)">
-                    <option value="adult-male-1">Male - Standard</option><option value="adult-male-2">Male - Deep Voice</option>
-                    <option value="adult-female-1">Female - Standard</option><option value="adult-female-2">Female - Corporate</option>
-                </optgroup>
-                <optgroup label="👴👵 Seniors (Respectful & Calm)">
-                    <option value="senior-male-1">Grandfather - Wise</option><option value="senior-male-2">Grandfather - Calm</option>
-                    <option value="senior-female-1">Grandmother - Loving</option><option value="senior-female-2">Grandmother - Gentle</option>
-                </optgroup>
-            `;
-        }
-
-        // 2. Restore 8 Age Logic Options
-        const logicSelect = document.getElementById("setting-logic");
-        if (logicSelect) {
-            logicSelect.innerHTML = `
-                <option value="5-10">5-10 saal (Kids/Simple)</option>
-                <option value="10-15">10-15 saal (Teens/School)</option>
-                <option value="15-18">15-18 saal (High School)</option>
-                <option value="18-25" selected>18-25 saal (College/Youth) - Active</option>
-                <option value="25-30">25-30 saal (Professionals)</option>
-                <option value="30-40">30-40 saal (Adults)</option>
-                <option value="40-50">40-50 saal (Mature)</option>
-                <option value="50+">50+ saal (Seniors/Respectful)</option>
-            `;
-        }
-
-        // 3. Restore Support Options
-        const supportSelect = document.querySelector("#support-modal select");
-        if (supportSelect) {
-            supportSelect.innerHTML = `
-                <option>Voice kaam nahi kar rahi</option>
-                <option>AI galat jawab de raha hai</option>
-                <option>Chat history delete ho gayi</option>
-                <option>App bahut slow chal raha hai</option>
-                <option>Other / Koi aur samasya</option>
-            `;
-        }
-    }
-    // Execute restoration immediately
-    restoreBlueprintOptions();
-
-
     // ==========================================
-    // 📱 1. PREMIUM HAPTIC ENGINE (Vibration)
+    // 📱 1. PREMIUM HAPTIC ENGINE (Light Vibration)
     // ==========================================
-    // Samsung/MacBook style subtle feedback
     function triggerHaptic(type = "light") {
         if (!navigator.vibrate) return;
-        // बहुत हल्का वाइब्रेशन ताकि प्रीमियम फील आए, इरिटेटिंग न हो
-        if (type === "light") navigator.vibrate(12);   // Subtle tap
-        if (type === "medium") navigator.vibrate(25);  // Button confirm
-        if (type === "heavy") navigator.vibrate([30, 50, 30]); // Error/Stop action
+        if (type === "light") navigator.vibrate(12);   // बहुत हल्का (MacBook Trackpad जैसा)
+        if (type === "medium") navigator.vibrate(25);  // बटन्स के लिए
+        if (type === "heavy") navigator.vibrate([30, 40, 30]); // एरर या स्टॉप के लिए
     }
 
     // ==========================================
-    // 🎯 2. DOM ELEMENTS & VARIABLES
+    // 🗣️ 2. BUG FIX: PRE-LOAD VOICES
+    // ==========================================
+    let availableVoices = [];
+    function loadVoices() {
+        availableVoices = window.speechSynthesis.getVoices();
+    }
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices(); // Initial fetch
+    }
+
+    // ==========================================
+    // 🎯 3. DOM ELEMENTS SETUP
     // ==========================================
     const screens = {
         signup: document.getElementById("signup-screen"),
@@ -93,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         goToSignup: document.getElementById("go-to-signup")
     };
     
-    // Chat Interface Elements
+    // Chat Elements
     const chatUI = {
         box: document.getElementById("chat-box"),
         input: document.getElementById("user-input"),
@@ -103,49 +52,81 @@ document.addEventListener("DOMContentLoaded", () => {
         plusBtn: document.getElementById("plus-btn"),
         actionMenu: document.getElementById("action-menu"),
         thinkingIndicator: document.getElementById("ai-thinking-indicator"),
-        suggestionChips: document.querySelectorAll(".suggestion-chip")
+        suggestionChips: document.querySelectorAll(".suggestion-chip"),
+        dummyMsg: document.getElementById("dummy-ai-message") // BUG FIX ID
     };
     
-    // Sidebar & Modals
+    // Sidebar & Tools
     const menuToggle = document.getElementById("menu-toggle");
     const appSidebar = document.getElementById("app-sidebar");
     const newChatBtn = document.getElementById("new-chat-btn");
-    
+    const aiTools = document.querySelectorAll(".ai-tools-list li");
+
     const modals = {
         profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
         settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
         support: { btn: document.getElementById("support-btn"), modal: document.getElementById("support-modal"), close: document.getElementById("close-support") },
         history: { btn: document.getElementById("history-settings-btn"), modal: document.getElementById("history-modal"), close: document.getElementById("close-history") }
     };
+    
+    // Live Voice Chat
+    const liveVoiceBtn = document.getElementById("live-voice-mode-btn");
+    const liveVoiceOverlay = document.getElementById("live-voice-overlay");
+    const liveVoiceText = document.getElementById("live-voice-text");
+    const liveVoiceStatus = document.getElementById("live-voice-status");
+    const closeLiveVoice = document.getElementById("close-live-voice");
+    const liveVoiceChatLog = document.getElementById("live-voice-chat-log");
 
-    // Global State
     let currentUser = { name: "User" };
     let currentAIMode = "chat";
     let currentAbortController = null;
     let isGenerating = false;
+    let isContinuousMicOn = false;
+    let isLiveVoiceMode = false;
+    let recognition;
+
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
 
-    // Unlock audio context for iOS/Android
     function unlockAudio() {
         if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }
     }
 
     // ==========================================
-    // 🔐 3. AUTHENTICATION & NAVIGATION LOGIC
+    // 🖼️ 4. PROFILE PHOTO UPLOAD LOGIC
     // ==========================================
+    const photoUpload = document.getElementById('profile-photo-upload');
+    const avatarPreview = document.getElementById('profile-avatar-preview');
     
-    // Check for saved user (Persistent Login)
+    if(photoUpload && avatarPreview) {
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarPreview.style.backgroundImage = `url(${event.target.result})`;
+                    avatarPreview.innerText = ""; // Removes the 📷 emoji
+                    triggerHaptic("medium");
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // ==========================================
+    // 🔐 5. AUTHENTICATION & LOGIN LOGIC
+    // ==========================================
+    window.speakText = function(text) { speak(text); }; // Defined later in Part 2
+
     function checkLoginState() {
         try {
             const savedUser = localStorage.getItem("a1_indian_user");
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
-                enterChatArea(currentUser.name, false, true); // true = skip animation for fast load
+                enterChatArea(currentUser.name, false, true); 
             }
         } catch (error) { localStorage.removeItem("a1_indian_user"); }
     }
 
-    // Switch between Signup and Login screens smoothly
     function switchScreen(hideElem, showElem) {
         triggerHaptic("light");
         hideElem.style.opacity = "0";
@@ -159,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
     auth.goToLogin?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(screens.signup, screens.login); });
     auth.goToSignup?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(screens.login, screens.signup); });
 
-    // Main function to enter the chat interface
     function enterChatArea(name, isGuest = false, skipIntro = false) {
         if(!skipIntro) triggerHaptic("medium");
         currentUser.name = name;
@@ -178,25 +158,21 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => { screens.chat.style.opacity = "1"; }, 50);
             
             if(!skipIntro) {
-                // Need to define speak function in Part 2, temp call here
-                setTimeout(() => { if(window.speakText) window.speakText(isGuest ? "Namaste! Main A1 hoon." : `Welcome ${name}.`); }, 800);
+                setTimeout(() => { 
+                    if(window.speakText) window.speakText(isGuest ? "Namaste Guest! Main A1 hoon." : `Welcome ${name}.`); 
+                }, 800);
             }
         }, 400);
     }
 
-    // Event Listeners for Auth
     auth.guestBtn?.addEventListener("click", () => { unlockAudio(); enterChatArea("Guest", true); });
-    auth.signupForm.addEventListener("submit", (e) => { 
-        e.preventDefault(); unlockAudio(); 
-        enterChatArea(document.getElementById("reg-name").value || "Commander"); 
-    });
-    auth.loginForm.addEventListener("submit", (e) => { 
-        e.preventDefault(); unlockAudio(); 
-        enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); 
-    });
+    auth.signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
+    auth.loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
+
+    checkLoginState();
 
     // ==========================================
-    // 🗂️ 4. SIDEBAR & MODAL INTERACTION
+    // 🗂️ 6. SIDEBAR, HISTORY MODAL & AI TOOLS
     // ==========================================
     menuToggle?.addEventListener("click", () => { appSidebar.classList.toggle("open"); triggerHaptic("light"); });
     document.querySelector(".chat-area").addEventListener("click", (e) => {
@@ -215,12 +191,67 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Run login check on load
-    checkLoginState();
+    // 🚨 BUG FIX: Recover and Delete Buttons Logic
+    const demoRecoverBtn = document.getElementById("demo-recover-btn");
+    const demoDeleteBtn = document.getElementById("demo-delete-btn");
 
+    if(demoRecoverBtn) {
+        demoRecoverBtn.addEventListener("click", () => {
+            triggerHaptic("medium");
+            alert("✅ Chat Recovered Successfully!");
+        });
+    }
+
+    if(demoDeleteBtn) {
+        demoDeleteBtn.addEventListener("click", (e) => {
+            triggerHaptic("heavy");
+            const item = e.target.closest('.history-item');
+            if(item) {
+                item.style.opacity = "0";
+                setTimeout(() => item.remove(), 300);
+            }
+        });
+    }
+
+    chatUI.plusBtn.addEventListener("click", () => { 
+        chatUI.actionMenu.classList.toggle("hidden"); 
+        chatUI.actionMenu.style.display = chatUI.actionMenu.classList.contains("hidden") ? "none" : "block"; 
+        triggerHaptic("light");
+    });
+    document.addEventListener("click", (e) => { 
+        if (!chatUI.plusBtn.contains(e.target) && !chatUI.actionMenu.contains(e.target)) { 
+            chatUI.actionMenu.classList.add("hidden"); chatUI.actionMenu.style.display = "none"; 
+        } 
+    });
+
+    newChatBtn.addEventListener("click", () => {
+        triggerHaptic("medium");
+        if (isGenerating && currentAbortController) currentAbortController.abort();
+        
+        // BUG FIX: Hide Dummy Message
+        if(chatUI.dummyMsg) chatUI.dummyMsg.style.display = "none";
+        
+        // Reset Chat Box
+        chatUI.box.innerHTML = ""; 
+        chatUI.box.appendChild(auth.welcomeBanner);
+        auth.welcomeBanner.style.display = "flex";
+        
+        if (window.innerWidth <= 768) appSidebar.classList.remove("open");
+        window.speakText("Naya chat shuru ho gaya hai.");
+    });
+
+    aiTools.forEach(item => {
+        item.addEventListener("click", () => {
+            triggerHaptic("light");
+            aiTools.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+            currentAIMode = item.getAttribute("data-mode");
+            if (window.innerWidth <= 768) appSidebar.classList.remove("open");
+        });
+    });
 
     // ==========================================
-    // 🗣️ 5. TEXT-TO-SPEECH (TTS) & HOLOGRAM SYNC
+    // 🗣️ 7. TEXT-TO-SPEECH (TTS) & SATURN ANIMATION SYNC
     // ==========================================
     window.speakText = function(text) { speak(text); };
 
@@ -230,11 +261,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
         let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        const voices = window.speechSynthesis.getVoices();
-        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
-        utterance.voice = selectedVoice;
         
-        // Voice Logic (Pitch & Rate)
+        // Use pre-loaded voices (Bug Fix)
+        let selectedVoice = availableVoices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || availableVoices[0];
+        if (selectedVoice) utterance.voice = selectedVoice;
+        
+        // Voice Logic (Pitch & Rate) based on User Selection
         const voicePref = document.getElementById("setting-voice")?.value || "";
         if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
         else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
@@ -242,13 +274,13 @@ document.addEventListener("DOMContentLoaded", () => {
         else { utterance.pitch = 1.0; utterance.rate = 1.0; }
 
         utterance.onstart = () => { 
-            // 🪐 ANIMATION SYNC: Make Saturn Rings Spin Faster when speaking!
+            // 🪐 ANIMATION SYNC: Saturn Rings Spin Faster when speaking!
             document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "0.5s"); 
             document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "2s");
             document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "3s");
         };
         utterance.onend = () => { 
-            // 🪐 ANIMATION SYNC: Return to normal speed
+            // 🪐 ANIMATION SYNC: Return to normal calm speed
             document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "2s");
             document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "6s");
             document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "8s");
@@ -259,16 +291,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // ✍️ 6. SMART TEXTAREA & PROMPT CHIPS
+    // ✍️ 8. SMART TEXTAREA (10k Words BUG FIX) & CHIPS
     // ==========================================
     chatUI.input.addEventListener("input", function() {
-        this.style.height = "auto";
+        this.style.height = "auto"; // Reset height
+        // Set new height based on scrollHeight, CSS max-height will handle the scrollbar
         this.style.height = (this.scrollHeight) + "px";
         if(this.value.trim() === "") this.style.height = "auto";
     });
 
     chatUI.input.addEventListener("keydown", function(e) {
-        // Shift+Enter for new line, regular Enter to send
+        // Shift+Enter creates a new line, normal Enter sends the message
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault(); 
             sendMessageToAI();
@@ -285,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🎙️ 7. LIVE VOICE CHAT & HISTORY LOG
+    // 🎙️ 9. LIVE VOICE CHAT & HISTORY LOG
     // ==========================================
     const SpeechRecAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecAPI) {
@@ -311,7 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 liveVoiceText.innerText = finalTranscript + interimTranscript;
             } else {
                 chatUI.input.value = finalTranscript + interimTranscript;
-                chatUI.input.dispatchEvent(new Event('input')); 
+                chatUI.input.dispatchEvent(new Event('input')); // Auto-grow trigger
             }
         };
 
@@ -337,14 +370,13 @@ document.addEventListener("DOMContentLoaded", () => {
         else { isContinuousMicOn = true; try { recognition.start(); } catch(e) {} }
     });
 
-    const liveVoiceChatLog = document.getElementById("live-voice-chat-log");
-
-    document.getElementById("live-voice-mode-btn")?.addEventListener("click", () => {
+    liveVoiceBtn?.addEventListener("click", () => {
         triggerHaptic("heavy");
         isLiveVoiceMode = true;
         liveVoiceOverlay.classList.remove("hidden");
         liveVoiceText.innerText = "(Bolna shuru karein...)";
         
+        // Reset voice history log
         if(liveVoiceChatLog) {
             liveVoiceChatLog.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; text-align: center; margin-bottom: 5px;">Voice session started...</div>';
         }
@@ -385,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 🧠 8. AI ENGINE, EDIT, ABORT & ACTION BAR
+    // 🧠 10. AI ENGINE, EDIT, ABORT & ACTION BAR
     // ==========================================
     function toggleInputUI(generating) {
         isGenerating = generating;
@@ -418,20 +450,16 @@ document.addEventListener("DOMContentLoaded", () => {
         steps[0].classList.add("hidden"); steps[1].classList.remove("hidden"); triggerHaptic("light");
     }
 
-    // NEW: Edit User Message logic
     window.editUserMessage = function(text) {
         triggerHaptic("medium");
         chatUI.input.value = text;
         chatUI.input.focus();
-        chatUI.input.dispatchEvent(new Event('input')); 
+        chatUI.input.dispatchEvent(new Event('input')); // auto-grow adjust
     };
 
     function appendUserMessage(text) {
         if(auth.welcomeBanner) auth.welcomeBanner.style.display = "none"; 
-        
-        // Hide Demo Message
-        const dummyMsg = document.getElementById("dummy-ai-message");
-        if(dummyMsg) dummyMsg.style.display = "none";
+        if(chatUI.dummyMsg) chatUI.dummyMsg.style.display = "none"; // Hide Dummy Bug Fix
 
         const msgContainer = document.createElement("div");
         msgContainer.style.display = "flex"; msgContainer.style.flexDirection = "column";
@@ -485,7 +513,6 @@ document.addEventListener("DOMContentLoaded", () => {
         typeWriter();
     }
 
-    // Clipboard & Share Logic
     window.copyTextToClipboard = function(text) {
         navigator.clipboard.writeText(text); triggerHaptic("medium"); alert("📋 Text Copied!");
     };
@@ -559,7 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.status === "success" || data.answer) {
                 let aiResponse = (data.answer || "No response generated.").replace(/Commander AI:/gi, '').trim();
                 appendTypingAI(aiResponse);
-                speak(aiResponse); // Auto-speak logic mapped to hologram
+                speak(aiResponse);
             } else {
                 appendTypingAI("Engine Error: " + (data.message || "Unknown error"), true);
                 toggleInputUI(false);
@@ -602,5 +629,6 @@ document.addEventListener("DOMContentLoaded", () => {
     chatUI.sendBtn.addEventListener("click", sendMessageToAI);
 
 }); // End of DOMContentLoaded
-            
-                          
+                
+    
+                                                                                                                                 

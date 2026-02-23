@@ -4,25 +4,26 @@ import requests
 import os
 
 # 1. Flask App Initialization
-# Static aur Templates folders ko explicitly set kiya gaya hai
+# Static और Templates फोल्डर्स को स्पष्ट रूप से परिभाषित किया गया है ताकि कोई रेंडरिंग एरर न आए
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# --- [MASTER CONFIG] ---
-# A1 Core Admin Panel - Jahan se AI ke jawab aate hain
+# --- [MASTER CONFIGURATION] ---
+# A1 Core Admin Panel - जहाँ असली AI प्रोसेसिंग और लॉजिक स्टोर है
 ADMIN_URL = "https://a1-zc43.onrender.com/api/ai/ask"
 
-# 2. Persona Logic (A1 Special Age-Groups)
+# 2. Advanced Persona Database (Blueprint के अनुसार)
+# उम्र के हिसाब से AI का व्यक्तित्व और बातचीत का तरीका बदल जाता है
 PERSONAS = {
-    "buddy": {"label": "Buddy Mode (Kids)", "greeting": "Namaste chote dost! Main A1 hoon. Aaj kya seekhenge?"},
-    "wingman": {"label": "Wingman Mode (Youth)", "greeting": "Hey bro! A1 here. Sab set hai? Kya help chahiye?"},
-    "professional": {"label": "Professional Mode (Adults)", "greeting": "Namaskar. Main A1, aapka digital assistant. Kya sahayata karoon?"},
-    "caretaker": {"label": "Caretaker Mode (Seniors)", "greeting": "Pranam. Main A1 hoon. Aap nishchint ho kar bataiye kya kaam hai."}
+    "child": {"label": "Buddy Mode (5-15)", "greeting": "Namaste chote dost! Main A1 hoon. Aaj hum kya seekhenge?"},
+    "youth": {"label": "Wingman Mode (18-25)", "greeting": "Hey bro! A1 here. Sab set hai? Kya help chahiye?"},
+    "adult": {"label": "Professional Mode (26-50)", "greeting": "Namaskar. Main A1, aapka digital assistant. Main aapki kya sahayata kar sakta hoon?"},
+    "senior": {"label": "Caretaker Mode (50+)", "greeting": "Pranam. Main A1 hoon. Aap aaram se bataiye, main aapke liye kya kar sakta hoon?"}
 }
 
 # --- [CORE LOGIC FUNCTIONS] ---
 
 def calculate_age(dob_string):
-    """Janam tithi se umar nikalne ka logic"""
+    """Janam tithi se umar nikalne ka bulletproof logic"""
     try:
         if not dob_string or dob_string == "null": return 25
         birth_date = datetime.strptime(dob_string, "%Y-%m-%d")
@@ -33,34 +34,37 @@ def calculate_age(dob_string):
         return 25
 
 def get_persona_mode(age):
-    """Umar ke hisab se persona chunna"""
-    if age < 18: return PERSONAS["buddy"]
-    elif 18 <= age <= 25: return PERSONAS["wingman"]
-    elif 26 <= age <= 55: return PERSONAS["professional"]
-    else: return PERSONAS["caretaker"]
+    """Umar ke hisab se AI ka persona chunna"""
+    if age <= 15: return PERSONAS["child"]
+    elif 16 <= age <= 25: return PERSONAS["youth"]
+    elif 26 <= age <= 50: return PERSONAS["adult"]
+    else: return PERSONAS["senior"]
 
-# --- [ROUTES & API] ---
+# --- [MODULAR ROUTES] ---
 
 @app.route('/')
 def home():
-    """Sirf ek rasta - Sari HTML ek hi jagah"""
+    """Main Gateway - यह आपकी मास्टर index.html फाइल को लोड करेगा"""
     return render_template('index.html')
+
+# --- [API ENDPOINTS - THE ENGINE ROOM] ---
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    """User data se persona set karna"""
+    """User login aur persona calculation endpoint"""
     try:
         data = request.get_json() or {}
         dob = data.get('dob', '')
-        name = data.get('name', 'User')
+        name = data.get('name', 'Commander')
         
         age = calculate_age(dob)
         persona = get_persona_mode(age)
         
         return jsonify({
             "success": True,
-            "user_info": {
+            "user_data": {
                 "name": name,
+                "age": age,
                 "persona": persona['label'],
                 "greeting": f"{name}, {persona['greeting']}"
             }
@@ -70,28 +74,37 @@ def login():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Main AI Bridge - Admin Panel se connection"""
+    """Admin Panel API Bridge - असली AI जवाब यहीं से आते हैं"""
     try:
         data = request.get_json() or {}
-        
-        # Payload for Admin Panel
+        user_message = data.get('query', '')
+        ai_mode = data.get('mode', 'chat') # 8 AI Super Powers (Image, Video, etc.)
+        user_context = data.get('user_context', {})
+
+        # Admin Panel को पेलोड भेजना (Blueprint के 'check_database_cache' फ्लैग के साथ)
         payload = {
-            "query": data.get('query', ''),
-            "mode": data.get('mode', 'chat'),
-            "user_context": data.get('user_context', {})
+            "query": user_message,
+            "mode": ai_mode,
+            "check_database_cache": True, # पैसे और समय बचाने के लिए कैशे चेक करें
+            "web_search": True, # Deep Search active by default
+            "user_context": user_context
         }
         
-        # 15 second ka timeout taki server hang na ho
-        response = requests.post(ADMIN_URL, json=payload, timeout=15)
-        return jsonify(response.json())
+        # 20 second का timeout ताकि सर्वर कभी भी 'Black Screen' पर न अटके
+        response = requests.post(ADMIN_URL, json=payload, timeout=20)
+        backend_data = response.json()
+
+        # Final answer को सीधा फ्रंटएंड (script.js) को भेजना
+        return jsonify(backend_data)
             
     except Exception as e:
         return jsonify({
             "status": "error",
-            "answer": "System Error: A1 Engine se sampark toot gaya hai."
+            "answer": "Commander, AI Engine se sampark nahi ho paa raha hai. Kripya net check karein.",
+            "message": str(e)
         })
 
 if __name__ == '__main__':
-    # Commander, debug mode ON hai
+    # Debug mode ON ताकि कोई भी गलती तुरंत कंसोल में दिखे
     app.run(debug=True, port=5000)
-        
+    

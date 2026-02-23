@@ -174,10 +174,22 @@ body {
 .action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
 .action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 
+/* NEW: User Message Actions (Audio/Edit) */
+.user-actions { display: flex; gap: 8px; margin-top: 8px; align-self: flex-end; opacity: 0.7; transition: 0.2s;}
+.user-actions:hover { opacity: 1; }
+.user-action-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 4px; transition: 0.2s; border-radius: 50%;}
+.user-action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.1); transform: scale(1.1);}
+
 /* ====================================================
    4. ADVANCED INPUT AREA & THINKING LOGIC
 ==================================================== */
 .advanced-input-container { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
+
+/* NEW: Prompt Suggestions Chips */
+.prompt-suggestions { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+.prompt-suggestions::-webkit-scrollbar { display: none; }
+.suggestion-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600;}
+.suggestion-chip:hover { background: rgba(255,153,51,0.15); color: var(--saffron-gold); border-color: var(--saffron-gold); transform: translateY(-2px);}
 
 /* 🚨 AI Thinking Indicator */
 .ai-thinking-box { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; align-self: flex-start; margin-bottom: 10px; border: 1px solid var(--glass-border); animation: slideUpFade 0.3s forwards;}
@@ -199,6 +211,13 @@ body {
 .active-tool-indicator.hidden { opacity: 0; transform: scale(0.8) translateY(10px); display: none !important;}
 #close-tool-btn { background: transparent; border: none; color: var(--saffron-gold); cursor: pointer; font-size: 14px; margin-left: 5px; font-weight: bold;}
 
+/* NEW: Attachment Preview Area */
+.attachment-preview-area { display: flex; gap: 10px; padding: 5px 10px; overflow-x: auto; }
+.attachment-preview-area.hidden { display: none !important; }
+.preview-box { position: relative; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid var(--saffron-gold); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.remove-attachment { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+.remove-attachment:hover { transform: scale(1.1); }
+
 /* 🚨 SMART TEXTAREA (Gemini Style) */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
 .input-wrapper:focus-within { border-color: var(--saffron-gold); box-shadow: 0 0 15px rgba(255,153,51,0.15); background: rgba(0,0,0,0.7); }
@@ -211,6 +230,12 @@ body {
 .plus-icon { color: var(--text-main); }
 .send-arrow { background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; width: 40px; height: 40px; }
 .send-arrow:hover { box-shadow: 0 0 15px var(--saffron-glow); }
+
+/* NEW: Stop Button */
+.stop-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; width: 40px; height: 40px; animation: pulseRed 1.5s infinite; }
+.stop-btn:hover { background: #ef4444; color: white; }
+.stop-btn.hidden { display: none !important; }
+@keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
 .mic-icon.active { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulseRed 1.5s infinite; }
 
@@ -227,89 +252,56 @@ body {
 /* =============================================================
    5. POP-UP MODALS & LIVE VOICE OVERLAY (Bouncy!)
 ============================================================= */
-.custom-modal { position: fixed; inset: 0; background: 
-rgba(0,0,0,0.7); backdrop-filter: blur(10px); 
--webkit-backdrop-filter: blur(10px); display: flex; 
-justify-content: center; align-items: center; z-index: 1000; 
-opacity: 1; transition: 0.3s ease; }
+.custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 1; transition: 0.3s ease; }
 .custom-modal.hidden { opacity: 0; pointer-events: none; }
 
-.modal-content { background: var(--bg-dark); border: 1px 
-solid var(--glass-border); border-radius: 28px; width: 90%; 
-max-width: 440px; padding: 35px 30px; box-shadow: 0 30px 
-60px rgba(0,0,0,0.8); transform: scale(1) translateY(0); 
-transition: 0.5s var(--bouncy-ease); position: relative; 
-max-height: 90vh; overflow-y: auto; scrollbar-width: none;}
+.modal-content { background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 28px; width: 90%; max-width: 440px; padding: 35px 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); transform: scale(1) translateY(0); transition: 0.5s var(--bouncy-ease); position: relative; max-height: 90vh; overflow-y: auto; scrollbar-width: none;}
 .modal-content::-webkit-scrollbar { display: none; }
-.custom-modal.hidden .modal-content { transform: scale(0.9) 
-translateY(40px); }
+.custom-modal.hidden .modal-content { transform: scale(0.9) translateY(40px); }
 
-.modal-content h2 { font-size: 24px; margin-bottom: 25px; 
-color: var(--saffron-gold); text-align: center; font-weight: 
-800;}
-.avatar-upload-box { display: flex; flex-direction: column; 
-align-items: center; margin-bottom: 25px; cursor: pointer; }
-.avatar-circle { width: 85px; height: 85px; border-radius: 
-50%; background: rgba(255,255,255,0.03); border: 2px dashed 
-#64748b; display: flex; justify-content: center; align-items: 
-center; font-size: 30px; margin-bottom: 12px; transition: 0.3s 
-var(--bouncy-ease);}
-.avatar-upload-box:hover .avatar-circle { border-color: 
-var(--saffron-gold); color: var(--saffron-gold); background: 
-rgba(255,153,51,0.05); transform: scale(1.05);}
-.avatar-upload-box p { font-size: 13px; color: 
-var(--text-muted); font-weight: 600;}
+.modal-content h2 { font-size: 24px; margin-bottom: 25px; color: var(--saffron-gold); text-align: center; font-weight: 800;}
+
+/* Tabs for Modals (Active vs Trash Chats) */
+.auth-tabs { display: flex; border-bottom: 1px solid var(--glass-border); gap: 15px; }
+.auth-tab { background: transparent; border: none; color: var(--text-muted); padding: 10px 5px; font-size: 14px; cursor: pointer; position: relative; transition: 0.3s; }
+.auth-tab.active { color: var(--saffron-gold); font-weight: bold; }
+.auth-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--saffron-gold); border-radius: 2px; }
+
+.avatar-upload-box { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; cursor: pointer; }
+.avatar-circle { width: 85px; height: 85px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 2px dashed #64748b; display: flex; justify-content: center; align-items: center; font-size: 30px; margin-bottom: 12px; transition: 0.3s var(--bouncy-ease);}
+.avatar-upload-box:hover .avatar-circle { border-color: var(--saffron-gold); color: var(--saffron-gold); background: rgba(255,153,51,0.05); transform: scale(1.05);}
+.avatar-upload-box p { font-size: 13px; color: var(--text-muted); font-weight: 600;}
 
 .verify-row { display: flex; gap: 10px; }
-.btn-verify { background: rgba(19, 136, 8, 0.15); color: 
-var(--emerald-green); border: 1px solid var(--emerald-green); 
-border-radius: 12px; padding: 0 20px; font-weight: 700; 
-cursor: pointer; transition: 0.3s; height: 50px; flex-shrink: 
-0;}
-.btn-verify:hover { background: var(--emerald-green); color: 
-#000; box-shadow: 0 0 15px var(--emerald-glow);}
+.btn-verify { background: rgba(19, 136, 8, 0.15); color: var(--emerald-green); border: 1px solid var(--emerald-green); border-radius: 12px; padding: 0 20px; font-weight: 700; cursor: pointer; transition: 0.3s; height: 50px; flex-shrink: 0;}
+.btn-verify:hover { background: var(--emerald-green); color: #000; box-shadow: 0 0 15px var(--emerald-glow);}
 
 /* 🎙️ Live Voice Overlay */
-#live-voice-overlay { backdrop-filter: blur(25px); 
--webkit-backdrop-filter: blur(25px); background: 
-rgba(0,0,0,0.85); z-index: 2000; }
-@keyframes pulseVoice { 0% { box-shadow: 0 0 20px 
-var(--saffron-glow), 0 0 0 0 rgba(255,153,51,0.2); transform: 
-scale(1); } 100% { box-shadow: 0 0 60px var(--saffron-glow), 0 
-0 30px transparent; transform: scale(1.1); } }
+#live-voice-overlay { backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); background: rgba(0,0,0,0.85); z-index: 2000; }
+@keyframes pulseVoice { 0% { box-shadow: 0 0 20px var(--saffron-glow), 0 0 0 0 rgba(255,153,51,0.2); transform: scale(1); } 100% { box-shadow: 0 0 60px var(--saffron-glow), 0 0 30px transparent; transform: scale(1.1); } }
 
 /* =============================================================
    6. RESPONSIVE DESIGN (Mobile Drawer)
 ============================================================= */
-.menu-btn { display: none; font-size: 24px; color: 
-var(--saffron-gold); background: transparent; border: none; 
-cursor: pointer; padding: 5px;}
+.menu-btn { display: none; font-size: 24px; color: var(--saffron-gold); background: transparent; border: none; cursor: pointer; padding: 5px;}
 
 @media (max-width: 768px) {
- .menu-btn { display: flex; }
- .sidebar { position: absolute; left: -320px; top: 0; 
-bottom: 0; width: 300px; z-index: 500; background: rgba(7, 
-11, 20, 0.98); backdrop-filter: blur(40px); box-shadow: 
-30px 0 60px rgba(0,0,0,0.8); border-right: 1px solid 
-rgba(255,255,255,0.1); }
- .sidebar.open { left: 0; }
-
- .main-wrapper { max-width: 100%; border-radius: 0; }
- .app-screen { padding: 10px 15px; }
- .chat-area { padding: 15px 5px; }
- .message { max-width: 92%; }
- .quick-toggles { display: none; }
+    .menu-btn { display: flex; }
+    .sidebar { position: absolute; left: -320px; top: 0; bottom: 0; width: 300px; z-index: 500; background: rgba(7, 11, 20, 0.98); backdrop-filter: blur(40px); box-shadow: 30px 0 60px rgba(0,0,0,0.8); border-right: 1px solid rgba(255,255,255,0.1); }
+    .sidebar.open { left: 0; }
+    .main-wrapper { max-width: 100%; border-radius: 0; }
+    .app-screen { padding: 10px 15px; }
+    .chat-area { padding: 15px 5px; }
+    .message { max-width: 92%; }
+    .quick-toggles { display: none; }
 }
 
 @media (min-width: 768px) {
- .main-wrapper { max-width: 1300px; height: 92vh; 
-border-radius: 24px; padding: 0; border: 1px solid 
-var(--glass-border); box-shadow: 0 30px 80px rgba(0,0,0,0.7);}
- .app-screen { padding: 0; }
- .sidebar { border-top-left-radius: 24px; 
-border-bottom-left-radius: 24px; }
- .chat-area { padding: 25px 35px; }
-}
+    .main-wrapper { max-width: 1300px; height: 92vh; border-radius: 24px; padding: 0; border: 1px solid var(--glass-border); box-shadow: 0 30px 80px rgba(0,0,0,0.7);}
+    .app-screen { padding: 0; }
+    .sidebar { border-top-left-radius: 24px; border-bottom-left-radius: 24px; }
+    .chat-area { padding: 25px 35px; }
+   }
 
 
 

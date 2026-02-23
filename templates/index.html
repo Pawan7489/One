@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=9.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -94,9 +94,21 @@
                     <div class="menu-section">
                         <h3>🕒 Recent Chats</h3>
                         <ul class="chat-history-list" id="chat-history-list">
-                            <li class="chat-item active" data-id="chat-1">Tax Planning 2026</li>
-                            <li class="chat-item" data-id="chat-2">Python Machine Learning...</li>
-                            <li class="chat-item" data-id="chat-3">Health & Diet Plan</li>
+                            <li class="chat-item active" data-id="chat-1" draggable="true">
+                                <span class="chat-title">📌 Tax Planning 2026</span>
+                                <button class="chat-options-btn">⋮</button>
+                                <div class="chat-context-menu hidden">
+                                    <button class="menu-action">📌 Unpin Chat</button>
+                                    <button class="menu-action">🔗 Share Chat</button>
+                                    <button class="menu-action">⬆️ Move Up</button>
+                                    <button class="menu-action">⬇️ Move Down</button>
+                                    <button class="menu-action text-danger">🗑️ Delete</button>
+                                </div>
+                            </li>
+                            <li class="chat-item" data-id="chat-2" draggable="true">
+                                <span class="chat-title">Python ML Code</span>
+                                <button class="chat-options-btn">⋮</button>
+                            </li>
                         </ul>
                         <button id="history-settings-btn" class="btn-secondary apple-btn mt-10" style="padding: 10px; font-size: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
                             ⚙️ Chat Room History Setting
@@ -201,6 +213,7 @@
     <div id="settings-modal" class="custom-modal hidden">
         <div class="modal-content">
             <h2>⚙️ AI Logic & Settings</h2>
+            
             <div class="input-field">
                 <label>Language Model (Bhasha)</label>
                 <select id="setting-lang">
@@ -211,23 +224,59 @@
             </div>
             
             <div class="input-field">
-                <label>Voice Preference (Awaaz)</label>
+                <label>Voice Preference (26+ Awaazein)</label>
                 <select id="setting-voice">
-                    <option value="male-1">Male - Standard</option>
-                    <option value="male-2">Male - Deep (Mature)</option>
-                    <option value="female-1">Female - Standard</option>
-                    <option value="female-2">Female - Soft & Caring</option>
-                    <option value="kid">Kid - Playful (Chote Dost)</option>
-                    <option value="senior">Senior Citizen - Respectful</option>
+                    <optgroup label="👦👧 Kids (6 Voices)">
+                        <option value="kid-boy-1">Boy 1 - Playful</option>
+                        <option value="kid-boy-2">Boy 2 - Energetic</option>
+                        <option value="kid-boy-3">Boy 3 - Soft</option>
+                        <option value="kid-girl-1">Girl 1 - Sweet</option>
+                        <option value="kid-girl-2">Girl 2 - Smart</option>
+                        <option value="kid-girl-3">Girl 3 - Joyful</option>
+                    </optgroup>
+                    <optgroup label="🎒🎓 Youth / College (6 Voices)">
+                        <option value="youth-boy-1">Boy 1 - Cool Dude</option>
+                        <option value="youth-boy-2">Boy 2 - Serious</option>
+                        <option value="youth-boy-3">Boy 3 - Friendly</option>
+                        <option value="youth-girl-1">Girl 1 - Cheerful</option>
+                        <option value="youth-girl-2">Girl 2 - Confident</option>
+                        <option value="youth-girl-3">Girl 3 - Polite</option>
+                    </optgroup>
+                    <optgroup label="👨👩 Adults (6 Voices)">
+                        <option value="adult-male-1" selected>Male 1 - Standard</option>
+                        <option value="adult-male-2">Male 2 - Deep Voice</option>
+                        <option value="adult-male-3">Male 3 - Professional</option>
+                        <option value="adult-female-1">Female 1 - Standard</option>
+                        <option value="adult-female-2">Female 2 - Caring</option>
+                        <option value="adult-female-3">Female 3 - Corporate</option>
+                    </optgroup>
+                    <optgroup label="👴👵 Seniors (8 Voices)">
+                        <option value="senior-male-1">Male 1 - Grandfather (Respectful)</option>
+                        <option value="senior-male-2">Male 2 - Wise</option>
+                        <option value="senior-male-3">Male 3 - Storyteller</option>
+                        <option value="senior-male-4">Male 4 - Calm</option>
+                        <option value="senior-female-1">Female 1 - Grandmother</option>
+                        <option value="senior-female-2">Female 2 - Loving</option>
+                        <option value="senior-female-3">Female 3 - Spiritual</option>
+                        <option value="senior-female-4">Female 4 - Gentle</option>
+                    </optgroup>
+                    <optgroup label="🌍 Global Voices (Coming Soon)" class="hidden" style="display:none;">
+                        <option value="us-male">US English - Male</option>
+                        <option value="uk-female">UK English - Female</option>
+                    </optgroup>
                 </select>
             </div>
 
             <div class="input-field">
                 <label>Age Logic Selector (AI Mode)</label>
                 <select id="setting-logic">
+                    <option value="5-10">5-10 saal (Kids/Simple)</option>
                     <option value="10-15">10-15 saal (Teens/School)</option>
-                    <option value="18-25">18-25 saal (College/Youth) - Active</option>
+                    <option value="15-18">15-18 saal (High School)</option>
+                    <option value="18-25" selected>18-25 saal (College/Youth) - Active</option>
+                    <option value="25-30">25-30 saal (Professionals)</option>
                     <option value="30-40">30-40 saal (Adults)</option>
+                    <option value="40-50">40-50 saal (Mature)</option>
                     <option value="50+">50+ saal (Seniors/Respectful)</option>
                 </select>
             </div>
@@ -274,7 +323,7 @@
                 <select>
                     <option>Voice kaam nahi kar rahi</option>
                     <option>AI galat jawab de raha hai</option>
-                    <option>Login problem</option>
+                    <option>Chat history delete ho gayi</option>
                     <option>Other / Anya</option>
                 </select>
             </div>
@@ -294,37 +343,4 @@
                 <button id="tab-trash-chats" class="auth-tab">Trash (Deleted)</button>
             </div>
 
-            <div class="history-list-container" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
-                
-                <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 5px;">
-                    <div style="display: flex; flex-direction: column;">
-                        <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Legal Advice AI</span>
-                        <span style="font-size: 11px; color: var(--text-muted);">Deleted: 2 days ago</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="action-icon apple-btn" title="Recover Chat" style="padding: 6px; font-size: 14px;">♻️</button>
-                        <button class="action-icon apple-btn" title="Permanent Delete" style="padding: 6px; font-size: 14px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">🗑️</button>
-                    </div>
-                </div>
-
-                <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 5px;">
-                    <div style="display: flex; flex-direction: column;">
-                        <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Space Exploration Info</span>
-                        <span style="font-size: 11px; color: var(--text-muted);">Deleted: 5 days ago</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="action-icon apple-btn" title="Recover Chat" style="padding: 6px; font-size: 14px;">♻️</button>
-                        <button class="action-icon apple-btn" title="Permanent Delete" style="padding: 6px; font-size: 14px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">🗑️</button>
-                    </div>
-                </div>
-
-            </div>
-            
-            <button id="close-history" class="btn-primary apple-btn">Done</button>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=9.0"></script>
-</body>
-                          </html>
-                          
+            <div class="history-list-container" 

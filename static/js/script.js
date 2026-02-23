@@ -446,16 +446,30 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     async function processLiveVoiceQuery(text) {
-        try {
-            const response = await fetch(ADMIN_PANEL_URL, {
-                method: "POST",
-             header: { "content-Type": "application/json"},
-             body: JSON.stringify({ query: tect, check_database_cache: true })
-            });
-          const data = await response.json();
-          let aiResponse = data.answer.replace
+    try {
+        const response = await fetch(ADMIN_PANEL_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/
+json" },
+            body: JSON.stringify({ query: text,
+check_database_cache: true })
+        });
+        const data = await response.json();
+        let aiResponse = data.answer.replace(/Commander
+AI:/gi, '').trim();
+        liveVoiceText.innerText = aiResponse;
+        speak(aiResponse);
+    } catch(e) {
+        liveVoiceText.innerText = "Connection lost. Please
+try again.";
+        setTimeout(() => { try{ recognition.start(); }
+catch(e){} }, 2000);
+    }
+}
 
+sendBtn.addEventListener("click", sendMessageToAI);
 
+});
 
 
               

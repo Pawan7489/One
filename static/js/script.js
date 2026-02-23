@@ -1,15 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
-    // 📱 1. HAPTIC ENGINE (iPhone/Samsung Style Vibration)
+    // 📱 1. HAPTIC ENGINE (Vibration)
     // ==========================================
     function triggerHaptic(type = "light") {
         if (!navigator.vibrate) return;
-        if (type === "light") navigator.vibrate(40); // Soft tick
-        if (type === "medium") navigator.vibrate(80); // Medium pop
-        if (type === "heavy") navigator.vibrate([50, 50, 50]); // Success/Error
+        if (type === "light") navigator.vibrate(30); 
+        if (type === "medium") navigator.vibrate(60); 
+        if (type === "heavy") navigator.vibrate([40, 50, 40]); 
     }
-
-    document.querySelectorAll('button, .action-icon').forEach(btn => {
+    document.querySelectorAll('button, .action-icon, .chat-item').forEach(btn => {
         btn.addEventListener('click', () => triggerHaptic("light"));
     });
 
@@ -20,213 +19,280 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginScreen = document.getElementById("login-screen");
     const chatScreen = document.getElementById("chat-screen");
     
-    const goToLogin = document.getElementById("go-to-login");
-    const goToSignup = document.getElementById("go-to-signup");
-    const signupForm = document.getElementById("signup-form");
+    // Auth & Modals
     const loginForm = document.getElementById("login-form");
-    const guestBtn = document.getElementById("guest-btn");
+    const signupForm = document.getElementById("signup-form");
+    const rememberMeCheck = document.getElementById("remember-me");
+    const welcomeBanner = document.getElementById("welcome-banner");
+    const welcomeUserName = document.getElementById("welcome-user-name");
     
     const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input"); // Now a TEXTAREA
+    const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
     const micBtn = document.getElementById("mic-btn");
-    const plusBtn = document.getElementById("plus-btn");
-    const actionMenu = document.getElementById("action-menu");
     
-    const menuToggle = document.getElementById("menu-toggle");
     const appSidebar = document.getElementById("app-sidebar");
     const newChatBtn = document.getElementById("new-chat-btn");
+    const aiThinkingIndicator = document.getElementById("ai-thinking-indicator");
     
-    // Tools & Modes
-    const aiTools = document.querySelectorAll(".ai-tools-list li");
-    const activeToolIndicator = document.getElementById("active-tool-indicator");
-    const toolIcon = document.getElementById("tool-icon");
-    const toolText = document.getElementById("tool-text");
-    const closeToolBtn = document.getElementById("close-tool-btn");
-    let currentAIMode = "chat"; // Default mode
+    // Live Voice
+    const liveVoiceBtn = document.getElementById("live-voice-mode-btn");
+    const liveVoiceOverlay = document.getElementById("live-voice-overlay");
+    const liveVoiceText = document.getElementById("live-voice-text");
+    const liveVoiceStatus = document.getElementById("live-voice-status");
+    const closeLiveVoice = document.getElementById("close-live-voice");
 
-    // Modals
-    const modals = {
-        profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
-        settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
-        support: { btn: document.getElementById("support-btn"), modal: document.getElementById("support-modal"), close: document.getElementById("close-support") }
-    };
-    
-    const miniHologram = document.getElementById("mini-hologram");
-    let currentUser = { name: "User", age: 25, persona: { label: "A1 Core" } };
+    let currentUser = { name: "User", persona: "A1 Core" };
     let isContinuousMicOn = false;
+    let isLiveVoiceMode = false;
     let recognition;
 
-    // 🚀 COMMANDER ADMIN PANEL URL
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
 
-    function unlockAudio() {
-        if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }
+    // ==========================================
+    // 💾 3. PERSISTENT LOGIN (Remember Me)
+    // ==========================================
+    function checkLoginState() {
+        const savedUser = localStorage.getItem("a1_indian_user");
+        if (savedUser) {
+            currentUser = JSON.JSON.parse(savedUser);
+            // Bypass Auth Screens directly to Chat
+            signupScreen.classList.add("hidden");
+            loginScreen.classList.add("hidden");
+            chatScreen.classList.remove("hidden");
+            welcomeUserName.innerText = `Welcome back, ${currentUser.name}!`;
+            document.getElementById("persona-badge").innerText = `Mode: ${currentUser.persona}`;
+            
+            // Speak Welcome
+            setTimeout(() => {
+                speakText(`Welcome back ${currentUser.name}, Main aapki kya madad kar sakta hoon?`);
+            }, 1000);
+        }
     }
+    checkLoginState(); // Run on page load
 
-    // ==========================================
-    // 🔄 3. SCREEN TRANSITIONS
-    // ==========================================
-    function switchScreen(hideElem, showElem) {
-        hideElem.style.opacity = "0";
+    function enterChatArea(name, isGuest = false) {
+        triggerHaptic("heavy");
+        currentUser.name = name;
+        
+        if (!isGuest && rememberMeCheck && rememberMeCheck.checked) {
+            localStorage.setItem("a1_indian_user", JSON.stringify(currentUser));
+        }
+
+        signupScreen.style.opacity = "0";
+        loginScreen.style.opacity = "0";
         setTimeout(() => {
-            hideElem.classList.add("hidden");
-            showElem.classList.remove("hidden");
-            setTimeout(() => { showElem.style.opacity = "1"; }, 50);
+            signupScreen.classList.add("hidden");
+            loginScreen.classList.add("hidden");
+            chatScreen.classList.remove("hidden");
+            welcomeUserName.innerText = isGuest ? `Namaste Guest! 🙏` : `Namaste ${name}! 🙏`;
+            
+            setTimeout(() => { chatScreen.style.opacity = "1"; }, 50);
+            setTimeout(() => { speakText(isGuest ? "Namaste Guest! Main A1 hoon." : `Welcome ${name}. Main A1 hoon.`); }, 800);
         }, 400);
     }
 
-    if(goToLogin) goToLogin.addEventListener("click", (e) => { e.preventDefault(); switchScreen(signupScreen, loginScreen); });
-    if(goToSignup) goToSignup.addEventListener("click", (e) => { e.preventDefault(); switchScreen(loginScreen, signupScreen); });
-
-    function enterChatArea(greetingMsg) {
-        triggerHaptic("heavy");
-        if(!signupScreen.classList.contains("hidden")) switchScreen(signupScreen, chatScreen);
-        if(!loginScreen.classList.contains("hidden")) switchScreen(loginScreen, chatScreen);
-        
-        setTimeout(() => {
-            document.getElementById("persona-badge").innerText = `Mode: ${currentUser.persona.label}`;
-            if(greetingMsg) { appendTypingAI(greetingMsg, false); speak(greetingMsg); }
-        }, 800);
+    if(document.getElementById("guest-btn")) {
+        document.getElementById("guest-btn").addEventListener("click", () => enterChatArea("Guest", true));
     }
-
-    if(guestBtn) guestBtn.addEventListener("click", () => {
-        unlockAudio(); currentUser = { name: "Guest", persona: { label: "Guest Mode" } };
-        enterChatArea("Namaste Guest! Main A1 hoon. Aapke liye kya generate karun?");
-    });
-
-    signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea("Account created securely. Namaste Commander!"); });
-    loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea("Secure Login Successful. Welcome back."); });
+    signupForm.addEventListener("submit", (e) => { e.preventDefault(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
+    loginForm.addEventListener("submit", (e) => { e.preventDefault(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
 
     // ==========================================
-    // 🗂️ 4. SIDEBAR, MODALS & NEW CHAT
+    // 🗂️ 4. CHAT HISTORY (Context Menu & New Chat)
     // ==========================================
-    if(menuToggle) menuToggle.addEventListener("click", () => { appSidebar.classList.toggle("open"); triggerHaptic("medium"); });
-    document.querySelector(".chat-area").addEventListener("click", (e) => {
-        if (window.innerWidth <= 768 && appSidebar.classList.contains("open") && !menuToggle.contains(e.target)) {
-            appSidebar.classList.remove("open");
-        }
-    });
-
-    // Modals Logic
-    function openModal(modal) { triggerHaptic("medium"); modal.classList.remove("hidden"); }
-    function closeModal(modal) { triggerHaptic("light"); modal.classList.add("hidden"); }
-
-    Object.values(modals).forEach(m => {
-        if(m.btn && m.modal && m.close) {
-            m.btn.addEventListener("click", () => { appSidebar.classList.remove("open"); openModal(m.modal); });
-            m.close.addEventListener("click", () => closeModal(m.modal));
-        }
-    });
-
-    // Plus Menu (+)
-    plusBtn.addEventListener("click", () => { actionMenu.classList.toggle("hidden"); actionMenu.style.display = actionMenu.classList.contains("hidden") ? "none" : "block"; });
-    document.addEventListener("click", (e) => { if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) { actionMenu.classList.add("hidden"); actionMenu.style.display = "none"; } });
-
-    // 🚨 NEW CHAT ROOM LOGIC
     newChatBtn.addEventListener("click", () => {
         triggerHaptic("medium");
-        chatBox.innerHTML = ""; // Clear chat history from screen
-        closeToolBtn.click(); // Reset tool to default
+        // Clear chat area, show welcome banner again
+        chatBox.innerHTML = ""; 
+        chatBox.appendChild(welcomeBanner);
+        welcomeBanner.style.display = "flex";
         if (window.innerWidth <= 768) appSidebar.classList.remove("open");
-        appendTypingAI("Naya chat room shuru ho gaya hai. Boliye?", false);
     });
 
-    // 🚨 AI TOOL SELECTION LOGIC (Menu Bar -> Badge)
-    aiTools.forEach(item => {
-        item.addEventListener("click", () => {
+    // Handle Context Menu (⋮) on Chat History
+    document.querySelectorAll(".chat-options-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
             triggerHaptic("light");
-            aiTools.forEach(i => i.classList.remove("active"));
-            item.classList.add("active");
-            currentAIMode = item.getAttribute("data-mode");
-
-            if (currentAIMode !== "chat") {
-                // Emoji nikalna aur text set karna
-                const textParts = item.innerText.split(" ");
-                toolIcon.innerText = textParts[0]; 
-                toolText.innerText = item.innerText.substring(item.innerText.indexOf(" ") + 1) + " Mode";
-                
-                activeToolIndicator.classList.remove("hidden");
-                activeToolIndicator.style.display = "flex";
-            } else {
-                activeToolIndicator.classList.add("hidden");
-                setTimeout(()=> activeToolIndicator.style.display = "none", 300);
-            }
-            if (window.innerWidth <= 768) appSidebar.classList.remove("open");
+            // Hide all other menus first
+            document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
+            // Toggle current menu
+            const menu = btn.nextElementSibling;
+            if(menu) menu.classList.toggle("hidden");
         });
     });
 
-    closeToolBtn.addEventListener("click", () => {
-        triggerHaptic("light");
-        activeToolIndicator.classList.add("hidden");
-        setTimeout(()=> activeToolIndicator.style.display = "none", 300);
-        aiTools.forEach(i => i.classList.remove("active"));
-        aiTools[0].classList.add("active"); // Wapas Core Chat par
-        currentAIMode = "chat";
+    // Close context menu when clicked outside
+    document.addEventListener("click", () => {
+        document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
     });
 
     // ==========================================
-    // ✍️ 5. SMART TEXTAREA (Auto-grow & Shift+Enter)
+    // ✍️ 5. SMART TEXTAREA (1 to 10 lines)
     // ==========================================
     userInput.addEventListener("input", function() {
-        this.style.height = "auto"; // Reset height
-        this.style.height = (this.scrollHeight) + "px"; // Set to scroll height
-        if(this.value.trim() === "") this.style.height = "auto"; // wapas chota karna
+        this.style.height = "auto";
+        this.style.height = (this.scrollHeight) + "px";
+        if(this.value.trim() === "") this.style.height = "auto";
     });
 
     userInput.addEventListener("keydown", function(e) {
         if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault(); // Nayi line banne se rokna
+            e.preventDefault(); 
             sendMessageToAI();
         }
-        // Shift+Enter will automatically add a new line due to default textarea behavior
     });
 
     // ==========================================
-    // 🎙️ 6. VOICE & MIC LOGIC
+    // 🗣️ 6. 26+ VOICE MODELS LOGIC (TTS)
     // ==========================================
     window.speakText = function(text) { speak(text); triggerHaptic("light"); };
 
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        let cleanText = text.replace(/[*#_`]/g, ''); 
+        let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
+        
         const utterance = new SpeechSynthesisUtterance(cleanText);
         const voices = window.speechSynthesis.getVoices();
+        
+        // Find best Indian voice
         let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
-        utterance.voice = selectedVoice; utterance.rate = 1.0;
+        utterance.voice = selectedVoice;
+        
+        // 🚨 GET SELECTED VOICE PREFERENCE FROM SETTINGS
+        const voicePref = document.getElementById("setting-voice").value;
+        
+        // Apply Pitch and Rate modifiers based on Persona
+        if (voicePref.includes("kid")) {
+            utterance.pitch = 1.6; // Patli awaaz
+            utterance.rate = 1.1;  // Tez bolna
+        } else if (voicePref.includes("senior")) {
+            utterance.pitch = 0.8; // Bhari awaaz
+            utterance.rate = 0.85; // Aaram se bolna
+        } else if (voicePref.includes("deep") || voicePref.includes("adult-male-2")) {
+            utterance.pitch = 0.6; // Ekdam Bhari (Mature)
+            utterance.rate = 0.95;
+        } else if (voicePref.includes("youth")) {
+            utterance.pitch = 1.1; 
+            utterance.rate = 1.05; // Energetic
+        } else {
+            // Standard Adult
+            utterance.pitch = 1.0;
+            utterance.rate = 1.0;
+        }
 
-        utterance.onstart = () => { miniHologram.classList.add("speaking"); };
-        utterance.onend = () => { miniHologram.classList.remove("speaking"); };
+        utterance.onstart = () => { 
+            document.getElementById("mini-hologram").classList.add("speaking"); 
+            if(isLiveVoiceMode) document.querySelector(".live-hologram").style.animation = "pulseVoice 0.5s infinite alternate";
+        };
+        utterance.onend = () => { 
+            document.getElementById("mini-hologram").classList.remove("speaking"); 
+            if(isLiveVoiceMode) {
+                document.querySelector(".live-hologram").style.animation = "none";
+                // Restart listening after speaking
+                try{ recognition.start(); }catch(e){}
+            }
+        };
         window.speechSynthesis.speak(utterance);
     }
 
+    // ==========================================
+    // 🎙️ 7. LIVE VOICE CHAT & MIC LOGIC
+    // ==========================================
     const SpeechRecAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecAPI) {
         recognition = new SpeechRecAPI();
-        recognition.lang = 'en-IN'; recognition.interimResults = false;
+        recognition.lang = 'en-IN'; 
+        recognition.interimResults = true; // For live typing effect
 
-        recognition.onstart = () => { micBtn.classList.add("active"); triggerHaptic("medium"); };
-        // FIX: Sirf textarea mein likhega, apne aap send nahi karega
-        recognition.onresult = (event) => { 
-            userInput.value += " " + event.results[0][0].transcript; 
-            userInput.dispatchEvent(new Event('input')); // Trigger auto-grow
+        recognition.onstart = () => { 
+            triggerHaptic("medium");
+            if(isLiveVoiceMode) liveVoiceStatus.innerText = "Listening...";
+            else micBtn.classList.add("active");
         };
+
+        let finalTranscript = "";
+        recognition.onresult = (event) => { 
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+            
+            if(isLiveVoiceMode) {
+                liveVoiceText.innerText = finalTranscript + interimTranscript;
+            } else {
+                userInput.value = finalTranscript + interimTranscript;
+                userInput.dispatchEvent(new Event('input')); // Auto-grow trigger
+            }
+        };
+
         recognition.onend = () => {
-            if (isContinuousMicOn) { try { recognition.start(); } catch(e) {} } 
-            else { micBtn.classList.remove("active"); }
+            if (isLiveVoiceMode) {
+                liveVoiceStatus.innerText = "Processing...";
+                if(liveVoiceText.innerText.length > 5) {
+                    // Auto-send in live voice mode
+                    processLiveVoiceQuery(liveVoiceText.innerText);
+                } else {
+                    try{ recognition.start(); }catch(e){} // Keep listening if nothing said
+                }
+            } else {
+                micBtn.classList.remove("active");
+                if (isContinuousMicOn) { try { recognition.start(); } catch(e) {} } 
+            }
+            finalTranscript = ""; // Reset
         };
     }
 
+    // Normal Textbox Mic Button
     micBtn.addEventListener("click", () => {
-        if (isContinuousMicOn) { isContinuousMicOn = false; recognition.stop(); micBtn.classList.remove("active"); } 
+        if (micBtn.classList.contains("active")) { isContinuousMicOn = false; recognition.stop(); } 
         else { isContinuousMicOn = true; try { recognition.start(); } catch(e) {} }
     });
 
+    // Live Voice Mode Overlays
+    liveVoiceBtn.addEventListener("click", () => {
+        isLiveVoiceMode = true;
+        liveVoiceOverlay.classList.remove("hidden");
+        liveVoiceText.innerText = "(Bolna shuru karein...)";
+        try { recognition.start(); } catch(e) {}
+    });
+
+    closeLiveVoice.addEventListener("click", () => {
+        isLiveVoiceMode = false;
+        recognition.stop();
+        window.speechSynthesis.cancel();
+        liveVoiceOverlay.classList.add("hidden");
+    });
+
     // ==========================================
-    // 🤖 7. AI CHAT ENGINE (Gemini Streaming & Actions)
+    // 🧠 8. AI ENGINE & THINKING ANIMATION
     // ==========================================
+    async function showThinkingSteps() {
+        chatBox.appendChild(aiThinkingIndicator);
+        aiThinkingIndicator.classList.remove("hidden");
+        
+        const steps = aiThinkingIndicator.querySelectorAll(".step");
+        steps.forEach(s => s.classList.add("hidden"));
+        
+        // Step 1: DB Check
+        steps[0].classList.remove("hidden"); triggerHaptic("light");
+        await new Promise(r => setTimeout(r, 800));
+        
+        // Step 2: Logic
+        steps[0].classList.add("hidden"); steps[1].classList.remove("hidden"); triggerHaptic("light");
+        await new Promise(r => setTimeout(r, 800));
+
+        // Wait till API actually replies, then we hide it completely in the main function.
+    }
+
     function appendUserMessage(text) {
+        welcomeBanner.style.display = "none"; // Hide welcome banner
         const msgDiv = document.createElement("div");
         msgDiv.className = `message user-message`;
         msgDiv.innerText = text;
@@ -234,7 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }
 
-    function appendTypingAI(text, showActionBar = true) {
+    function appendTypingAI(text, isError = false) {
+        aiThinkingIndicator.classList.add("hidden"); // Hide thinking box
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ai-message`;
         chatBox.appendChild(msgDiv);
@@ -247,17 +314,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 msgDiv.innerHTML += words[i] + ' ';
                 i++;
                 chatBox.scrollTo({ top: chatBox.scrollHeight });
-                setTimeout(typeWriter, Math.floor(Math.random() * 20) + 20); // Human speed
+                setTimeout(typeWriter, Math.floor(Math.random() * 20) + 15); 
             } else {
-                if(showActionBar) addActionBar(msgDiv, text);
+                if(!isError) addActionBar(msgDiv, text);
             }
         }
         typeWriter();
     }
-
-    window.copyTextToClipboard = function(text) {
-        navigator.clipboard.writeText(text); triggerHaptic("medium"); alert("📋 Copied to clipboard!");
-    };
 
     function addActionBar(container, rawText) {
         const actionBar = document.createElement("div");
@@ -265,19 +328,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const safeText = rawText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         
         actionBar.innerHTML = `
-            <button class="action-icon" onclick="copyTextToClipboard('${safeText}')" title="Copy">📋 Copy</button>
-            <button class="action-icon" onclick="speakText('${safeText}')" title="Read Aloud">🔊 Listen</button>
-            <button class="action-icon" title="Good Response">👍</button>
-            <button class="action-icon" title="Bad Response">👎</button>
-            <span class="sources-badge">🔗 Mode: ${currentAIMode.toUpperCase()}</span>
+            <button class="action-icon" onclick="copyTextToClipboard('${safeText}')" title="Copy">📋</button>
+            <button class="action-icon" onclick="speakText('${safeText}')" title="Read">🔊</button>
+            <button class="action-icon">👍</button>
+            <button class="action-icon">👎</button>
+            <span class="sources-badge">🔗 Cache Verified</span>
         `;
-        
         actionBar.style.opacity = "0";
         container.appendChild(actionBar);
         setTimeout(() => actionBar.style.opacity = "1", 100);
-        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        triggerHaptic("light"); 
     }
 
+    // MAIN SEND FUNCTION
     window.sendMessageToAI = async function() {
         const text = userInput.value.trim();
         if (!text) return;
@@ -285,39 +348,55 @@ document.addEventListener("DOMContentLoaded", () => {
         triggerHaptic("medium");
         appendUserMessage(text);
         
-        // Reset Textarea
         userInput.value = "";
         userInput.style.height = "auto"; 
 
-        // Check Toggles
         const deepSearchON = document.getElementById('toggle-search').checked;
-        const deepThinkON = document.getElementById('toggle-reasoning').checked;
-        
-        // Prepare Full Query with context
-        let finalQuery = text;
-        if(currentAIMode !== "chat") finalQuery = `[Generate ${currentAIMode}] ` + text;
-        if(deepSearchON) finalQuery = `[Web Search] ` + finalQuery;
+        const currentMode = document.querySelector(".ai-tools-list .active").getAttribute("data-mode");
+
+        showThinkingSteps(); // Start UI Animation
 
         try {
             const response = await fetch(ADMIN_PANEL_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: finalQuery })
+                body: JSON.stringify({ 
+                    query: text,
+                    mode: currentMode,
+                    web_search: deepSearchON,
+                    check_database_cache: true // 🚨 Instructing backend to check DB first
+                })
             });
 
             const data = await response.json();
             if (data.status === "success") {
-                let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
-                appendTypingAI(aiResponse, true);
-                speak(aiResponse);
+                appendTypingAI(data.answer);
+                speak(data.answer);
             } else {
-                appendTypingAI("Engine Error: " + data.message, false);
+                appendTypingAI("Engine Error: " + data.message, true);
             }
         } catch (error) {
-            appendTypingAI("System Error: Network unreachable.", false);
+            appendTypingAI("System Error: Network unreachable. Database fallback failed.", true);
         }
     };
 
+    // Live Voice Chat Processor
+    async function processLiveVoiceQuery(text) {
+        try {
+            const response = await fetch(ADMIN_PANEL_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: text, check_database_cache: true })
+            });
+            const data = await response.json();
+            liveVoiceText.innerText = data.answer; // Show answer on live overlay
+            speak(data.answer); // Speak it, which will restart mic on end
+        } catch(e) {
+            liveVoiceText.innerText = "Connection lost. Please try again.";
+            setTimeout(() => { try{ recognition.start(); }catch(e){} }, 2000);
+        }
+    }
+
     sendBtn.addEventListener("click", sendMessageToAI);
 });
-           
+                          

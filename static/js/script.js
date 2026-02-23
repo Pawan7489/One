@@ -654,7 +654,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chatUI.sendBtn.addEventListener("click", sendMessageToAI);
 
-}); // End of DOMContentLoaded
+    // ==========================================
+    // 🍒 11. FINAL UX POLISH (Deep Search Fixes)
+    // ==========================================
+    
+    // 1. Profile Name Update Logic
+    const saveProfileBtn = document.getElementById("close-profile");
+    const profNameInput = document.getElementById("prof-name");
+    
+    if (saveProfileBtn && profNameInput) {
+        saveProfileBtn.addEventListener("click", () => {
+            const newName = profNameInput.value.trim();
+            if (newName !== "") {
+                currentUser.name = newName;
+                // Update Welcome Screen Name
+                if (auth.welcomeUserText) {
+                    auth.welcomeUserText.innerText = `Welcome back, ${newName}!`;
+                }
+                // Update LocalStorage so it remembers the new name
+                localStorage.setItem("a1_indian_user", JSON.stringify(currentUser));
+                triggerHaptic("medium");
+            }
+        });
+    }
+
+    // 2. Auto-Close Plus (+) Menu on Item Click
+    const actionMenuItems = document.querySelectorAll(".menu-item");
+    actionMenuItems.forEach(item => {
+        item.addEventListener("click", () => {
+            triggerHaptic("light");
+            chatUI.actionMenu.classList.add("hidden");
+            chatUI.actionMenu.style.display = "none";
+            
+            // Just an alert for UI feedback (Can be removed later)
+            // alert(item.innerText.trim() + " selected!"); 
+        });
+    });
+    
+
+
+
+
+
+    
+}); 
+// End of DOMContentLoaded
             
 
     

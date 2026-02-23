@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Project A1 - Premium Indian AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.0">
+    <title>Project A1 - The Indian Super-AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -15,7 +16,7 @@
             <div class="login-content">
                 <div class="logo-box aura-glow">A1</div>
                 <h1 class="welcome-text">Swagat Hai</h1>
-                <p class="subtitle">Secure Digital Companion</p>
+                <p class="subtitle">Aapka Secure AI Companion</p>
                 
                 <div class="auth-tabs">
                     <button id="tab-login" class="auth-tab">Login</button>
@@ -25,6 +26,17 @@
                 <form id="signup-form" class="auth-form">
                     <div class="input-field">
                         <input type="text" id="reg-name" required placeholder="Aapka Poora Naam">
+                    </div>
+                    <div class="input-field">
+                        <input type="text" id="reg-username" required placeholder="Username banayein">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-field w-50">
+                            <input type="password" id="reg-password" required placeholder="Password">
+                        </div>
+                        <div class="input-field w-50">
+                            <input type="password" id="reg-confirm" required placeholder="Confirm Password">
+                        </div>
                     </div>
                     <div class="input-row">
                         <div class="input-field w-50">
@@ -38,6 +50,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn-primary apple-btn">Create Secure Account</button>
+                    <button type="button" class="btn-secondary apple-btn mt-10">👤 Continue as Guest</button>
                 </form>
 
                 <form id="login-form" class="auth-form hidden">
@@ -55,80 +68,175 @@
                 </form>
 
                 <div class="social-divider"><span>OR CONTINUE WITH</span></div>
-                <div class="social-logins">
+                <div class="social-logins grid-socials">
                     <button class="social-btn apple-btn">🌐 Google</button>
+                    <button class="social-btn apple-btn">📱 OTP Login</button>
                     <button class="social-btn apple-btn">🐙 GitHub</button>
-                    <button class="social-btn apple-btn">📱 OTP</button>
+                    <button class="social-btn apple-btn">📘 Facebook</button>
+                    <button class="social-btn apple-btn">📸 Instagram</button>
+                    <button class="social-btn apple-btn">📞 Truecaller</button>
                 </div>
             </div>
         </div>
 
-        <div id="chat-screen" class="app-screen hidden">
-            <div class="header">
-                <div class="logo-text">A1</div>
-                <div class="mode-badge" id="persona-badge">Mode: Active</div>
-            </div>
-
-            <div class="hologram-stage">
-                <div class="hologram-container" id="hologram">
-                    <div class="aura-ring ring-1"></div>
-                    <div class="aura-ring ring-2"></div>
-                    <div class="hologram-core">A1</div>
-                </div>
-                <p id="status-text">Ready...</p>
-            </div>
-
-            <div class="chat-box" id="chat-box"></div>
-
-            <div class="advanced-input-container">
-                <div class="version-selector">
-                    <select id="ai-version">
-                        <option value="llama3-8b-8192">A1 Core (Fast Chat)</option>
-                        <option value="mixtral-8x7b-32768">A1 Pro (Deep Search & Logic)</option>
-                        <option value="v3">A1 Vision (Images & Video)</option>
-                        <option value="mixtral-8x7b-32768">A1 Max (Coding & Finance)</option>
-                    </select>
+        <div id="chat-screen" class="app-screen hidden full-layout">
+            
+            <aside class="sidebar" id="app-sidebar">
+                <button class="new-chat-btn apple-btn"><span>+</span> New Chat Room</button>
+                
+                <div class="menu-section">
+                    <h3>AI Super Powers</h3>
+                    <ul class="ai-tools-list">
+                        <li class="active">💬 AI Chat (A1 Core)</li>
+                        <li>🎨 Image Generation</li>
+                        <li>🎬 Video Generation</li>
+                        <li>💻 Coding & Debugging</li>
+                        <li>🌐 Web Design</li>
+                        <li>🖌️ Canvas Style</li>
+                        <li>🔍 Deep Web Search</li>
+                    </ul>
                 </div>
 
-                <div class="input-wrapper">
-                    <div class="action-menu-wrapper">
-                        <button id="plus-btn" class="icon-btn plus-icon" type="button">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        </button>
-                        <div id="action-menu" class="action-menu hidden">
-                            <div class="menu-item">📷 Upload Photo/Video</div>
-                            <div class="menu-item">📁 Select Document</div>
-                            <div class="menu-item">☁️ Google Photos</div>
-                            <hr>
-                            <div class="menu-item">🎨 Generate Image</div>
-                            <div class="menu-item">🔍 Deep Web Search</div>
-                            <div class="menu-item">💻 Code Generator</div>
+                <div class="sidebar-bottom">
+                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ Settings & Logic</button>
+                </div>
+            </aside>
+
+            <main class="chat-area">
+                <header class="chat-header">
+                    <div class="left-header">
+                        <div class="mini-hologram" id="mini-hologram">
+                            <div class="mini-ring"></div>
+                            <div class="mini-core">A1</div>
                         </div>
+                        <div class="mode-badge" id="persona-badge">Mode: Active</div>
+                    </div>
+                    <div class="right-header">
+                        <button id="profile-btn" class="profile-btn apple-btn">👤</button>
+                    </div>
+                </header>
+
+                <div class="chat-box" id="chat-box">
                     </div>
 
-                    <input type="text" id="user-input" placeholder="Message ya command..." autocomplete="off">
-                    
-                    <button id="mic-btn" class="icon-btn mic-icon" type="button">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-                    </button>
+                <div class="advanced-input-container">
+                    <div class="input-wrapper">
+                        
+                        <div class="action-menu-wrapper">
+                            <button id="plus-btn" class="icon-btn plus-icon" type="button" title="Upload & Tools">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                            <div id="action-menu" class="action-menu hidden">
+                                <div class="menu-item">📸 Camera (Take Photo)</div>
+                                <div class="menu-item">📷 Upload Photo/Video</div>
+                                <div class="menu-item">📁 Select File/Document</div>
+                                <div class="menu-item">☁️ Google Photos</div>
+                            </div>
+                        </div>
 
-                    <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
+                        <button id="mic-btn" class="icon-btn mic-icon" type="button" title="Voice Mic">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        </button>
+
+                        <input type="text" id="user-input" placeholder="Message ya command..." autocomplete="off">
+
+                        <button id="send-btn" class="icon-btn send-arrow" type="button" onclick="sendMessageToAI()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="security-footer">
-                <span class="shield">🛡️ End-to-End Encrypted</span> • 
-                <span class="india">🇮🇳 Made in India</span> • 
-                <span class="text-green">🔒 100% Privacy</span>
+                <div class="security-footer">
+                    <span class="shield">🛡️ End-to-End Encrypted</span> • 
+                    <span class="india">🇮🇳 Made in India</span> • 
+                    <span class="text-green">🔒 100% Privacy</span>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <div id="settings-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>⚙️ AI Logic & Settings</h2>
+            
+            <div class="input-field">
+                <label>Language Model (Bhasha)</label>
+                <select id="setting-lang">
+                    <option value="hinglish">Hinglish (Default)</option>
+                    <option value="hindi">Pure Hindi</option>
+                    <option value="english">English</option>
+                </select>
             </div>
+            
+            <div class="input-field">
+                <label>Voice Preference (Awaaz)</label>
+                <select id="setting-voice">
+                    <option value="male">Male (Purush)</option>
+                    <option value="female">Female (Mahila)</option>
+                </select>
+            </div>
+            
+            <div class="input-field">
+                <label>Age Logic Selector (AI Mode)</label>
+                <select id="setting-logic">
+                    <option value="5-10">5-10 saal (Kids/Simple)</option>
+                    <option value="10-15">10-15 saal (Teens/School)</option>
+                    <option value="15-18">15-18 saal (High School)</option>
+                    <option value="18-25">18-25 saal (College/Youth) - Active</option>
+                    <option value="25-30">25-30 saal (Professionals)</option>
+                    <option value="30-40">30-40 saal (Adults)</option>
+                    <option value="40-50">40-50 saal (Mature)</option>
+                    <option value="50+">50+ saal (Seniors/Respectful)</option>
+                </select>
+            </div>
+            
+            <button id="close-settings" class="btn-primary apple-btn mt-10">Save Settings</button>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=4.0"></script>
+
+    <div id="profile-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>👤 Profile Setup</h2>
+            
+            <div class="avatar-upload-box">
+                <div class="avatar-circle">📷</div>
+                <p>Change Photo</p>
+            </div>
+
+            <div class="input-field">
+                <label>Update Name</label>
+                <input type="text" id="prof-name" placeholder="Aapka Naam">
+            </div>
+            <div class="input-field">
+                <label>Update Date of Birth</label>
+                <input type="date" id="prof-dob">
+            </div>
+            <div class="input-field">
+                <label>Email ID</label>
+                <input type="email" id="prof-email" placeholder="email@example.com">
+            </div>
+            <div class="input-field">
+                <label>Mobile Verification</label>
+                <div class="verify-row">
+                    <input type="tel" id="prof-mobile" placeholder="+91 XXXXX XXXXX">
+                    <button class="btn-verify">Verify</button>
+                </div>
+            </div>
+            
+            <button id="close-profile" class="btn-primary apple-btn mt-10">Save Profile</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=5.0"></script>
+
+
+
+
 
 
 <script>
+
     /* ==========================================================
        COMMANDER AI CONFIGURATION (CONNECTED)
        ========================================================== */

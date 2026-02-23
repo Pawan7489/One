@@ -8,8 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (type === "medium") navigator.vibrate(60); 
         if (type === "heavy") navigator.vibrate([40, 50, 40]); 
     }
-    document.querySelectorAll('button, .action-icon, .chat-item').forEach(btn => {
-        btn.addEventListener('click', () => triggerHaptic("light"));
+    
+    // Auto-attach haptics to all buttons
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.closest('.action-icon') || e.target.closest('.chat-item') || e.target.closest('.prompt-chip')) {
+            triggerHaptic("light");
+        }
     });
 
     // ==========================================
@@ -29,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatBox = document.getElementById("chat-box");
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
+    const stopBtn = document.getElementById("stop-btn");
     const micBtn = document.getElementById("mic-btn");
     const plusBtn = document.getElementById("plus-btn");
     const actionMenu = document.getElementById("action-menu");
@@ -38,15 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const newChatBtn = document.getElementById("new-chat-btn");
     const aiThinkingIndicator = document.getElementById("ai-thinking-indicator");
     
-    // Tools
+    // Tools & Chips
     const aiTools = document.querySelectorAll(".ai-tools-list li");
+    const promptChips = document.querySelectorAll(".prompt-chip");
     const activeToolIndicator = document.getElementById("active-tool-indicator");
     const toolIcon = document.getElementById("tool-icon");
     const toolText = document.getElementById("tool-text");
     const closeToolBtn = document.getElementById("close-tool-btn");
     let currentAIMode = "chat";
 
-    // 🚨 FIX: Added History Modal to the Modals Object
+    // Modals Object
     const modals = {
         profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
         settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
@@ -65,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentUser = { name: "User", persona: "A1 Core" };
     let isContinuousMicOn = false;
     let isLiveVoiceMode = false;
+    let isTyping = false; // Flag to stop typewriter effect
+    let abortController = null; // To abort fetch requests
     let recognition;
 
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
@@ -74,14 +82,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 💾 3. PERSISTENT LOGIN (THE BUG FIX)
+    // 💾 3. PERSISTENT LOGIN (BUG FIXED)
     // ==========================================
     function checkLoginState() {
         try {
             const savedUser = localStorage.getItem("a1_indian_user");
             if (savedUser) {
-                // 🚨 BIG FIX: Changed JSON.JSON.parse to JSON.parse
-                currentUser = JSON.parse(savedUser);
+                currentUser = JSON.parse(savedUser); // FIXED: No JSON.JSON
                 
                 signupScreen.classList.add("hidden");
                 loginScreen.classList.add("hidden");
@@ -93,12 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 1000);
             }
         } catch (error) {
-            console.error("Login Cache Error Fixed: ", error);
-            localStorage.removeItem("a1_indian_user"); // Clear corrupted data
+            console.error("Login Cache Error: ", error);
+            localStorage.removeItem("a1_indian_user"); 
         }
     }
     
-    // Speak function needs to be defined before calling it in checkLoginState
     window.speakText = function(text) { speak(text); triggerHaptic("light"); };
 
     function speak(text) {
@@ -111,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
         utterance.voice = selectedVoice;
         
+        // Advanced 26+ Voice Logic
         const voicePref = document.getElementById("setting-voice").value;
         if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
         else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
@@ -132,8 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.speechSynthesis.speak(utterance);
     }
 
-    // Now run login check safely
-    checkLoginState(); 
+    checkLoginState(); // Run safe login check
 
     function switchScreen(hideElem, showElem) {
         hideElem.style.opacity = "0";
@@ -173,8 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById("guest-btn")) {
         document.getElementById("guest-btn").addEventListener("click", () => { unlockAudio(); enterChatArea("Guest", true); });
     }
-    signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
-    loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
+    signupForm.addEventListener("submit", () => { unlockAudio(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
+    loginForm.addEventListener("submit", () => { unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
 
     // ==========================================
     // 🗂️ 4. SIDEBAR, MODALS & CHAT HISTORY
@@ -204,30 +210,27 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.innerHTML = ""; 
         chatBox.appendChild(welcomeBanner);
         welcomeBanner.style.display = "flex";
-        closeToolBtn.click();
+        closeToolBtn.click(); // Reset tool
         if (window.innerWidth <= 768) appSidebar.classList.remove("open");
-        speakText("Naya chat room shuru ho gaya hai. Boliye?");
+        speakText("Naya chat room shuru ho gaya hai.");
     });
 
-    // Chat History Context Menu (⋮)
+    // Context Menu (⋮)
     document.querySelectorAll(".chat-options-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            triggerHaptic("light");
             document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
             const menu = btn.nextElementSibling;
             if(menu) menu.classList.toggle("hidden");
         });
     });
-
     document.addEventListener("click", () => {
         document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
     });
 
-    // AI Super Powers Selection
+    // Tools Selection
     aiTools.forEach(item => {
         item.addEventListener("click", () => {
-            triggerHaptic("light");
             aiTools.forEach(i => i.classList.remove("active"));
             item.classList.add("active");
             currentAIMode = item.getAttribute("data-mode");
@@ -237,26 +240,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 toolIcon.innerText = textParts[0]; 
                 toolText.innerText = item.innerText.substring(item.innerText.indexOf(" ") + 1) + " Mode";
                 activeToolIndicator.classList.remove("hidden");
-                activeToolIndicator.style.display = "flex";
             } else {
                 activeToolIndicator.classList.add("hidden");
-                setTimeout(()=> activeToolIndicator.style.display = "none", 300);
             }
             if (window.innerWidth <= 768) appSidebar.classList.remove("open");
         });
     });
 
     closeToolBtn.addEventListener("click", () => {
-        triggerHaptic("light");
         activeToolIndicator.classList.add("hidden");
-        setTimeout(()=> activeToolIndicator.style.display = "none", 300);
         aiTools.forEach(i => i.classList.remove("active"));
         aiTools[0].classList.add("active"); 
         currentAIMode = "chat";
     });
 
     // ==========================================
-    // ✍️ 5. SMART TEXTAREA
+    // 💡 5. PROMPT SUGGESTIONS (CHIPS)
+    // ==========================================
+    promptChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            let cleanText = chip.innerText.replace(/🚀|📝|🎨|🔍|💻/g, '').trim();
+            userInput.value = cleanText;
+            userInput.dispatchEvent(new Event('input')); // Auto-grow trigger
+            sendMessageToAI(); // Auto-send
+        });
+    });
+
+    // ==========================================
+    // ✍️ 6. SMART TEXTAREA
     // ==========================================
     userInput.addEventListener("input", function() {
         this.style.height = "auto";
@@ -272,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🎙️ 6. LIVE VOICE CHAT & MIC LOGIC
+    // 🎙️ 7. MIC & LIVE VOICE CHAT
     // ==========================================
     const SpeechRecAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecAPI) {
@@ -338,7 +349,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🧠 7. AI ENGINE & THINKING ANIMATION
+    // 🛑 8. STOP GENERATION LOGIC
+    // ==========================================
+    function toggleSendStop(isGenerating) {
+        if(isGenerating) {
+            sendBtn.classList.add("hidden");
+            stopBtn.classList.remove("hidden");
+        } else {
+            sendBtn.classList.remove("hidden");
+            stopBtn.classList.add("hidden");
+        }
+    }
+
+    stopBtn.addEventListener("click", () => {
+        triggerHaptic("heavy");
+        isTyping = false; // Stops Typewriter effect
+        if(abortController) abortController.abort(); // Stops API Call
+        window.speechSynthesis.cancel(); // Stops Voice
+        toggleSendStop(false);
+        aiThinkingIndicator.classList.add("hidden");
+        
+        // Add a 'stopped' message badge
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ai-message`;
+        msgDiv.innerHTML = `<span style="color:#ef4444; font-size:12px; font-weight:bold;">[ Generation Stopped by User ]</span>`;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+    });
+
+    // ==========================================
+    // 🧠 9. AI ENGINE, THINKING & MESSAGE RENDER
     // ==========================================
     async function showThinkingSteps() {
         chatBox.appendChild(aiThinkingIndicator);
@@ -348,16 +388,35 @@ document.addEventListener("DOMContentLoaded", () => {
         steps.forEach(s => s.classList.add("hidden"));
         
         steps[0].classList.remove("hidden"); triggerHaptic("light");
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 600));
+        if(!isTyping) return; // if stopped
         steps[0].classList.add("hidden"); steps[1].classList.remove("hidden"); triggerHaptic("light");
-        await new Promise(r => setTimeout(r, 800));
     }
+
+    // Edit User Message (Global function)
+    window.editUserMessage = function(text) {
+        userInput.value = text;
+        userInput.focus();
+        userInput.dispatchEvent(new Event('input')); // trigger auto-grow
+        triggerHaptic("medium");
+    };
 
     function appendUserMessage(text) {
         welcomeBanner.style.display = "none"; 
+        document.getElementById("prompt-suggestions").style.display = "none"; // Hide chips after first message
+        
         const msgDiv = document.createElement("div");
         msgDiv.className = `message user-message`;
-        msgDiv.innerText = text;
+        const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
+        // 🔊 ADDED USER MESSAGE READER & EDITOR
+        msgDiv.innerHTML = `
+            <div>${text.replace(/\n/g, '<br>')}</div>
+            <div class="user-actions">
+                <button class="action-icon" onclick="speakText('${safeText}')" title="Read Aloud">🔊</button>
+                <button class="action-icon" onclick="editUserMessage('${safeText}')" title="Edit">✏️</button>
+            </div>
+        `;
         chatBox.appendChild(msgDiv);
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }
@@ -372,81 +431,19 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 0;
         
         function typeWriter() {
+            if (!isTyping) return; // STOP button pressed
+            
             if (i < words.length) {
                 msgDiv.innerHTML += words[i] + ' ';
                 i++;
                 chatBox.scrollTo({ top: chatBox.scrollHeight });
                 setTimeout(typeWriter, Math.floor(Math.random() * 20) + 15); 
             } else {
+                toggleSendStop(false);
                 if(!isError) addActionBar(msgDiv, text);
             }
         }
         typeWriter();
     }
 
-    window.copyTextToClipboard = function(text) {
-        navigator.clipboard.writeText(text); triggerHaptic("medium"); alert("📋 Copied to clipboard!");
-    };
-
-    function addActionBar(container, rawText) {
-        const actionBar = document.createElement("div");
-        actionBar.className = "ai-actions";
-        const safeText = rawText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        
-        actionBar.innerHTML = `
-            <button class="action-icon" onclick="copyTextToClipboard('${safeText}')" title="Copy">📋</button>
-            <button class="action-icon" onclick="speakText('${safeText}')" title="Read">🔊</button>
-            <button class="action-icon">👍</button>
-            <button class="action-icon">👎</button>
-            <span class="sources-badge">🔗 Cache Verified</span>
-        `;
-        actionBar.style.opacity = "0";
-        container.appendChild(actionBar);
-        setTimeout(() => actionBar.style.opacity = "1", 100);
-        triggerHaptic("light"); 
-    }
-
-    window.sendMessageToAI = async function() {
-        const text = userInput.value.trim();
-        if (!text) return;
-
-        triggerHaptic("medium");
-        appendUserMessage(text);
-        
-        userInput.value = "";
-        userInput.style.height = "auto"; 
-
-        const deepSearchON = document.getElementById('toggle-search').checked;
-        
-        showThinkingSteps(); 
-
-        try {
-            const response = await fetch(ADMIN_PANEL_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    query: text,
-                    mode: currentAIMode,
-                    web_search: deepSearchON,
-                    check_database_cache: true 
-                })
-            });
-
-            const data = await response.json();
-            if (data.status === "success") {
-                let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
-                appendTypingAI(aiResponse);
-                speak(aiResponse);
-            } else {
-                appendTypingAI("Engine Error: " + data.message, true);
-            }
-        } catch (error) {
-            appendTypingAI("System Error: Network unreachable. Database fallback failed.", true);
-        }
-    };
-
-    async function processLiveVoiceQuery(text) {
-        try {
-            const response = await fetch(ADMIN_PANEL_URL, {
-                method: "POST",
-             
+    window.copyT

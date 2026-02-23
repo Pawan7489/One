@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Project A1 - Master V13.0</title>
+    <title>Project A1 - The Indian Super-AI (V13.0)</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
-    
     <svg style="display:none;"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" /><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" /><feComposite in="SourceGraphic" in2="goo" operator="atop"/></filter></defs></svg>
 
     <div class="main-wrapper">
@@ -17,28 +16,36 @@
             <div class="login-content animate-slide-up">
                 <div class="logo-box aura-glow">A1</div>
                 <h1>Namaste! 🙏</h1>
-                <p class="subtitle">Naya Account Banayein</p>
+                <p class="subtitle">Aapka Apna Secure AI Companion</p>
+                
                 <form id="signup-form" onsubmit="event.preventDefault();">
-                    <div class="input-field"><input type="text" id="reg-name" placeholder="Poora Naam" required></div>
-                    <div class="input-field"><input type="text" id="reg-username" placeholder="Username" required></div>
+                    <div class="input-field"><input type="text" id="reg-name" placeholder="Aapka Poora Naam" required></div>
+                    <div class="input-field"><input type="text" id="reg-username" placeholder="Username Banayein" required></div>
                     <div class="input-row">
                         <input type="password" id="reg-password" placeholder="Password" required>
-                        <input type="password" id="reg-confirm" placeholder="Confirm" required>
+                        <input type="password" id="reg-confirm" placeholder="Confirm Password" required>
                     </div>
                     <div class="input-row">
-                        <input type="date" id="reg-dob" required>
-                        <select id="reg-gender"><option value="male">Male</option><option value="female">Female</option></select>
+                        <input type="date" id="reg-dob" required title="Date of Birth">
+                        <select id="reg-gender">
+                            <option value="male">Male (Purush)</option>
+                            <option value="female">Female (Mahila)</option>
+                        </select>
                     </div>
-                    <button type="button" id="signup-submit-btn" class="btn-primary apple-btn">Create Account</button>
+                    <button type="button" id="signup-submit-btn" class="btn-primary apple-btn">Create Secure Account</button>
                     <button type="button" id="guest-btn" class="btn-secondary apple-btn mt-10">👤 Continue as Guest</button>
                 </form>
+
                 <div class="social-divider"><span>OR SIGN UP WITH</span></div>
                 <div class="social-logins grid-socials">
-                    <button class="social-btn">🌐 Google</button><button class="social-btn">📱 OTP</button>
-                    <button class="social-btn">🐙 GitHub</button><button class="social-btn">📘 FB</button>
-                    <button class="social-btn">📸 Insta</button><button class="social-btn">📞 True</button>
+                    <button type="button" class="social-btn">🌐 Google</button>
+                    <button type="button" class="social-btn">📱 OTP</button>
+                    <button type="button" class="social-btn">🐙 GitHub</button>
+                    <button type="button" class="social-btn">📘 FB</button>
+                    <button type="button" class="social-btn">📸 Insta</button>
+                    <button type="button" class="social-btn">📞 True</button>
                 </div>
-                <p class="footer-link">Pehle se account hai? <a href="#" id="go-to-login">Login Karein</a></p>
+                <p class="footer-link">Account hai? <a href="#" id="go-to-login">Login Karein</a></p>
             </div>
         </div>
 
@@ -50,9 +57,9 @@
                 <form id="login-form" onsubmit="event.preventDefault();">
                     <div class="input-field"><input type="text" id="login-id" placeholder="Username / Email" required></div>
                     <div class="input-field"><input type="password" id="login-pass" placeholder="Password" required></div>
-                    <div class="remember-row">
+                    <div class="remember-row" style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:15px;">
                         <label><input type="checkbox" id="remember-me" checked> Remember Me</label>
-                        <a href="#">Forgot Password?</a>
+                        <a href="#" style="color:var(--saffron);">Forgot Password?</a>
                     </div>
                     <button type="button" id="login-submit-btn" class="btn-primary apple-btn">Secure Login</button>
                 </form>
@@ -61,15 +68,21 @@
         </div>
 
         <div id="chat-screen" class="app-screen hidden full-layout">
+            
             <aside class="sidebar" id="app-sidebar">
                 <button id="new-chat-btn" class="new-chat-btn apple-btn">+ Naya Chat Room</button>
                 <div class="sidebar-scroll-area">
                     <div class="menu-section">
                         <h3>🕒 Recent History</h3>
                         <ul class="chat-history-list" id="chat-history-list">
-                            </ul>
-                        <button id="history-settings-btn" class="history-settings-btn">📂 Chat Room History Setting</button>
+                            <li class="chat-item active" data-id="c1">
+                                <span class="chat-title">📌 Tax Planning 2026</span>
+                                <button class="opt-btn">⋮</button>
+                            </li>
+                        </ul>
+                        <button id="history-settings-btn" class="history-settings-btn">⚙️ Chat History Setting</button>
                     </div>
+
                     <div class="menu-section mt-15">
                         <h3>⚡ AI Super Powers</h3>
                         <ul class="ai-tools-list">
@@ -81,10 +94,18 @@
                             <li data-mode="search">🔍 Deep Search</li>
                         </ul>
                     </div>
+                    
+                    <div class="menu-section mt-15 upcoming-section">
+                        <h3>🚀 Upcoming</h3>
+                        <ul class="upcoming-list">
+                            <li><span class="beta-tag">BETA</span> Voice Call</li>
+                            <li><span class="beta-tag">SOON</span> WhatsApp</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="sidebar-bottom">
-                    <button id="support-btn" class="settings-btn">🆘 Help & Support</button>
-                    <button id="settings-btn" class="settings-btn">⚙️ Settings & AI Control</button>
+                    <button id="support-btn" class="settings-btn apple-btn">🆘 Support</button>
+                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ AI Control</button>
                 </div>
             </aside>
 
@@ -93,8 +114,9 @@
                     <div class="left-header">
                         <button id="menu-toggle" class="icon-btn">☰</button>
                         <div class="mini-hologram">A1</div>
+                        <div class="mode-badge">A1 Core</div>
                     </div>
-                    <div class="right-header">
+                    <div class="right-header" style="display:flex; gap:10px;">
                         <button id="live-voice-mode-btn" class="live-voice-btn">🎙️ Live Chat</button>
                         <button id="profile-btn" class="profile-btn">👤</button>
                     </div>
@@ -102,15 +124,18 @@
 
                 <div class="chat-box" id="chat-box">
                     <div id="welcome-banner" class="welcome-banner">
-                        <div class="welcome-logo">A1</div>
-                        <h2>Welcome Back, Commander!</h2>
+                        <div class="welcome-logo aura-glow">A1</div>
+                        <h2 id="welcome-user-name">Welcome back, Commander!</h2>
+                        <p>Aaj main aapki kya madad kar sakta hoon?</p>
                     </div>
                     <div id="chat-messages"></div>
                 </div>
 
                 <div id="ai-thinking-indicator" class="ai-thinking-box hidden">
                     <div class="spinner"></div>
-                    <div class="thinking-steps"><span class="step">🔍 Processing...</span></div>
+                    <div class="thinking-steps">
+                        <span class="step">🔍 Logic Processing...</span>
+                    </div>
                 </div>
 
                 <div class="advanced-input-container">
@@ -118,8 +143,10 @@
                         <div class="plus-menu-container">
                             <button id="plus-btn" class="icon-btn">+</button>
                             <div id="attachment-menu" class="attachment-menu hidden">
-                                <button class="menu-item">📸 Camera</button><button class="menu-item">📷 Upload</button>
-                                <button class="menu-item">📁 Files</button><button class="menu-item">☁️ Cloud</button>
+                                <button class="menu-item">📸 Camera</button>
+                                <button class="menu-item">📷 Upload</button>
+                                <button class="menu-item">📁 Files</button>
+                                <button class="menu-item">☁️ Cloud</button>
                             </div>
                         </div>
                         <button id="mic-btn" class="icon-btn">🎙️</button>
@@ -132,33 +159,57 @@
                 </div>
             </main>
         </div>
-    </div>
-
-    <div id="profile-modal" class="custom-modal hidden">
+    </div> <div id="profile-modal" class="custom-modal hidden">
         <div class="modal-content animate-slide-up">
-            <h2>👤 Profile Setup</h2>
+            <h2>👤 Profile Dashboard</h2>
             <div class="avatar-upload-box"><div class="avatar-circle">📷</div></div>
-            <div class="input-field"><label>Naam</label><input type="text" id="prof-name" value="Commander"></div>
-            <div class="input-field"><label>Email ID</label><div class="verify-row"><input type="email" value="user@a1.ai"><button class="btn-verify">Verify</button></div></div>
-            <button id="close-profile" class="btn-primary apple-btn mt-10">Update Profile Details</button>
+            <div class="input-field"><label>Aapka Naam</label><input type="text" id="prof-name" value="Commander"></div>
+            <div class="input-row">
+                <div class="input-field w-50"><label>DOB</label><input type="date" value="2000-01-01"></div>
+                <div class="input-field w-50"><label>Gender</label><select><option>Male</option><option>Female</option></select></div>
+            </div>
+            <div class="verify-field"><input type="email" placeholder="Email Verify"><button class="btn-verify">Verify</button></div>
+            <button id="close-profile" class="btn-primary apple-btn mt-10">Update Profile</button>
         </div>
     </div>
 
     <div id="settings-modal" class="custom-modal hidden">
         <div class="modal-content">
-            <h2>⚙️ AI Control</h2>
-            <div class="input-field"><label>Voice Preference (26+)</label><select id="setting-voice"><option>Kid Playful</option><option selected>Adult Standard</option><option>Senior Wise</option></select></div>
-            <div class="input-field"><label>Age Logic</label><select id="setting-logic"><option>5-15</option><option selected>18-25</option><option>50+</option></select></div>
+            <h2>⚙️ AI Control & Logic</h2>
+            <div class="input-field">
+                <label>Voice Preference (26+ Awaazein)</label>
+                <select id="setting-voice">
+                    <option value="kid">Kid (Playful)</option>
+                    <option value="adult" selected>Adult (Standard)</option>
+                    <option value="senior">Senior (Wise)</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label>Age Logic Selector</label>
+                <select id="setting-logic">
+                    <option value="18-25" selected>18-25 saal (Youth)</option>
+                    <option value="50+">50+ saal (Senior)</option>
+                </select>
+            </div>
             <button id="close-settings" class="btn-primary apple-btn mt-10">Save Settings</button>
         </div>
     </div>
 
     <div id="live-voice-overlay" class="custom-modal hidden">
         <div class="live-voice-container">
-            <div class="live-hologram">A1</div>
+            <div class="live-hologram aura-glow">A1</div>
             <h2 id="live-voice-status">Listening...</h2>
             <p id="live-voice-text">(Aapki awaaz yahan dikhegi...)</p>
             <button id="close-live-voice" class="btn-secondary apple-btn" style="color:#ef4444;">End Voice Chat</button>
+        </div>
+    </div>
+
+    <div id="history-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h2>🗂️ History & Trash</h2>
+            <div class="auth-tabs"><button class="auth-tab active">Active</button><button class="auth-tab">Trash (Recover)</button></div>
+            <div style="padding:20px; text-align:center; color:#888;">No items in Trash.</div>
+            <button id="close-history" class="btn-primary apple-btn">Close</button>
         </div>
     </div>
 
@@ -170,7 +221,7 @@
 
     <script src="{{ url_for('static', filename='js/heptic.js') }}"></script>
     <script src="{{ url_for('static', filename='js/animation.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=13.0"></script>
 </body>
-                                                                                                               </html>
-                                                                                                               
+               </html>
+    

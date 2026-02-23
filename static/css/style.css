@@ -1,9 +1,11 @@
-/* PROJECT A1 - MASTER STYLESHEET (V13.0)
-   Connecting all Modular CSS via Imports or Direct Rules
-*/
+/* ====================================================
+   PROJECT A1 - MASTER CSS (V13.0)
+   Combining all Modular CSS via Imports
+==================================================== */
 
-/* 1. Global Reset & Variables */
+/* 1. 🔗 Importing All Modules */
 @import url('signup.css');
+@import url('login.css');
 @import url('userprofile.css');
 @import url('menusidebar.css');
 @import url('chatroom.css');
@@ -12,30 +14,38 @@
 @import url('animation.css');
 @import url('heptic.css');
 
+/* 2. 🚨 THE "BLACK SCREEN" FIX: Display Logic */
 :root {
-    --bg-main: #070b14;
+    --bg-dark: #070b14;
     --saffron: #ff9933;
-    --glass-border: rgba(255, 255, 255, 0.08);
 }
 
-/* 2. 🚨 CRITICAL: The Bulletproof Hidden Class */
+body { background: var(--bg-dark); margin: 0; overflow: hidden; }
+
+/* 🛡️ CRITICAL BUG FIX: Buttons Overlapping Solution */
+.app-screen {
+    width: 100%;
+    height: 100dvh;
+    display: none; /* डिफ़ॉल्ट रूप से सब बंद */
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    flex-direction: column;
+}
+
+/* केवल 'Active' स्क्रीन ही दिखेगी */
+.app-screen:not(.hidden) {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 .hidden { 
     display: none !important; 
-    opacity: 0 !important; 
     pointer-events: none !important; 
 }
 
-/* 3. Main Wrapper Layout */
-.main-wrapper {
-    position: relative; width: 100%; height: 100dvh;
-    overflow: hidden; background: var(--bg-main);
-    display: flex; flex-direction: column;
-}
-
+/* 3. Global Dashboard Layout */
 .full-layout { flex-direction: row !important; }
+.main-wrapper { position: relative; width: 100%; height: 100%; }
 
-/* Responsive Tweaks */
-@media (max-width: 768px) {
-    .sidebar { position: absolute; left: -300px; z-index: 1000; }
-    .sidebar.open { left: 0; }
-}
+.chat-area { flex: 1; display: flex; flex-direction: column; position: relative; }

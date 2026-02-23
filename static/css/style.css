@@ -1,6 +1,6 @@
 /* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (V12.0 MASTER)
-   Universal Holograms, Advanced Actions & Live History
+   PROJECT A1 - THE INDIAN SUPER-AI (V13.0 MASTER)
+   Saturn 3D Holograms, Premium UI & Live Background
 ==================================================== */
 
 :root {
@@ -37,12 +37,12 @@ body {
 .ambient-bg-glow { 
     position: absolute; top: 10%; left: 50%; width: 70vw; height: 70vw; border-radius: 50%; 
     background: radial-gradient(circle, var(--saffron-glow) 0%, transparent 60%); 
-    filter: blur(90px); z-index: 0; opacity: 0.4; pointer-events: none; 
+    filter: blur(90px); z-index: 0; opacity: 0.3; pointer-events: none; 
     animation: driftGlow 15s ease-in-out infinite alternate;
 }
 @keyframes driftGlow {
-    0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.3; }
-    100% { transform: translateX(-40%) translateY(5%) scale(1.1); opacity: 0.6; }
+    0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.2; }
+    100% { transform: translateX(-40%) translateY(5%) scale(1.1); opacity: 0.5; }
 }
 
 /* 🏢 Main Container */
@@ -56,41 +56,62 @@ body {
 .app-screen.hidden { display: none !important; opacity: 0; }
 
 /* ====================================================
-   🌀 UNIVERSAL A1 MASTER HOLOGRAM (2-Ring Animation)
+   🪐 UNIVERSAL SATURN HOLOGRAM (3D Rings matching Image)
 ==================================================== */
-.a1-master-hologram {
-    position: relative; display: flex; justify-content: center; align-items: center; 
-    width: 80px; height: 80px; margin: 0 auto;
+.saturn-hologram-container {
+    display: flex; justify-content: center; align-items: center; width: 100%;
 }
-.a1-master-hologram.mb-20 { margin-bottom: 20px; }
-.a1-master-hologram.small-thinking-holo { width: 40px; height: 40px; margin: 0; }
 
-.holo-core {
+.saturn-hologram {
+    position: relative; 
+    display: flex; justify-content: center; align-items: center; 
+    width: 80px; height: 80px; /* Default size, can be overridden inline */
+    transform-style: preserve-3d;
+    perspective: 1000px; /* Gives the 3D depth */
+}
+
+.core-ai {
     background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark));
     color: #111; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-    font-size: 28px; font-weight: 800; z-index: 3; box-shadow: 0 0 25px var(--saffron-glow);
+    font-size: 28px; font-weight: 800; z-index: 3; 
+    box-shadow: 0 0 25px var(--saffron-glow);
     width: 100%; height: 100%; position: relative;
     animation: pulseCore 2s infinite alternate;
 }
 
-.holo-ring {
-    position: absolute; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    border: 1px solid var(--saffron-gold); z-index: 1;
+.ring-x, .ring-y {
+    position: absolute; 
+    width: 180%; height: 180%; /* Larger than core */
+    border: 2px solid var(--saffron-gold); 
+    border-radius: 50%; box-sizing: border-box;
+    opacity: 0.7;
 }
 
-.holo-ring.inner {
-    width: 140%; height: 140%; opacity: 0.6; border-width: 2px;
-    animation: pulseRing 2.5s cubic-bezier(0.21, 0.53, 0.56, 0.8) infinite;
+.ring-x {
+    /* Angled one way */
+    animation: spinOrbitX 6s linear infinite;
+    border-color: rgba(255, 153, 51, 0.8);
 }
 
-.holo-ring.outer {
-    width: 190%; height: 190%; opacity: 0.3; border-width: 1px; border-style: dashed;
-    animation: spinRing 8s linear infinite;
+.ring-y {
+    /* Angled the other way */
+    animation: spinOrbitY 8s linear infinite;
+    border-width: 1px;
+    border-color: rgba(255, 153, 51, 0.4);
 }
 
-@keyframes pulseCore { 0% { transform: scale(0.95); box-shadow: 0 0 15px var(--saffron-glow); } 100% { transform: scale(1.05); box-shadow: 0 0 35px var(--saffron-gold); } }
-@keyframes pulseRing { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; } }
-@keyframes spinRing { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes pulseCore { 
+    0% { transform: scale(0.95); box-shadow: 0 0 15px var(--saffron-glow); } 
+    100% { transform: scale(1.05); box-shadow: 0 0 35px var(--saffron-gold); } 
+}
+@keyframes spinOrbitX { 
+    0% { transform: rotateX(65deg) rotateY(20deg) rotateZ(0deg); } 
+    100% { transform: rotateX(65deg) rotateY(20deg) rotateZ(360deg); } 
+}
+@keyframes spinOrbitY { 
+    0% { transform: rotateX(65deg) rotateY(-20deg) rotateZ(0deg); } 
+    100% { transform: rotateX(65deg) rotateY(-20deg) rotateZ(360deg); } 
+}
 
 /* ====================================================
    1. AUTH & LOGIN UI
@@ -138,8 +159,8 @@ body {
 .new-chat-btn:hover { background: rgba(255, 153, 51, 0.1); border-style: solid; box-shadow: 0 0 15px rgba(255,153,51,0.2); transform: translateY(-2px); }
 
 .menu-section h3 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; padding-left: 5px; font-weight: 700; letter-spacing: 0.5px;}
-.ai-tools-list, .chat-history-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-.ai-tools-list li { padding: 10px 14px; font-size: 14px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 8px;}
+.ai-tools-list, .chat-history-list, .upcoming-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.ai-tools-list li, .upcoming-list li { padding: 10px 14px; font-size: 14px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 8px;}
 .ai-tools-list li:hover { background: rgba(255,255,255,0.06); color: #fff; transform: translateX(3px);}
 .ai-tools-list li.active { background: linear-gradient(90deg, rgba(255,153,51,0.15) 0%, transparent 100%); color: var(--saffron-gold); border-left: 3px solid var(--saffron-gold); border-radius: 0 10px 10px 0;}
 
@@ -157,12 +178,17 @@ body {
 .menu-action:hover { background: rgba(255,255,255,0.1); color: var(--saffron-gold); }
 .menu-action.text-danger:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
+.upcoming-section { background: rgba(255,255,255,0.02); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border); }
+.upcoming-list li { cursor: default; font-size: 13px; padding: 8px 10px;}
+.beta-tag { background: rgba(255, 153, 51, 0.2); color: var(--saffron-gold); border: 1px solid var(--saffron-gold); font-size: 9px; padding: 2px 6px; border-radius: 6px; font-weight: 800; letter-spacing: 0.5px;}
+
 .sidebar-bottom { margin-top: 15px; border-top: 1px solid var(--glass-border); padding-top: 15px;}
 .settings-btn { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: white; padding: 12px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;}
 .settings-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px);}
 
-   /* ====================================================
-   3. CHAT AREA, MESSAGES & BANNERS
+
+/* ====================================================
+   3. CHAT AREA, MESSAGES & ACTION BARS
 ==================================================== */
 .chat-area { flex: 1; display: flex; flex-direction: column; padding: 15px 20px; position: relative; }
 .chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
@@ -179,7 +205,7 @@ body {
 .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 15px 5px 30px; scrollbar-width: none; }
 .chat-box::-webkit-scrollbar { display: none; }
 
-/* 🚨 Welcome Banner */
+/* Welcome Banner */
 .welcome-banner { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; animation: slideUpFade 0.6s var(--bouncy-ease); }
 .welcome-banner h2 { font-size: 26px; color: white; margin-bottom: 10px; }
 .welcome-banner p { color: var(--text-muted); font-size: 16px; }
@@ -192,12 +218,11 @@ body {
 .ai-message { align-self: flex-start; background: transparent; border: none; color: var(--text-main); max-width: 100%; padding: 0; position: relative; }
 .ai-message::before { content: "A1"; display: inline-flex; justify-content: center; align-items: center; width: 30px; height: 30px; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; border-radius: 50%; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 0 0 12px var(--saffron-glow); }
 
-/* 🛠️ AI Feedback & Action System (New Design) */
+/* 🛠️ AI & User Action Bars (Premium Control) */
 .ai-actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; flex-wrap: wrap;}
 .action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
 .action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 
-/* User Message Actions (Audio/Edit) */
 .user-actions { display: flex; gap: 8px; margin-top: 8px; align-self: flex-end; opacity: 0.7; transition: 0.2s;}
 .user-actions:hover { opacity: 1; }
 .user-action-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 4px; transition: 0.2s; border-radius: 50%;}
@@ -214,26 +239,43 @@ body {
 .suggestion-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600;}
 .suggestion-chip:hover { background: rgba(255,153,51,0.15); color: var(--saffron-gold); border-color: var(--saffron-gold); transform: translateY(-2px);}
 
-/* 🚨 AI Thinking Indicator */
-.ai-thinking-box { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; align-self: flex-start; margin-bottom: 10px; border: 1px solid var(--glass-border); animation: slideUpFade 0.3s forwards;}
+/* AI Thinking Indicator */
+.ai-thinking-box { display: flex; align-items: center; padding: 10px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; align-self: flex-start; margin-bottom: 10px; border: 1px solid var(--glass-border); animation: slideUpFade 0.3s forwards;}
 .ai-thinking-box.hidden { display: none !important; }
 .thinking-steps { font-size: 13px; color: var(--saffron-gold); font-weight: 600; display: flex; align-items: center;}
 .step { transition: opacity 0.3s; }
 .step.hidden { display: none; }
 
-/* 🎛️ Quick Toggles */
+/* Quick Toggles */
 .quick-toggles { display: flex; gap: 10px; padding: 0 5px;}
 .toggle-pill { cursor: pointer; display: flex; align-items: center; }
 .toggle-pill input { display: none; }
 .toggle-pill span { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 5px;}
 .toggle-pill input:checked + span { background: rgba(19, 136, 8, 0.15); border-color: var(--emerald-green); color: var(--emerald-green); box-shadow: 0 0 10px rgba(19,136,8,0.2);}
 
-/* 🚨 SMART TEXTAREA (10,000 words ready) */
+/* 🚨 SMART TEXTAREA (ChatGPT Style - Auto Growing with Scroll) */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
 .input-wrapper:focus-within { border-color: var(--saffron-gold); box-shadow: 0 0 15px rgba(255,153,51,0.15); background: rgba(0,0,0,0.7); }
 
-.input-wrapper textarea { flex: 1; background: transparent; border: none; color: white; font-size: 15px; outline: none; padding: 10px 5px; min-width: 0; resize: none; font-family: inherit; line-height: 1.4; max-height: 200px; overflow-y: auto; scrollbar-width: none; }
-.input-wrapper textarea::-webkit-scrollbar { display: none; }
+.input-wrapper textarea { 
+    flex: 1; 
+    background: transparent; 
+    border: none; 
+    color: white; 
+    font-size: 15px; 
+    outline: none; 
+    padding: 10px 5px; 
+    min-height: 24px;
+    max-height: 250px; /* Limits growth, enables scroll for long text */
+    resize: none; 
+    font-family: inherit; 
+    line-height: 1.5; 
+    overflow-y: auto; /* Adds scroll when needed */
+    scrollbar-width: thin; /* Clean scrollbar for editing */
+    scrollbar-color: var(--saffron-gold) transparent;
+}
+.input-wrapper textarea::-webkit-scrollbar { width: 4px; }
+.input-wrapper textarea::-webkit-scrollbar-thumb { background: var(--saffron-gold); border-radius: 10px; }
 
 .icon-btn { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; margin-bottom: 2px;}
 .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; transform: scale(1.05);}
@@ -253,7 +295,7 @@ body {
 .security-footer .shield { color: #38bdf8; } .security-footer .india { color: #f97316; } .security-footer .text-green { color: var(--emerald-green); }
 
 /* =============================================================
-   5. POP-UP MODALS & LIVE VOICE OVERLAY (Bouncy!)
+   5. POP-UP MODALS & LIVE VOICE OVERLAY
 ============================================================= */
 .custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 1; transition: 0.3s ease; }
 .custom-modal.hidden { opacity: 0; pointer-events: none; }
@@ -264,7 +306,7 @@ body {
 
 .modal-content h2 { font-size: 24px; margin-bottom: 25px; color: var(--saffron-gold); text-align: center; font-weight: 800;}
 
-/* Tabs for Modals (Active vs Trash Chats) */
+/* Tabs for Modals */
 .auth-tabs { display: flex; border-bottom: 1px solid var(--glass-border); gap: 15px; }
 .auth-tab { background: transparent; border: none; color: var(--text-muted); padding: 10px 5px; font-size: 14px; cursor: pointer; position: relative; transition: 0.3s; }
 .auth-tab.active { color: var(--saffron-gold); font-weight: bold; }
@@ -304,5 +346,7 @@ body {
     .app-screen { padding: 0; }
     .sidebar { border-top-left-radius: 24px; border-bottom-left-radius: 24px; }
     .chat-area { padding: 25px 35px; }
-              }
-                             
+             }
+                    
+
+

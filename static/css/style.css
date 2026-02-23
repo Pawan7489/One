@@ -1,15 +1,15 @@
 /* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (V12.0 MASTER)
-   Ultra-Premium Vibe, Bouncy Animations & Deep UI
+   PROJECT A1 - THE INDIAN SUPER-AI (V13.0 MASTER)
+   100% Bug-Free, Premium Vibe & Smooth Animations
 ==================================================== */
 
 :root {
-    /* Deep Indian Navy - Trust, Security, Calmness */
+    /* 🇮🇳 Deep Indian Navy - Trust, Security, Calmness */
     --bg-dark: #070b14; 
     --glass-bg: rgba(15, 23, 42, 0.65);
     --glass-border: rgba(255, 255, 255, 0.08);
     
-    /* Vibrant Saffron & Emerald - The Indian Identity */
+    /* 🇮🇳 Vibrant Saffron & Emerald */
     --saffron-gold: #ff9933; 
     --saffron-dark: #cc7a00;
     --saffron-glow: rgba(255, 153, 51, 0.4);
@@ -33,6 +33,9 @@ body {
     height: 100dvh; overflow: hidden; display: flex; justify-content: center; 
 }
 
+/* 🚨 CRITICAL BUG FIX: The Ultimate Hidden Class */
+.hidden { display: none !important; opacity: 0 !important; pointer-events: none !important; }
+
 /* 🌟 Floating Ambient Background Animation */
 .ambient-bg-glow { 
     position: absolute; top: 10%; left: 50%; width: 70vw; height: 70vw; border-radius: 50%; 
@@ -52,11 +55,10 @@ body {
     display: flex; flex-direction: column; overflow: hidden; 
 }
 
-.app-screen { width: 100%; height: 100%; display: flex; flex-direction: column; padding: 15px 20px; transition: opacity 0.5s ease; }
-.app-screen.hidden { display: none !important; opacity: 0; }
+.app-screen { width: 100%; height: 100%; display: flex; flex-direction: column; padding: 15px 20px; transition: opacity 0.4s var(--apple-ease); }
 
 /* ====================================================
-   1. AUTH & LOGIN UI (Smooth Entrances)
+   1. AUTH & LOGIN UI (Crash-Free Entrances)
 ==================================================== */
 .login-content { margin: auto; width: 100%; max-width: 380px; text-align: center; overflow-y: auto; padding-bottom: 20px; scrollbar-width: none; animation: slideUpFade 0.6s var(--apple-ease) forwards; }
 .login-content::-webkit-scrollbar { display: none; }
@@ -118,7 +120,6 @@ body {
 .chat-options-btn:hover { color: var(--saffron-gold); }
 
 .chat-context-menu { position: absolute; right: 25px; top: 30px; background: rgba(10, 15, 28, 0.98); border: 1px solid var(--glass-border); border-radius: 10px; padding: 5px 0; width: 140px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 50; backdrop-filter: blur(10px); }
-.chat-context-menu.hidden { display: none; }
 .menu-action { display: block; width: 100%; text-align: left; background: transparent; border: none; padding: 8px 15px; color: white; font-size: 12px; cursor: pointer; transition: 0.2s;}
 .menu-action:hover { background: rgba(255,255,255,0.1); color: var(--saffron-gold); }
 .menu-action.text-danger:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
@@ -132,7 +133,7 @@ body {
 .settings-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px);}
 
 /* ====================================================
-   3. CHAT AREA, MESSAGES & BANNERS
+   3. CHAT AREA & HEADER
 ==================================================== */
 .chat-area { flex: 1; display: flex; flex-direction: column; padding: 15px 20px; position: relative; }
 .chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
@@ -151,17 +152,18 @@ body {
 .mini-hologram.speaking .mini-core { background: var(--saffron-gold); color: #111; animation: pulseMini 1.5s infinite; }
 @keyframes pulseMini { 0% { box-shadow: 0 0 0 0 rgba(255,153,51,0.6); } 70% { box-shadow: 0 0 0 12px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
-/* Main Chat Box */
+/* ====================================================
+   4. CHAT MESSAGES & BANNER
+==================================================== */
 .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 15px 5px 30px; scrollbar-width: none; }
 .chat-box::-webkit-scrollbar { display: none; }
 
-/* 🚨 Welcome Banner (New Chat State) */
 .welcome-banner { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; animation: slideUpFade 0.6s var(--bouncy-ease); }
 .welcome-logo { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; font-size: 38px; font-weight: bold; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 40px var(--saffron-glow); margin-bottom: 20px; animation: pulseLogo 3s infinite alternate; }
 .welcome-banner h2 { font-size: 26px; color: white; margin-bottom: 10px; }
 .welcome-banner p { color: var(--text-muted); font-size: 16px; }
 
-/* Messages */
+/* Message Bubbles */
 .message { font-size: 15px; line-height: 1.6; animation: slideUpFade 0.4s var(--apple-ease) forwards; display: flex; flex-direction: column; word-wrap: break-word;}
 @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(20px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 
@@ -169,32 +171,30 @@ body {
 .ai-message { align-self: flex-start; background: transparent; border: none; color: var(--text-main); max-width: 100%; padding: 0; position: relative; }
 .ai-message::before { content: "A1"; display: inline-flex; justify-content: center; align-items: center; width: 30px; height: 30px; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; border-radius: 50%; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 0 0 12px var(--saffron-glow); }
 
-/* 🛠️ AI & User Feedback System */
-.ai-actions { display: flex; gap: 10px; margin-top: 10px; align-items: center; flex-wrap: wrap;}
-/* Added .user-actions for user message reader/editor */
-.user-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end;} 
-.action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
+/* 🛠️ User & AI Actions (Reader, Edit, Copy) */
+.ai-actions, .user-actions { display: flex; gap: 10px; margin-top: 10px; align-items: center; flex-wrap: wrap;}
+.user-actions { justify-content: flex-end; margin-top: 8px; }
+.action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
 .action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+.sources-badge { font-size: 11px; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 12px; color: var(--emerald-green); border: 1px solid rgba(16,185,129,0.3); font-weight: 600;}
 
 /* ====================================================
-   4. ADVANCED INPUT AREA, PROMPTS & THINKING
+   5. INPUT AREA, PROMPTS & AI THINKING
 ==================================================== */
 .advanced-input-container { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
 
-/* 💡 NEW: Prompt Suggestions (ChatGPT Style Chips) */
+/* 💡 Prompt Suggestions Chips */
 .prompt-suggestions { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
 .prompt-suggestions::-webkit-scrollbar { display: none; }
 .prompt-chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.3s var(--bouncy-ease); }
 .prompt-chip:hover { background: rgba(255, 153, 51, 0.1); border-color: var(--saffron-gold); color: var(--saffron-gold); transform: translateY(-3px); box-shadow: 0 4px 12px rgba(255,153,51,0.15);}
 
-/* 🚨 AI Thinking Indicator */
+/* 🧠 AI Thinking Process */
 .ai-thinking-box { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; align-self: flex-start; margin-bottom: 10px; border: 1px solid var(--glass-border); animation: slideUpFade 0.3s forwards;}
-.ai-thinking-box.hidden { display: none !important; }
 .spinner { width: 18px; height: 18px; border: 3px solid rgba(255,153,51,0.3); border-top-color: var(--saffron-gold); border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .thinking-steps { font-size: 13px; color: var(--saffron-gold); font-weight: 600; display: flex; align-items: center;}
 .step { transition: opacity 0.3s; }
-.step.hidden { display: none; }
 
 /* 🎛️ Quick Toggles & Active Badge */
 .quick-toggles { padding: 0 5px;}
@@ -204,14 +204,12 @@ body {
 .toggle-pill input:checked + span { background: rgba(19, 136, 8, 0.15); border-color: var(--emerald-green); color: var(--emerald-green); box-shadow: 0 0 10px rgba(19,136,8,0.2);}
 
 .active-tool-indicator { align-self: flex-start; background: rgba(255, 153, 51, 0.15); border: 1px solid var(--saffron-gold); color: var(--saffron-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: -5px; transition: 0.4s var(--bouncy-ease); transform-origin: left bottom;}
-.active-tool-indicator.hidden { opacity: 0; transform: scale(0.8) translateY(10px); display: none !important;}
 #close-tool-btn { background: transparent; border: none; color: var(--saffron-gold); cursor: pointer; font-size: 14px; margin-left: 5px; font-weight: bold;}
 
-/* 📎 Attachment Preview Area */
+/* 📎 Attachment Preview */
 .attachment-preview { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px; margin-bottom: -5px; display: flex; gap: 10px; overflow-x: auto;}
-.attachment-preview.hidden { display: none !important; }
 
-/* 🚨 SMART TEXTAREA (Gemini Style) */
+/* 🚨 SMART TEXTAREA */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
 .input-wrapper:focus-within { border-color: var(--saffron-gold); box-shadow: 0 0 15px rgba(255,153,51,0.15); background: rgba(0,0,0,0.7); }
 
@@ -221,13 +219,11 @@ body {
 .icon-btn { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; margin-bottom: 2px;}
 .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; transform: scale(1.05);}
 .plus-icon { color: var(--text-main); }
+.mic-icon.active { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulseRed 1.5s infinite; }
+@keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
-/* 🛑 Send & Stop Button Styles */
+/* 🛑 SEND & STOP BUTTONS */
 #action-btn-container { position: relative; width: 40px; height: 40px; margin-bottom: 2px; }
 .send-arrow { position: absolute; top: 0; left: 0; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; width: 100%; height: 100%; margin: 0;}
 .send-arrow:hover { box-shadow: 0 0 15px var(--saffron-glow); }
-.stop-square { position: absolute; top: 0; left: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 100%; height: 100%; margin: 0; transition: 0.3s var(--bouncy-ease);}
-.stop-square:hover { background: #ef4444; color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);}
-.stop-square.hidden { opacity: 0; transform: scale(0.5); pointer-events: none; }
-
-.mic-icon.active { background: rgba(239,
+.stop-square { position: absolute; top: 0; left: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 100%; height: 100%; margin: 0; transition: 0

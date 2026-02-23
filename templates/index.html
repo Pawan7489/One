@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project A1 - The Indian Super-AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=15.0">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -50,8 +50,6 @@
                     <button class="social-btn apple-btn">📱 Mobile OTP</button>
                     <button class="social-btn apple-btn">🐙 GitHub</button>
                     <button class="social-btn apple-btn">📘 Facebook</button>
-                    <button class="social-btn apple-btn">📸 Instagram</button>
-                    <button class="social-btn apple-btn">📞 Truecaller</button>
                 </div>
                 
                 <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
@@ -92,8 +90,6 @@
                     <button class="social-btn apple-btn">📱 Mobile OTP</button>
                     <button class="social-btn apple-btn">🐙 GitHub</button>
                     <button class="social-btn apple-btn">📘 Facebook</button>
-                    <button class="social-btn apple-btn">📸 Instagram</button>
-                    <button class="social-btn apple-btn">📞 Truecaller</button>
                 </div>
 
                 <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
@@ -116,9 +112,6 @@
                                 <button class="chat-options-btn">⋮</button>
                                 <div class="chat-context-menu hidden">
                                     <button class="menu-action">📌 Unpin Chat</button>
-                                    <button class="menu-action">🔗 Share Chat</button>
-                                    <button class="menu-action">⬆️ Move Up</button>
-                                    <button class="menu-action">⬇️ Move Down</button>
                                     <button class="menu-action text-danger">🗑️ Delete</button>
                                 </div>
                             </li>
@@ -131,14 +124,14 @@
                     <div class="menu-section mt-15">
                         <h3>⚡ AI Super Powers</h3>
                         <ul class="ai-tools-list" id="ai-tools-list">
-                            <li class="active" data-mode="chat">💬 AI Chat (A1 Core)</li>
-                            <li data-mode="image">🎨 Image Generation</li>
-                            <li data-mode="video">🎬 Video Generation</li>
-                            <li data-mode="coding">💻 Coding & Debugging</li>
-                            <li data-mode="web">🌐 Web Design & Generate</li>
-                            <li data-mode="photo">🖼️ Photo Design</li>
-                            <li data-mode="canvas">🖌️ Canvas Style Design</li>
-                            <li data-mode="search">🔍 Deep Web Search</li>
+                            <li class="active" data-mode="chat" data-name="AI Chat (A1 Core)" data-icon="💬">💬 AI Chat (A1 Core)</li>
+                            <li data-mode="image" data-name="Image Generation Mode" data-icon="🎨">🎨 Image Generation</li>
+                            <li data-mode="video" data-name="Video Generation Mode" data-icon="🎬">🎬 Video Generation</li>
+                            <li data-mode="coding" data-name="Coding & Debugging Mode" data-icon="💻">💻 Coding & Debugging</li>
+                            <li data-mode="web" data-name="Web Design Mode" data-icon="🌐">🌐 Web Design & Generate</li>
+                            <li data-mode="photo" data-name="Photo Design Mode" data-icon="🖼️">🖼️ Photo Design</li>
+                            <li data-mode="canvas" data-name="Canvas Style Mode" data-icon="🖌️">🖌️ Canvas Style Design</li>
+                            <li data-mode="search" data-name="Deep Web Search" data-icon="🔍">🔍 Deep Web Search</li>
                         </ul>
                     </div>
 
@@ -171,10 +164,16 @@
                     </div>
                     <div class="right-header" style="display: flex; gap: 10px; align-items: center;">
                         <button id="live-voice-mode-btn" class="live-voice-btn apple-btn" title="Start Live Voice Chat">🎙️ Live Chat</button>
-                        <button id="profile-btn" class="profile-btn apple-btn" title="Your Profile">👤</button>
+                        
+                        <button id="profile-btn" class="profile-btn apple-btn" title="Your Profile" style="background-image: none; background-size: cover; background-position: center;">
+                            <span id="header-profile-icon" style="font-size: 20px; color: #38bdf8;">👤</span>
+                        </button>
                     </div>
                             </header>
-                    <div class="chat-box" id="chat-box">
+
+
+
+                      <div class="chat-box" id="chat-box">
                     <div id="welcome-banner" class="welcome-banner">
                         <div class="saturn-hologram-container" style="padding: 30px 0; margin-bottom: 10px;">
                             <div class="saturn-hologram" style="width: 90px; height: 90px;">
@@ -237,12 +236,10 @@
                         <label class="toggle-pill"><input type="checkbox" id="toggle-reasoning"> <span>🧠 Deep Think</span></label>
                     </div>
 
-                    <div id="active-tool-indicator" class="active-tool-indicator hidden">
+                    <div id="active-tool-indicator" class="active-tool-indicator hidden" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--saffron-gold); background: rgba(255,153,51,0.1); padding: 5px 12px; border-radius: 12px; width: fit-content; border: 1px solid var(--saffron-gold);">
                         <span id="tool-icon">🎨</span> <span id="tool-text">Image Generation Mode</span>
-                        <button id="close-tool-btn">✖</button>
+                        <button id="close-tool-btn" style="background: none; border: none; color: white; cursor: pointer; font-size: 14px; margin-left: 5px;">✖</button>
                     </div>
-
-                    <div id="attachment-preview-area" class="attachment-preview-area hidden"></div>
 
                     <div class="input-wrapper">
                         <div class="action-menu-wrapper">
@@ -417,7 +414,8 @@
         </div>
     </div>
 
-     <script src="{{ url_for('static', filename='js/script.js') }}?v=14.0"></script>
-  </body>
+<script src="{{ url_for('static', filename='js/script.js') }}?v=15.0"></script>
+</body>
 </html>
-                            
+
+                

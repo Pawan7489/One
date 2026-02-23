@@ -1,0 +1,7 @@
+/* Signup.css ka code copy karein bas remember-box add karein */
+.remember-box {
+    text-align: left; font-size: 12px; color: #888;
+    margin: 10px 0; cursor: pointer;
+}
+/* Baaki design signup.css jaisa hi stylish rahega */
+@import url('signup.css');

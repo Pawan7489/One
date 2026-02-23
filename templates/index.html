@@ -326,11 +326,61 @@
         </div>
     </div>
 
-    <div id="support-modal" class="custom-modal hidden">
-        <div class="modal-content">
-            <h2>🆘 Sahayata (Support)</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px; text-align: center;">Agar aapko AI use karne mein koi samasya aa rahi hai, toh hume batayein.</p>
-            <div class="input-field">
-                <label>Aapki Samasya (Issue)</label>
-                <select>
-                    <option>Voice ka
+<div id="support-modal" class="custom-modal hidden">
+    <div class="modal-content">
+        <h2>🆘 Sahayata (Support)</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px; text-align: center;">Agar aapko AI use karne mein koi samasya aa rahi hai, toh hume batayein.</p>
+        <div class="input-field">
+            <label>Aapki Samasya (Issue)</label>
+            <select>
+                <option>Voice kaam nahi kar rahi</option>
+                <option>AI galat jawab de raha hai</option>
+                <option>Chat history delete ho gayi</option>
+                <option>Other / Anya</option>
+            </select>
+        </div>
+        <div class="input-field"><textarea rows="4" style="width: 100%; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white;" placeholder="Apni samasya yahan likhein..."></textarea></div>
+        <button id="close-support" class="btn-primary apple-btn mt-10">Submit Ticket</button>
+    </div>
+</div>
+
+<div id="history-modal" class="custom-modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+        <h2 style="margin-bottom: 15px;">📂 Chat History Settings</h2>
+
+        <div class="auth-tabs" style="margin-bottom: 15px;">
+            <button id="tab-active-chats" class="auth-tab active">Active Chats</button>
+            <button id="tab-trash-chats" class="auth-tab">Trash (Deleted)</button>
+        </div>
+
+        <div class="history-list-container" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
+            <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 5px;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Legal Advice AI</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">Deleted: 2 days ago</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="action-icon apple-btn" title="Recover Chat" style="padding: 6px; font-size: 14px;">♻️</button>
+                    <button class="action-icon apple-btn" title="Permanent Delete" style="padding: 6px; font-size: 14px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">🗑️</button>
+                </div>
+            </div>
+        </div>
+
+        <button id="close-history" class="btn-primary apple-btn">Done</button>
+    </div>
+</div>
+
+<div id="live-voice-overlay" class="custom-modal hidden" style="backdrop-filter: blur(20px);">
+    <div class="live-voice-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+        <div class="live-hologram" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); box-shadow: 0 0 50px var(--saffron-glow); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: bold; color: #111; margin-bottom: 30px; animation: pulseVoice 1.5s infinite alternate;">AI</div>
+        <h2 id="live-voice-status" style="color: var(--saffron-gold); margin-bottom: 10px;">Listening...</h2>
+        <p id="live-voice-text" style="color: white; font-size: 18px; max-width: 80%; line-height: 1.5; min-height: 60px;">(Bolna shuru karein...)</p>
+        <button id="close-live-voice" class="btn-secondary apple-btn mt-15" style="width: auto; padding: 12px 30px; border-radius: 30px; border-color: #ef4444; color: #ef4444;">End Voice Chat</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}?v=11.0"></script>
+</body>
+</html>
+
+

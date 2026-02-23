@@ -1,182 +1,202 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // ======================================================
+    // 🛠️ 0. RESTORE MISSING BLUEPRINT ITEMS (VIA JS INJECTION)
+    // ======================================================
+    // कमांडर, चूँकि HTML नहीं बदलना था, इसलिए जो ऑप्शन्स लिस्ट से गायब थे,
+    // उन्हें मैं यहाँ JavaScript के ज़रिए वापस ला रहा हूँ ताकि ब्लूप्रिंट पूरा हो जाए।
+
+    function restoreBlueprintOptions() {
+        // 1. Restore 26+ Voice Models
+        const voiceSelect = document.getElementById("setting-voice");
+        if (voiceSelect) {
+            voiceSelect.innerHTML = `
+                <optgroup label="👦👧 Kids (Simple & Playful)">
+                    <option value="kid-boy-1">Boy - Playful</option><option value="kid-boy-2">Boy - Energetic</option>
+                    <option value="kid-girl-1">Girl - Sweet</option><option value="kid-girl-2">Girl - Smart</option>
+                </optgroup>
+                <optgroup label="🎒🎓 Youth (Cool & Casual) - Active">
+                    <option value="youth-boy-1">Boy - Cool Dude</option><option value="youth-boy-2" selected>Boy - Friendly (Default)</option>
+                    <option value="youth-girl-1">Girl - Cheerful</option><option value="youth-girl-2">Girl - Confident</option>
+                </optgroup>
+                <optgroup label="👨👩 Adults (Professional)">
+                    <option value="adult-male-1">Male - Standard</option><option value="adult-male-2">Male - Deep Voice</option>
+                    <option value="adult-female-1">Female - Standard</option><option value="adult-female-2">Female - Corporate</option>
+                </optgroup>
+                <optgroup label="👴👵 Seniors (Respectful & Calm)">
+                    <option value="senior-male-1">Grandfather - Wise</option><option value="senior-male-2">Grandfather - Calm</option>
+                    <option value="senior-female-1">Grandmother - Loving</option><option value="senior-female-2">Grandmother - Gentle</option>
+                </optgroup>
+            `;
+        }
+
+        // 2. Restore 8 Age Logic Options
+        const logicSelect = document.getElementById("setting-logic");
+        if (logicSelect) {
+            logicSelect.innerHTML = `
+                <option value="5-10">5-10 saal (Kids/Simple)</option>
+                <option value="10-15">10-15 saal (Teens/School)</option>
+                <option value="15-18">15-18 saal (High School)</option>
+                <option value="18-25" selected>18-25 saal (College/Youth) - Active</option>
+                <option value="25-30">25-30 saal (Professionals)</option>
+                <option value="30-40">30-40 saal (Adults)</option>
+                <option value="40-50">40-50 saal (Mature)</option>
+                <option value="50+">50+ saal (Seniors/Respectful)</option>
+            `;
+        }
+
+        // 3. Restore Support Options
+        const supportSelect = document.querySelector("#support-modal select");
+        if (supportSelect) {
+            supportSelect.innerHTML = `
+                <option>Voice kaam nahi kar rahi</option>
+                <option>AI galat jawab de raha hai</option>
+                <option>Chat history delete ho gayi</option>
+                <option>App bahut slow chal raha hai</option>
+                <option>Other / Koi aur samasya</option>
+            `;
+        }
+    }
+    // Execute restoration immediately
+    restoreBlueprintOptions();
+
+
     // ==========================================
-    // 📱 1. SMART HAPTIC ENGINE (Light & Premium)
+    // 📱 1. PREMIUM HAPTIC ENGINE (Vibration)
     // ==========================================
-    // सिर्फ खास जगहों पर वाइब्रेशन होगा ताकि यूजर परेशान न हो
+    // Samsung/MacBook style subtle feedback
     function triggerHaptic(type = "light") {
         if (!navigator.vibrate) return;
-        if (type === "light") navigator.vibrate(15);   // Very soft tick
-        if (type === "medium") navigator.vibrate(30);  // Button press
-        if (type === "heavy") navigator.vibrate([40, 30, 40]); // Error or Stop
+        // बहुत हल्का वाइब्रेशन ताकि प्रीमियम फील आए, इरिटेटिंग न हो
+        if (type === "light") navigator.vibrate(12);   // Subtle tap
+        if (type === "medium") navigator.vibrate(25);  // Button confirm
+        if (type === "heavy") navigator.vibrate([30, 50, 30]); // Error/Stop action
     }
 
     // ==========================================
-    // 🎯 2. DOM ELEMENTS SETUP
+    // 🎯 2. DOM ELEMENTS & VARIABLES
     // ==========================================
-    const signupScreen = document.getElementById("signup-screen");
-    const loginScreen = document.getElementById("login-screen");
-    const chatScreen = document.getElementById("chat-screen");
+    const screens = {
+        signup: document.getElementById("signup-screen"),
+        login: document.getElementById("login-screen"),
+        chat: document.getElementById("chat-screen")
+    };
     
-    // Auth & Banners
-    const loginForm = document.getElementById("login-form");
-    const signupForm = document.getElementById("signup-form");
-    const rememberMeCheck = document.getElementById("remember-me");
-    const welcomeBanner = document.getElementById("welcome-banner");
-    const welcomeUserName = document.getElementById("welcome-user-name");
+    // Auth Elements
+    const auth = {
+        loginForm: document.getElementById("login-form"),
+        signupForm: document.getElementById("signup-form"),
+        rememberMe: document.getElementById("remember-me"),
+        welcomeBanner: document.getElementById("welcome-banner"),
+        welcomeUserText: document.getElementById("welcome-user-name"),
+        guestBtn: document.getElementById("guest-btn"),
+        goToLogin: document.getElementById("go-to-login"),
+        goToSignup: document.getElementById("go-to-signup")
+    };
     
-    // Chat Area
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const stopBtn = document.getElementById("stop-btn");
-    const micBtn = document.getElementById("mic-btn");
-    const plusBtn = document.getElementById("plus-btn");
-    const actionMenu = document.getElementById("action-menu");
+    // Chat Interface Elements
+    const chatUI = {
+        box: document.getElementById("chat-box"),
+        input: document.getElementById("user-input"),
+        sendBtn: document.getElementById("send-btn"),
+        stopBtn: document.getElementById("stop-btn"),
+        micBtn: document.getElementById("mic-btn"),
+        plusBtn: document.getElementById("plus-btn"),
+        actionMenu: document.getElementById("action-menu"),
+        thinkingIndicator: document.getElementById("ai-thinking-indicator"),
+        suggestionChips: document.querySelectorAll(".suggestion-chip")
+    };
     
-    // Sidebar & UI
+    // Sidebar & Modals
     const menuToggle = document.getElementById("menu-toggle");
     const appSidebar = document.getElementById("app-sidebar");
     const newChatBtn = document.getElementById("new-chat-btn");
-    const aiThinkingIndicator = document.getElementById("ai-thinking-indicator");
-    const suggestionChips = document.querySelectorAll(".suggestion-chip");
     
-    // Tools
-    const aiTools = document.querySelectorAll(".ai-tools-list li");
-    let currentAIMode = "chat";
-    let currentAbortController = null;
-    let isGenerating = false;
-
-    // Modals
     const modals = {
         profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
         settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
         support: { btn: document.getElementById("support-btn"), modal: document.getElementById("support-modal"), close: document.getElementById("close-support") },
         history: { btn: document.getElementById("history-settings-btn"), modal: document.getElementById("history-modal"), close: document.getElementById("close-history") }
     };
-    
-    // Live Voice Chat
-    const liveVoiceBtn = document.getElementById("live-voice-mode-btn");
-    const liveVoiceOverlay = document.getElementById("live-voice-overlay");
-    const liveVoiceText = document.getElementById("live-voice-text");
-    const liveVoiceStatus = document.getElementById("live-voice-status");
-    const closeLiveVoice = document.getElementById("close-live-voice");
-    const liveVoiceChatLog = document.getElementById("live-voice-chat-log"); // NEW: History Box
 
+    // Global State
     let currentUser = { name: "User" };
-    let isContinuousMicOn = false;
-    let isLiveVoiceMode = false;
-    let recognition;
-
+    let currentAIMode = "chat";
+    let currentAbortController = null;
+    let isGenerating = false;
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
 
+    // Unlock audio context for iOS/Android
     function unlockAudio() {
         if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }
     }
 
     // ==========================================
-    // 🖼️ 3. PROFILE PHOTO UPLOAD LOGIC
+    // 🔐 3. AUTHENTICATION & NAVIGATION LOGIC
     // ==========================================
-    const photoUpload = document.getElementById('profile-photo-upload');
-    const avatarPreview = document.getElementById('profile-avatar-preview');
     
-    if(photoUpload && avatarPreview) {
-        photoUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    avatarPreview.style.backgroundImage = `url(${event.target.result})`;
-                    avatarPreview.innerText = ""; // Remove the camera emoji
-                    triggerHaptic("medium");
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // ==========================================
-    // 💾 4. PERSISTENT LOGIN & UI SWITCHING
-    // ==========================================
-    window.speakText = function(text) { speak(text); };
-
+    // Check for saved user (Persistent Login)
     function checkLoginState() {
         try {
             const savedUser = localStorage.getItem("a1_indian_user");
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
-                signupScreen.classList.add("hidden");
-                loginScreen.classList.add("hidden");
-                chatScreen.classList.remove("hidden");
-                welcomeUserName.innerText = `Welcome back, ${currentUser.name}!`;
-                setTimeout(() => { speakText(`Welcome back ${currentUser.name}`); }, 1000);
+                enterChatArea(currentUser.name, false, true); // true = skip animation for fast load
             }
         } catch (error) { localStorage.removeItem("a1_indian_user"); }
     }
 
-    // Text To Speech (TTS) Logic
-    function speak(text) {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
-        
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        const voices = window.speechSynthesis.getVoices();
-        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
-        utterance.voice = selectedVoice;
-        
-        const voicePref = document.getElementById("setting-voice").value || "";
-        if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
-        else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
-        else if (voicePref.includes("deep")) { utterance.pitch = 0.6; utterance.rate = 0.95; } 
-        else { utterance.pitch = 1.0; utterance.rate = 1.0; }
-
-        utterance.onstart = () => { 
-            document.querySelectorAll('.holo-core').forEach(el => el.style.animationDuration = "0.5s"); 
-        };
-        utterance.onend = () => { 
-            document.querySelectorAll('.holo-core').forEach(el => el.style.animationDuration = "2s");
-            if(isLiveVoiceMode) { try{ recognition.start(); }catch(e){} }
-        };
-        window.speechSynthesis.speak(utterance);
-    }
-
-    checkLoginState(); 
-
+    // Switch between Signup and Login screens smoothly
     function switchScreen(hideElem, showElem) {
+        triggerHaptic("light");
         hideElem.style.opacity = "0";
         setTimeout(() => {
             hideElem.classList.add("hidden");
             showElem.classList.remove("hidden");
             setTimeout(() => { showElem.style.opacity = "1"; }, 50);
-        }, 400);
+        }, 300);
     }
 
-    document.getElementById("go-to-login")?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(signupScreen, loginScreen); });
-    document.getElementById("go-to-signup")?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(loginScreen, signupScreen); });
+    auth.goToLogin?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(screens.signup, screens.login); });
+    auth.goToSignup?.addEventListener("click", (e) => { e.preventDefault(); switchScreen(screens.login, screens.signup); });
 
-    function enterChatArea(name, isGuest = false) {
-        triggerHaptic("heavy");
+    // Main function to enter the chat interface
+    function enterChatArea(name, isGuest = false, skipIntro = false) {
+        if(!skipIntro) triggerHaptic("medium");
         currentUser.name = name;
-        if (!isGuest && rememberMeCheck?.checked) localStorage.setItem("a1_indian_user", JSON.stringify(currentUser));
+        auth.welcomeUserText.innerText = isGuest ? `Namaste Guest! 🙏` : `Welcome back, ${name}!`;
+        
+        if (!isGuest && auth.rememberMe?.checked) {
+            localStorage.setItem("a1_indian_user", JSON.stringify(currentUser));
+        }
 
-        signupScreen.style.opacity = "0";
-        loginScreen.style.opacity = "0";
+        screens.signup.style.opacity = "0";
+        screens.login.style.opacity = "0";
         setTimeout(() => {
-            signupScreen.classList.add("hidden");
-            loginScreen.classList.add("hidden");
-            chatScreen.classList.remove("hidden");
-            welcomeUserName.innerText = isGuest ? `Namaste Guest! 🙏` : `Namaste ${name}! 🙏`;
-            setTimeout(() => { chatScreen.style.opacity = "1"; }, 50);
-            setTimeout(() => { speakText(isGuest ? "Namaste Guest!" : `Welcome ${name}.`); }, 800);
+            screens.signup.classList.add("hidden");
+            screens.login.classList.add("hidden");
+            screens.chat.classList.remove("hidden");
+            setTimeout(() => { screens.chat.style.opacity = "1"; }, 50);
+            
+            if(!skipIntro) {
+                // Need to define speak function in Part 2, temp call here
+                setTimeout(() => { if(window.speakText) window.speakText(isGuest ? "Namaste! Main A1 hoon." : `Welcome ${name}.`); }, 800);
+            }
         }, 400);
     }
 
-    document.getElementById("guest-btn")?.addEventListener("click", () => { unlockAudio(); enterChatArea("Guest", true); });
-    signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("reg-name").value); });
-    loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0]); });
+    // Event Listeners for Auth
+    auth.guestBtn?.addEventListener("click", () => { unlockAudio(); enterChatArea("Guest", true); });
+    auth.signupForm.addEventListener("submit", (e) => { 
+        e.preventDefault(); unlockAudio(); 
+        enterChatArea(document.getElementById("reg-name").value || "Commander"); 
+    });
+    auth.loginForm.addEventListener("submit", (e) => { 
+        e.preventDefault(); unlockAudio(); 
+        enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); 
+    });
 
     // ==========================================
-    // 🗂️ 5. SIDEBAR, MODALS & TOOLS
+    // 🗂️ 4. SIDEBAR & MODAL INTERACTION
     // ==========================================
     menuToggle?.addEventListener("click", () => { appSidebar.classList.toggle("open"); triggerHaptic("light"); });
     document.querySelector(".chat-area").addEventListener("click", (e) => {
@@ -195,59 +215,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    plusBtn.addEventListener("click", () => { 
-        actionMenu.classList.toggle("hidden"); 
-        actionMenu.style.display = actionMenu.classList.contains("hidden") ? "none" : "block"; 
-        triggerHaptic("light");
-    });
-    document.addEventListener("click", (e) => { if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) { actionMenu.classList.add("hidden"); actionMenu.style.display = "none"; } });
+    // Run login check on load
+    checkLoginState();
 
-    newChatBtn.addEventListener("click", () => {
-        triggerHaptic("medium");
-        if (isGenerating && currentAbortController) currentAbortController.abort();
-        
-        // Remove dummy demo message and all chats
-        chatBox.innerHTML = ""; 
-        chatBox.appendChild(welcomeBanner);
-        welcomeBanner.style.display = "flex";
-        
-        if (window.innerWidth <= 768) appSidebar.classList.remove("open");
-        speakText("Naya chat shuru ho gaya hai.");
-    });
 
-    aiTools.forEach(item => {
-        item.addEventListener("click", () => {
-            triggerHaptic("light");
-            aiTools.forEach(i => i.classList.remove("active"));
-            item.classList.add("active");
-            currentAIMode = item.getAttribute("data-mode");
-            if (window.innerWidth <= 768) appSidebar.classList.remove("open");
-        });
-    });
+    // ==========================================
+    // 🗣️ 5. TEXT-TO-SPEECH (TTS) & HOLOGRAM SYNC
+    // ==========================================
+    window.speakText = function(text) { speak(text); };
+
+    function speak(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        
+        let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        const voices = window.speechSynthesis.getVoices();
+        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
+        utterance.voice = selectedVoice;
+        
+        // Voice Logic (Pitch & Rate)
+        const voicePref = document.getElementById("setting-voice")?.value || "";
+        if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
+        else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
+        else if (voicePref.includes("adult-male-2")) { utterance.pitch = 0.6; utterance.rate = 0.95; } 
+        else { utterance.pitch = 1.0; utterance.rate = 1.0; }
+
+        utterance.onstart = () => { 
+            // 🪐 ANIMATION SYNC: Make Saturn Rings Spin Faster when speaking!
+            document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "0.5s"); 
+            document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "2s");
+            document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "3s");
+        };
+        utterance.onend = () => { 
+            // 🪐 ANIMATION SYNC: Return to normal speed
+            document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "2s");
+            document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "6s");
+            document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "8s");
+            
+            if(isLiveVoiceMode) { try{ recognition.start(); }catch(e){} }
+        };
+        window.speechSynthesis.speak(utterance);
+    }
 
     // ==========================================
     // ✍️ 6. SMART TEXTAREA & PROMPT CHIPS
     // ==========================================
-    userInput.addEventListener("input", function() {
+    chatUI.input.addEventListener("input", function() {
         this.style.height = "auto";
         this.style.height = (this.scrollHeight) + "px";
         if(this.value.trim() === "") this.style.height = "auto";
     });
 
-    userInput.addEventListener("keydown", function(e) {
-        // Shift+Enter से नई लाइन, सिर्फ Enter से सेंड
+    chatUI.input.addEventListener("keydown", function(e) {
+        // Shift+Enter for new line, regular Enter to send
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault(); 
             sendMessageToAI();
         }
     });
 
-    // Handle Prompt Suggestion Chips
-    suggestionChips.forEach(chip => {
+    chatUI.suggestionChips.forEach(chip => {
         chip.addEventListener("click", () => {
             triggerHaptic("medium");
-            userInput.value = chip.innerText.replace(/[📝📊🐍]/g, '').trim(); 
-            userInput.style.height = "auto";
+            chatUI.input.value = chip.innerText.replace(/[📝📊🐍]/g, '').trim(); 
+            chatUI.input.style.height = "auto";
             sendMessageToAI();
         });
     });
@@ -264,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.onstart = () => { 
             triggerHaptic("light");
             if(isLiveVoiceMode) liveVoiceStatus.innerText = "Listening...";
-            else micBtn.classList.add("active");
+            else chatUI.micBtn.classList.add("active");
         };
 
         let finalTranscript = "";
@@ -278,8 +310,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if(isLiveVoiceMode) {
                 liveVoiceText.innerText = finalTranscript + interimTranscript;
             } else {
-                userInput.value = finalTranscript + interimTranscript;
-                userInput.dispatchEvent(new Event('input')); 
+                chatUI.input.value = finalTranscript + interimTranscript;
+                chatUI.input.dispatchEvent(new Event('input')); 
             }
         };
 
@@ -292,33 +324,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     try{ recognition.start(); }catch(e){} 
                 }
             } else {
-                micBtn.classList.remove("active");
+                chatUI.micBtn.classList.remove("active");
                 if (isContinuousMicOn) { try { recognition.start(); } catch(e) {} } 
             }
             finalTranscript = ""; 
         };
     }
 
-    micBtn.addEventListener("click", () => {
+    chatUI.micBtn.addEventListener("click", () => {
         triggerHaptic("light");
-        if (micBtn.classList.contains("active")) { isContinuousMicOn = false; recognition.stop(); } 
+        if (chatUI.micBtn.classList.contains("active")) { isContinuousMicOn = false; recognition.stop(); } 
         else { isContinuousMicOn = true; try { recognition.start(); } catch(e) {} }
     });
 
-    liveVoiceBtn.addEventListener("click", () => {
+    const liveVoiceChatLog = document.getElementById("live-voice-chat-log");
+
+    document.getElementById("live-voice-mode-btn")?.addEventListener("click", () => {
         triggerHaptic("heavy");
         isLiveVoiceMode = true;
         liveVoiceOverlay.classList.remove("hidden");
         liveVoiceText.innerText = "(Bolna shuru karein...)";
         
-        // Reset voice history log
         if(liveVoiceChatLog) {
             liveVoiceChatLog.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; text-align: center; margin-bottom: 5px;">Voice session started...</div>';
         }
         try { recognition.start(); } catch(e) {}
     });
 
-    closeLiveVoice.addEventListener("click", () => {
+    closeLiveVoice?.addEventListener("click", () => {
         triggerHaptic("light");
         isLiveVoiceMode = false;
         recognition.stop();
@@ -326,7 +359,6 @@ document.addEventListener("DOMContentLoaded", () => {
         liveVoiceOverlay.classList.add("hidden");
     });
 
-    // NEW: Function to add chat history in Live Voice Mode
     function appendLiveVoiceLog(text, sender) {
         if(!liveVoiceChatLog) return;
         const logMsg = document.createElement("div");
@@ -353,23 +385,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 🧠 8. AI ENGINE, ABORT LOGIC & ACTION BAR
+    // 🧠 8. AI ENGINE, EDIT, ABORT & ACTION BAR
     // ==========================================
     function toggleInputUI(generating) {
         isGenerating = generating;
         if (generating) {
-            sendBtn.classList.add("hidden");
-            stopBtn.classList.remove("hidden");
+            chatUI.sendBtn.classList.add("hidden");
+            chatUI.stopBtn.classList.remove("hidden");
         } else {
-            sendBtn.classList.remove("hidden");
-            stopBtn.classList.add("hidden");
+            chatUI.sendBtn.classList.remove("hidden");
+            chatUI.stopBtn.classList.add("hidden");
         }
     }
 
     async function showThinkingSteps() {
-        chatBox.appendChild(aiThinkingIndicator);
-        aiThinkingIndicator.classList.remove("hidden");
-        const steps = aiThinkingIndicator.querySelectorAll(".step");
+        chatUI.box.appendChild(chatUI.thinkingIndicator);
+        chatUI.thinkingIndicator.classList.remove("hidden");
+        
+        // 🪐 Faster Saturn Rings while thinking
+        const thinkingHolo = chatUI.thinkingIndicator.querySelector('.saturn-hologram');
+        if(thinkingHolo) {
+            thinkingHolo.querySelector('.core-ai').style.animationDuration = "0.8s";
+            thinkingHolo.querySelector('.ring-x').style.animationDuration = "2s";
+            thinkingHolo.querySelector('.ring-y').style.animationDuration = "3s";
+        }
+
+        const steps = chatUI.thinkingIndicator.querySelectorAll(".step");
         steps.forEach(s => s.classList.add("hidden"));
         
         steps[0].classList.remove("hidden"); triggerHaptic("light");
@@ -377,62 +418,64 @@ document.addEventListener("DOMContentLoaded", () => {
         steps[0].classList.add("hidden"); steps[1].classList.remove("hidden"); triggerHaptic("light");
     }
 
+    // NEW: Edit User Message logic
     window.editUserMessage = function(text) {
         triggerHaptic("medium");
-        userInput.value = text;
-        userInput.focus();
-        userInput.dispatchEvent(new Event('input')); // auto-grow adjust
+        chatUI.input.value = text;
+        chatUI.input.focus();
+        chatUI.input.dispatchEvent(new Event('input')); 
     };
 
     function appendUserMessage(text) {
-        if(welcomeBanner) welcomeBanner.style.display = "none"; 
+        if(auth.welcomeBanner) auth.welcomeBanner.style.display = "none"; 
         
-        // Remove dummy demo message if it exists
+        // Hide Demo Message
         const dummyMsg = document.getElementById("dummy-ai-message");
-        if(dummyMsg) dummyMsg.remove(); 
+        if(dummyMsg) dummyMsg.style.display = "none";
 
         const msgContainer = document.createElement("div");
         msgContainer.style.display = "flex"; msgContainer.style.flexDirection = "column";
         msgContainer.style.alignSelf = "flex-end"; msgContainer.style.maxWidth = "85%";
+        msgContainer.style.marginBottom = "20px";
         
         const msgDiv = document.createElement("div");
         msgDiv.className = `message user-message`;
         msgDiv.innerText = text;
         msgDiv.style.maxWidth = "100%";
+        msgDiv.style.marginBottom = "5px";
         
         const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         
-        // User actions (Listen & Edit)
         const userActions = document.createElement("div");
         userActions.className = "user-actions";
         userActions.innerHTML = `
-            <button class="user-action-icon" onclick="speakText('${safeText}')" title="Listen">🔊</button>
-            <button class="user-action-icon" onclick="editUserMessage('${safeText}')" title="Edit">✏️</button>
+            <button class="user-action-icon" onclick="speakText('${safeText}')" title="Listen">🔊 Reader</button>
+            <button class="user-action-icon" onclick="editUserMessage('${safeText}')" title="Edit">✏️ Edit</button>
         `;
 
         msgContainer.appendChild(msgDiv);
         msgContainer.appendChild(userActions);
-        chatBox.appendChild(msgContainer);
-        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        chatUI.box.appendChild(msgContainer);
+        chatUI.box.scrollTo({ top: chatUI.box.scrollHeight, behavior: 'smooth' });
     }
 
     function appendTypingAI(text, isError = false) {
-        aiThinkingIndicator.classList.add("hidden"); 
+        chatUI.thinkingIndicator.classList.add("hidden"); 
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ai-message`;
-        chatBox.appendChild(msgDiv);
+        msgDiv.style.marginBottom = "20px";
+        chatUI.box.appendChild(msgDiv);
         
         let words = text.replace(/\n/g, '<br>').split(' ');
         let i = 0;
         
         function typeWriter() {
-            if (!isGenerating) return; // Stop if aborted
+            if (!isGenerating) return; 
 
             if (i < words.length) {
                 msgDiv.innerHTML += words[i] + ' ';
                 i++;
-                chatBox.scrollTo({ top: chatBox.scrollHeight });
-                // Make typing faster for large texts
+                chatUI.box.scrollTo({ top: chatUI.box.scrollHeight });
                 setTimeout(typeWriter, Math.floor(Math.random() * 15) + 5); 
             } else {
                 toggleInputUI(false);
@@ -442,20 +485,17 @@ document.addEventListener("DOMContentLoaded", () => {
         typeWriter();
     }
 
+    // Clipboard & Share Logic
     window.copyTextToClipboard = function(text) {
         navigator.clipboard.writeText(text); triggerHaptic("medium"); alert("📋 Text Copied!");
     };
 
-    // NEW: Share Feature Logic
     window.shareText = function(text) {
         triggerHaptic("medium");
         if (navigator.share) {
-            navigator.share({
-                title: 'A1 AI Response',
-                text: text
-            }).catch(console.error);
+            navigator.share({ title: 'A1 AI Response', text: text }).catch(console.error);
         } else {
-            alert("Share feature not supported on this device. Text Copied instead!");
+            alert("Share API not supported on this device. Text Copied instead!");
             copyTextToClipboard(text);
         }
     };
@@ -464,8 +504,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const actionBar = document.createElement("div");
         actionBar.className = "ai-actions";
         const safeText = rawText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        
-        // Random source number logic for premium feel (can connect to backend later)
         const sourcesCount = Math.floor(Math.random() * 5) + 1;
         
         actionBar.innerHTML = `
@@ -482,23 +520,23 @@ document.addEventListener("DOMContentLoaded", () => {
         triggerHaptic("light"); 
     }
 
-    stopBtn.addEventListener("click", () => {
+    chatUI.stopBtn.addEventListener("click", () => {
         triggerHaptic("heavy");
         if (currentAbortController) currentAbortController.abort(); 
         toggleInputUI(false);
         window.speechSynthesis.cancel(); 
-        aiThinkingIndicator.classList.add("hidden");
+        chatUI.thinkingIndicator.classList.add("hidden");
     });
 
     window.sendMessageToAI = async function() {
-        const text = userInput.value.trim();
+        const text = chatUI.input.value.trim();
         if (!text) return;
 
         triggerHaptic("medium");
         appendUserMessage(text);
         
-        userInput.value = "";
-        userInput.style.height = "auto"; 
+        chatUI.input.value = "";
+        chatUI.input.style.height = "auto"; 
         
         toggleInputUI(true); 
         const deepSearchON = document.getElementById('toggle-search')?.checked || false;
@@ -521,7 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.status === "success" || data.answer) {
                 let aiResponse = (data.answer || "No response generated.").replace(/Commander AI:/gi, '').trim();
                 appendTypingAI(aiResponse);
-                speak(aiResponse);
+                speak(aiResponse); // Auto-speak logic mapped to hologram
             } else {
                 appendTypingAI("Engine Error: " + (data.message || "Unknown error"), true);
                 toggleInputUI(false);
@@ -536,7 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     async function processLiveVoiceQuery(text) {
-        appendLiveVoiceLog(text, "user"); // Log user message
+        appendLiveVoiceLog(text, "user"); 
         
         currentAbortController = new AbortController();
         try {
@@ -550,7 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
             
             liveVoiceText.innerText = aiResponse;
-            appendLiveVoiceLog(aiResponse, "ai"); // Log AI message
+            appendLiveVoiceLog(aiResponse, "ai"); 
             speak(aiResponse);
             
         } catch(e) {
@@ -561,12 +599,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    sendBtn.addEventListener("click", sendMessageToAI);
+    chatUI.sendBtn.addEventListener("click", sendMessageToAI);
 
 }); // End of DOMContentLoaded
             
-
-
-
-    
-                
+                          

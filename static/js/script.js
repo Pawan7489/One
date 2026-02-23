@@ -30,10 +30,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
     const micBtn = document.getElementById("mic-btn");
+    const plusBtn = document.getElementById("plus-btn");
+    const actionMenu = document.getElementById("action-menu");
     
+    const menuToggle = document.getElementById("menu-toggle");
     const appSidebar = document.getElementById("app-sidebar");
     const newChatBtn = document.getElementById("new-chat-btn");
     const aiThinkingIndicator = document.getElementById("ai-thinking-indicator");
+    
+    // Tools
+    const aiTools = document.querySelectorAll(".ai-tools-list li");
+    const activeToolIndicator = document.getElementById("active-tool-indicator");
+    const toolIcon = document.getElementById("tool-icon");
+    const toolText = document.getElementById("tool-text");
+    const closeToolBtn = document.getElementById("close-tool-btn");
+    let currentAIMode = "chat";
+
+    // 🚨 FIX: Added History Modal to the Modals Object
+    const modals = {
+        profile: { btn: document.getElementById("profile-btn"), modal: document.getElementById("profile-modal"), close: document.getElementById("close-profile") },
+        settings: { btn: document.getElementById("settings-btn"), modal: document.getElementById("settings-modal"), close: document.getElementById("close-settings") },
+        support: { btn: document.getElementById("support-btn"), modal: document.getElementById("support-modal"), close: document.getElementById("close-support") },
+        history: { btn: document.getElementById("history-settings-btn"), modal: document.getElementById("history-modal"), close: document.getElementById("close-history") }
+    };
     
     // Live Voice
     const liveVoiceBtn = document.getElementById("live-voice-mode-btn");
@@ -41,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const liveVoiceText = document.getElementById("live-voice-text");
     const liveVoiceStatus = document.getElementById("live-voice-status");
     const closeLiveVoice = document.getElementById("close-live-voice");
+    const miniHologram = document.getElementById("mini-hologram");
 
     let currentUser = { name: "User", persona: "A1 Core" };
     let isContinuousMicOn = false;
@@ -49,27 +69,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ADMIN_PANEL_URL = "https://a1-zc43.onrender.com/api/ai/ask";
 
+    function unlockAudio() {
+        if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }
+    }
+
     // ==========================================
-    // 💾 3. PERSISTENT LOGIN (Remember Me)
+    // 💾 3. PERSISTENT LOGIN (THE BUG FIX)
     // ==========================================
     function checkLoginState() {
-        const savedUser = localStorage.getItem("a1_indian_user");
-        if (savedUser) {
-            currentUser = JSON.JSON.parse(savedUser);
-            // Bypass Auth Screens directly to Chat
-            signupScreen.classList.add("hidden");
-            loginScreen.classList.add("hidden");
-            chatScreen.classList.remove("hidden");
-            welcomeUserName.innerText = `Welcome back, ${currentUser.name}!`;
-            document.getElementById("persona-badge").innerText = `Mode: ${currentUser.persona}`;
-            
-            // Speak Welcome
-            setTimeout(() => {
-                speakText(`Welcome back ${currentUser.name}, Main aapki kya madad kar sakta hoon?`);
-            }, 1000);
+        try {
+            const savedUser = localStorage.getItem("a1_indian_user");
+            if (savedUser) {
+                // 🚨 BIG FIX: Changed JSON.JSON.parse to JSON.parse
+                currentUser = JSON.parse(savedUser);
+                
+                signupScreen.classList.add("hidden");
+                loginScreen.classList.add("hidden");
+                chatScreen.classList.remove("hidden");
+                welcomeUserName.innerText = `Welcome back, ${currentUser.name}!`;
+                
+                setTimeout(() => {
+                    speakText(`Welcome back ${currentUser.name}, Main aapki kya madad kar sakta hoon?`);
+                }, 1000);
+            }
+        } catch (error) {
+            console.error("Login Cache Error Fixed: ", error);
+            localStorage.removeItem("a1_indian_user"); // Clear corrupted data
         }
     }
-    checkLoginState(); // Run on page load
+    
+    // Speak function needs to be defined before calling it in checkLoginState
+    window.speakText = function(text) { speak(text); triggerHaptic("light"); };
+
+    function speak(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        const voices = window.speechSynthesis.getVoices();
+        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
+        utterance.voice = selectedVoice;
+        
+        const voicePref = document.getElementById("setting-voice").value;
+        if (voicePref.includes("kid")) { utterance.pitch = 1.6; utterance.rate = 1.1; } 
+        else if (voicePref.includes("senior")) { utterance.pitch = 0.8; utterance.rate = 0.85; } 
+        else if (voicePref.includes("deep") || voicePref.includes("adult-male-2")) { utterance.pitch = 0.6; utterance.rate = 0.95; } 
+        else if (voicePref.includes("youth")) { utterance.pitch = 1.1; utterance.rate = 1.05; } 
+        else { utterance.pitch = 1.0; utterance.rate = 1.0; }
+
+        utterance.onstart = () => { 
+            miniHologram.classList.add("speaking"); 
+            if(isLiveVoiceMode) document.querySelector(".live-hologram").style.animation = "pulseVoice 0.5s infinite alternate";
+        };
+        utterance.onend = () => { 
+            miniHologram.classList.remove("speaking"); 
+            if(isLiveVoiceMode) {
+                document.querySelector(".live-hologram").style.animation = "none";
+                try{ recognition.start(); }catch(e){}
+            }
+        };
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Now run login check safely
+    checkLoginState(); 
+
+    function switchScreen(hideElem, showElem) {
+        hideElem.style.opacity = "0";
+        setTimeout(() => {
+            hideElem.classList.add("hidden");
+            showElem.classList.remove("hidden");
+            setTimeout(() => { showElem.style.opacity = "1"; }, 50);
+        }, 400);
+    }
+
+    const goToLogin = document.getElementById("go-to-login");
+    const goToSignup = document.getElementById("go-to-signup");
+    if(goToLogin) goToLogin.addEventListener("click", (e) => { e.preventDefault(); switchScreen(signupScreen, loginScreen); });
+    if(goToSignup) goToSignup.addEventListener("click", (e) => { e.preventDefault(); switchScreen(loginScreen, signupScreen); });
 
     function enterChatArea(name, isGuest = false) {
         triggerHaptic("heavy");
@@ -93,43 +171,92 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if(document.getElementById("guest-btn")) {
-        document.getElementById("guest-btn").addEventListener("click", () => enterChatArea("Guest", true));
+        document.getElementById("guest-btn").addEventListener("click", () => { unlockAudio(); enterChatArea("Guest", true); });
     }
-    signupForm.addEventListener("submit", (e) => { e.preventDefault(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
-    loginForm.addEventListener("submit", (e) => { e.preventDefault(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
+    signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("reg-name").value || "Commander"); });
+    loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0] || "Commander"); });
 
     // ==========================================
-    // 🗂️ 4. CHAT HISTORY (Context Menu & New Chat)
+    // 🗂️ 4. SIDEBAR, MODALS & CHAT HISTORY
     // ==========================================
+    if(menuToggle) menuToggle.addEventListener("click", () => { appSidebar.classList.toggle("open"); triggerHaptic("medium"); });
+    document.querySelector(".chat-area").addEventListener("click", (e) => {
+        if (window.innerWidth <= 768 && appSidebar.classList.contains("open") && !menuToggle.contains(e.target)) {
+            appSidebar.classList.remove("open");
+        }
+    });
+
+    function openModal(modal) { triggerHaptic("medium"); modal.classList.remove("hidden"); }
+    function closeModal(modal) { triggerHaptic("light"); modal.classList.add("hidden"); }
+
+    Object.values(modals).forEach(m => {
+        if(m.btn && m.modal && m.close) {
+            m.btn.addEventListener("click", () => { appSidebar.classList.remove("open"); openModal(m.modal); });
+            m.close.addEventListener("click", () => closeModal(m.modal));
+        }
+    });
+
+    plusBtn.addEventListener("click", () => { actionMenu.classList.toggle("hidden"); actionMenu.style.display = actionMenu.classList.contains("hidden") ? "none" : "block"; });
+    document.addEventListener("click", (e) => { if (!plusBtn.contains(e.target) && !actionMenu.contains(e.target)) { actionMenu.classList.add("hidden"); actionMenu.style.display = "none"; } });
+
     newChatBtn.addEventListener("click", () => {
         triggerHaptic("medium");
-        // Clear chat area, show welcome banner again
         chatBox.innerHTML = ""; 
         chatBox.appendChild(welcomeBanner);
         welcomeBanner.style.display = "flex";
+        closeToolBtn.click();
         if (window.innerWidth <= 768) appSidebar.classList.remove("open");
+        speakText("Naya chat room shuru ho gaya hai. Boliye?");
     });
 
-    // Handle Context Menu (⋮) on Chat History
+    // Chat History Context Menu (⋮)
     document.querySelectorAll(".chat-options-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             triggerHaptic("light");
-            // Hide all other menus first
             document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
-            // Toggle current menu
             const menu = btn.nextElementSibling;
             if(menu) menu.classList.toggle("hidden");
         });
     });
 
-    // Close context menu when clicked outside
     document.addEventListener("click", () => {
         document.querySelectorAll(".chat-context-menu").forEach(m => m.classList.add("hidden"));
     });
 
+    // AI Super Powers Selection
+    aiTools.forEach(item => {
+        item.addEventListener("click", () => {
+            triggerHaptic("light");
+            aiTools.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+            currentAIMode = item.getAttribute("data-mode");
+
+            if (currentAIMode !== "chat") {
+                const textParts = item.innerText.split(" ");
+                toolIcon.innerText = textParts[0]; 
+                toolText.innerText = item.innerText.substring(item.innerText.indexOf(" ") + 1) + " Mode";
+                activeToolIndicator.classList.remove("hidden");
+                activeToolIndicator.style.display = "flex";
+            } else {
+                activeToolIndicator.classList.add("hidden");
+                setTimeout(()=> activeToolIndicator.style.display = "none", 300);
+            }
+            if (window.innerWidth <= 768) appSidebar.classList.remove("open");
+        });
+    });
+
+    closeToolBtn.addEventListener("click", () => {
+        triggerHaptic("light");
+        activeToolIndicator.classList.add("hidden");
+        setTimeout(()=> activeToolIndicator.style.display = "none", 300);
+        aiTools.forEach(i => i.classList.remove("active"));
+        aiTools[0].classList.add("active"); 
+        currentAIMode = "chat";
+    });
+
     // ==========================================
-    // ✍️ 5. SMART TEXTAREA (1 to 10 lines)
+    // ✍️ 5. SMART TEXTAREA
     // ==========================================
     userInput.addEventListener("input", function() {
         this.style.height = "auto";
@@ -145,67 +272,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🗣️ 6. 26+ VOICE MODELS LOGIC (TTS)
-    // ==========================================
-    window.speakText = function(text) { speak(text); triggerHaptic("light"); };
-
-    function speak(text) {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
-        
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        const voices = window.speechSynthesis.getVoices();
-        
-        // Find best Indian voice
-        let selectedVoice = voices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || voices[0];
-        utterance.voice = selectedVoice;
-        
-        // 🚨 GET SELECTED VOICE PREFERENCE FROM SETTINGS
-        const voicePref = document.getElementById("setting-voice").value;
-        
-        // Apply Pitch and Rate modifiers based on Persona
-        if (voicePref.includes("kid")) {
-            utterance.pitch = 1.6; // Patli awaaz
-            utterance.rate = 1.1;  // Tez bolna
-        } else if (voicePref.includes("senior")) {
-            utterance.pitch = 0.8; // Bhari awaaz
-            utterance.rate = 0.85; // Aaram se bolna
-        } else if (voicePref.includes("deep") || voicePref.includes("adult-male-2")) {
-            utterance.pitch = 0.6; // Ekdam Bhari (Mature)
-            utterance.rate = 0.95;
-        } else if (voicePref.includes("youth")) {
-            utterance.pitch = 1.1; 
-            utterance.rate = 1.05; // Energetic
-        } else {
-            // Standard Adult
-            utterance.pitch = 1.0;
-            utterance.rate = 1.0;
-        }
-
-        utterance.onstart = () => { 
-            document.getElementById("mini-hologram").classList.add("speaking"); 
-            if(isLiveVoiceMode) document.querySelector(".live-hologram").style.animation = "pulseVoice 0.5s infinite alternate";
-        };
-        utterance.onend = () => { 
-            document.getElementById("mini-hologram").classList.remove("speaking"); 
-            if(isLiveVoiceMode) {
-                document.querySelector(".live-hologram").style.animation = "none";
-                // Restart listening after speaking
-                try{ recognition.start(); }catch(e){}
-            }
-        };
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // ==========================================
-    // 🎙️ 7. LIVE VOICE CHAT & MIC LOGIC
+    // 🎙️ 6. LIVE VOICE CHAT & MIC LOGIC
     // ==========================================
     const SpeechRecAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecAPI) {
         recognition = new SpeechRecAPI();
         recognition.lang = 'en-IN'; 
-        recognition.interimResults = true; // For live typing effect
+        recognition.interimResults = true; 
 
         recognition.onstart = () => { 
             triggerHaptic("medium");
@@ -217,18 +290,15 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.onresult = (event) => { 
             let interimTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
-                }
+                if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+                else interimTranscript += event.results[i][0].transcript;
             }
             
             if(isLiveVoiceMode) {
                 liveVoiceText.innerText = finalTranscript + interimTranscript;
             } else {
                 userInput.value = finalTranscript + interimTranscript;
-                userInput.dispatchEvent(new Event('input')); // Auto-grow trigger
+                userInput.dispatchEvent(new Event('input')); 
             }
         };
 
@@ -236,26 +306,23 @@ document.addEventListener("DOMContentLoaded", () => {
             if (isLiveVoiceMode) {
                 liveVoiceStatus.innerText = "Processing...";
                 if(liveVoiceText.innerText.length > 5) {
-                    // Auto-send in live voice mode
                     processLiveVoiceQuery(liveVoiceText.innerText);
                 } else {
-                    try{ recognition.start(); }catch(e){} // Keep listening if nothing said
+                    try{ recognition.start(); }catch(e){} 
                 }
             } else {
                 micBtn.classList.remove("active");
                 if (isContinuousMicOn) { try { recognition.start(); } catch(e) {} } 
             }
-            finalTranscript = ""; // Reset
+            finalTranscript = ""; 
         };
     }
 
-    // Normal Textbox Mic Button
     micBtn.addEventListener("click", () => {
         if (micBtn.classList.contains("active")) { isContinuousMicOn = false; recognition.stop(); } 
         else { isContinuousMicOn = true; try { recognition.start(); } catch(e) {} }
     });
 
-    // Live Voice Mode Overlays
     liveVoiceBtn.addEventListener("click", () => {
         isLiveVoiceMode = true;
         liveVoiceOverlay.classList.remove("hidden");
@@ -271,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🧠 8. AI ENGINE & THINKING ANIMATION
+    // 🧠 7. AI ENGINE & THINKING ANIMATION
     // ==========================================
     async function showThinkingSteps() {
         chatBox.appendChild(aiThinkingIndicator);
@@ -280,19 +347,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const steps = aiThinkingIndicator.querySelectorAll(".step");
         steps.forEach(s => s.classList.add("hidden"));
         
-        // Step 1: DB Check
         steps[0].classList.remove("hidden"); triggerHaptic("light");
         await new Promise(r => setTimeout(r, 800));
-        
-        // Step 2: Logic
         steps[0].classList.add("hidden"); steps[1].classList.remove("hidden"); triggerHaptic("light");
         await new Promise(r => setTimeout(r, 800));
-
-        // Wait till API actually replies, then we hide it completely in the main function.
     }
 
     function appendUserMessage(text) {
-        welcomeBanner.style.display = "none"; // Hide welcome banner
+        welcomeBanner.style.display = "none"; 
         const msgDiv = document.createElement("div");
         msgDiv.className = `message user-message`;
         msgDiv.innerText = text;
@@ -301,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function appendTypingAI(text, isError = false) {
-        aiThinkingIndicator.classList.add("hidden"); // Hide thinking box
+        aiThinkingIndicator.classList.add("hidden"); 
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ai-message`;
         chatBox.appendChild(msgDiv);
@@ -322,6 +384,10 @@ document.addEventListener("DOMContentLoaded", () => {
         typeWriter();
     }
 
+    window.copyTextToClipboard = function(text) {
+        navigator.clipboard.writeText(text); triggerHaptic("medium"); alert("📋 Copied to clipboard!");
+    };
+
     function addActionBar(container, rawText) {
         const actionBar = document.createElement("div");
         actionBar.className = "ai-actions";
@@ -340,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
         triggerHaptic("light"); 
     }
 
-    // MAIN SEND FUNCTION
     window.sendMessageToAI = async function() {
         const text = userInput.value.trim();
         if (!text) return;
@@ -352,9 +417,8 @@ document.addEventListener("DOMContentLoaded", () => {
         userInput.style.height = "auto"; 
 
         const deepSearchON = document.getElementById('toggle-search').checked;
-        const currentMode = document.querySelector(".ai-tools-list .active").getAttribute("data-mode");
-
-        showThinkingSteps(); // Start UI Animation
+        
+        showThinkingSteps(); 
 
         try {
             const response = await fetch(ADMIN_PANEL_URL, {
@@ -362,16 +426,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
                     query: text,
-                    mode: currentMode,
+                    mode: currentAIMode,
                     web_search: deepSearchON,
-                    check_database_cache: true // 🚨 Instructing backend to check DB first
+                    check_database_cache: true 
                 })
             });
 
             const data = await response.json();
             if (data.status === "success") {
-                appendTypingAI(data.answer);
-                speak(data.answer);
+                let aiResponse = data.answer.replace(/Commander AI:/gi, '').trim();
+                appendTypingAI(aiResponse);
+                speak(aiResponse);
             } else {
                 appendTypingAI("Engine Error: " + data.message, true);
             }
@@ -380,23 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Live Voice Chat Processor
     async function processLiveVoiceQuery(text) {
         try {
             const response = await fetch(ADMIN_PANEL_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: text, check_database_cache: true })
-            });
-            const data = await response.json();
-            liveVoiceText.innerText = data.answer; // Show answer on live overlay
-            speak(data.answer); // Speak it, which will restart mic on end
-        } catch(e) {
-            liveVoiceText.innerText = "Connection lost. Please try again.";
-            setTimeout(() => { try{ recognition.start(); }catch(e){} }, 2000);
-        }
-    }
-
-    sendBtn.addEventListener("click", sendMessageToAI);
-});
-                          
+             

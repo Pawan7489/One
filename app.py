@@ -1,57 +1,61 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-import requests  # <-- [NEW] Admin Panel से बात करने के लिए
+import requests
 
 app = Flask(__name__)
 
-# --- [NEW] Admin Panel Address ---
+# --- [MASTER CONFIG] ---
+# Admin Panel Address - जहा सारा AI लॉजिक प्रोसेस होता है
 ADMIN_URL = "https://a1-zc43.onrender.com/api/ai/ask"
 
-# Persona Logic Database (Unchanged)
+# Persona Logic (A1 Special Age-Groups)
 PERSONAS = {
-    "buddy": {
-        "label": "Buddy Mode (Kids)",
-        "greeting": "Namaste chote dost! Main A1 hoon. Aaj hum kya khelenge ya seekhenge?"
-    },
-    "wingman": {
-        "label": "Wingman Mode (Youth)",
-        "greeting": "Hey bro! A1 here. Kaisa chal raha hai sab? Koi naya project ya coding ki baat karein?"
-    },
-    "professional": {
-        "label": "Professional Mode (Adults)",
-        "greeting": "Namaskar. Main A1, aapka digital assistant. Main aapki kya sahayata kar sakta hoon?"
-    },
-    "caretaker": {
-        "label": "Caretaker Mode (Seniors)",
-        "greeting": "Pranam. Main A1 hoon. Aap aaram se bataiye, main aapke liye kya kaam kar sakta hoon?"
-    }
+    "buddy": {"label": "Buddy Mode (Kids)", "greeting": "Namaste chote dost! Main A1 hoon. Aaj kya seekhenge?"},
+    "wingman": {"label": "Wingman Mode (Youth)", "greeting": "Hey bro! A1 here. Sab set hai? Kya help chahiye?"},
+    "professional": {"label": "Professional Mode (Adults)", "greeting": "Namaskar. Main A1. Main aapki kya sahayata kar sakta hoon?"},
+    "caretaker": {"label": "Caretaker Mode (Seniors)", "greeting": "Pranam. Main A1 hoon. Aap nishchint ho kar bataiye kya kaam hai."}
 }
 
-# Fix: Error-proof Age Calculation (Unchanged)
+# --- [HELPER FUNCTIONS] ---
 def calculate_age(dob_string):
     try:
-        if not dob_string:
-            return 25
+        if not dob_string: return 25
         birth_date = datetime.strptime(dob_string, "%Y-%m-%d")
         today = datetime.now()
-        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-        return age
-    except Exception:
-        return 25
+        return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+    except: return 25
 
 def get_persona_mode(age):
-    if age < 18:
-        return PERSONAS["buddy"]
-    elif 18 <= age <= 25:
-        return PERSONAS["wingman"]
-    elif 26 <= age <= 55:
-        return PERSONAS["professional"]
-    else:
-        return PERSONAS["caretaker"]
+    if age < 18: return PERSONAS["buddy"]
+    elif 18 <= age <= 25: return PERSONAS["wingman"]
+    elif 26 <= age <= 55: return PERSONAS["professional"]
+    else: return PERSONAS["caretaker"]
+
+# --- [MODULAR ROUTES - कनेक्टिंग फाइल्स] ---
 
 @app.route('/')
-def home():
+def index():
+    # यह मुख्य फाइल है जो सभी मॉड्यूल्स को लोड करती है
     return render_template('index.html')
+
+# हर मॉड्यूलर पार्ट के लिए अलग रूट (Testing और Scaling के लिए)
+@app.route('/signup')
+def signup_page():
+    return render_template('signup.HTML')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.HTML')
+
+@app.route('/profile')
+def profile_page():
+    return render_template('userprofile.HTML')
+
+@app.route('/voice')
+def voice_page():
+    return render_template('voice.HTML')
+
+# --- [API ENDPOINTS] ---
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -63,56 +67,50 @@ def login():
         age = calculate_age(dob)
         persona = get_persona_mode(age)
         
-        personalized_greeting = f"{name}, {persona['greeting']}"
-        
         return jsonify({
             "success": True,
-            "age": age,
-            "persona": persona,
-            "greeting": personalized_greeting
+            "user_data": {
+                "name": name,
+                "age": age,
+                "persona": persona['label'],
+                "greeting": f"{name}, {persona['greeting']}"
+            }
         })
     except Exception as e:
-        return jsonify({
-            "success": True,
-            "age": 25,
-            "persona": PERSONAS["professional"],
-            "greeting": "Namaskar, Main A1 aapki sahayata ke liye taiyar hoon."
-        })
+        return jsonify({"success": False, "error": str(e)})
 
-# --- [UPDATED] Chat API: Admin Panel से कनेक्टेड ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
-    user_message = data.get('message', '')
-    user_info = data.get('user', {}) # Login se mila hua data
-    ai_version = data.get('engine', 'llama3-8b-8192') # HTML se mila model choice
+    user_message = data.get('query', '')
+    ai_mode = data.get('mode', 'chat') # Image, Video, Coding etc.
+    web_search = data.get('web_search', False)
+    user_context = data.get('user_context', {})
 
-    # 1. Admin Panel को डेटा भेजना
+    # 1. Admin Panel को स्मार्ट पेलोड भेजना
     try:
         payload = {
             "query": user_message,
-            "engine": ai_version,
-            "user_context": {
-                "name": user_info.get('name', 'User'),
-                "age": user_info.get('age', 25),
-                "persona": user_info.get('persona', 'professional')
-            }
+            "mode": ai_mode,
+            "web_search": web_search,
+            "check_database_cache": True, # इंजन की लागत बचाने के लिए
+            "user_context": user_context
         }
         
-        # Admin Panel (Backend) को कॉल करना
-        response = requests.post(ADMIN_URL, json=payload, timeout=10)
+        # Admin Panel (Backend AI) को कॉल करना
+        response = requests.post(ADMIN_URL, json=payload, timeout=15)
         backend_data = response.json()
 
-        if backend_data.get('status') == 'success':
-            reply = backend_data.get('answer')
-        else:
-            reply = "Commander, AI Engine se sampark nahi ho paa raha hai."
+        return jsonify(backend_data)
             
     except Exception as e:
-        reply = f"System Error: Backend unreachable. ({str(e)})"
-
-    return jsonify({"reply": reply})
+        return jsonify({
+            "status": "error",
+            "answer": "System Error: Backend unreachable. AI Engine offline hai.",
+            "message": str(e)
+        })
 
 if __name__ == '__main__':
+    # Commander, डिबग मोड ऑन है ताकि कोई भी एरर तुरंत दिखे
     app.run(debug=True, port=5000)
     

@@ -1,5 +1,5 @@
 /* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (V14.0 MASTER)
+   PROJECT A1 - THE INDIAN SUPER-AI (V15.0 MASTER)
    Saturn 3D Holograms, Premium UI & Bug-Free Layout
 ==================================================== */
 
@@ -186,6 +186,7 @@ body {
 .settings-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px);}
 
 
+
 /* ====================================================
    3. CHAT AREA, MESSAGES & ACTION BARS
 ==================================================== */
@@ -197,7 +198,9 @@ body {
 .mode-badge { background: rgba(19, 136, 8, 0.15); color: var(--emerald-green); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid rgba(19, 136, 8, 0.3); box-shadow: 0 0 10px rgba(19,136,8,0.1);}
 .live-voice-btn { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; transition: 0.3s; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);}
 .live-voice-btn:hover { background: #ef4444; color: #fff; transform: scale(1.05); }
-.profile-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: 0.3s;}
+
+/* FIX: Profile Button Design for Photo Upload */
+.profile-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: 0.3s; overflow: hidden; }
 .profile-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
 
 /* Main Chat Box */
@@ -252,7 +255,7 @@ body {
 .toggle-pill span { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 5px;}
 .toggle-pill input:checked + span { background: rgba(19, 136, 8, 0.15); border-color: var(--emerald-green); color: var(--emerald-green); box-shadow: 0 0 10px rgba(19,136,8,0.2);}
 
-/* 🚨 SMART TEXTAREA (10,000 words ready with scroll) */
+/* 🚨 SMART TEXTAREA (Bug Fix: Limits Growth & Adds Scroll) */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
 .input-wrapper:focus-within { border-color: var(--saffron-gold); box-shadow: 0 0 15px rgba(255,153,51,0.15); background: rgba(0,0,0,0.7); }
 
@@ -265,11 +268,11 @@ body {
     outline: none; 
     padding: 10px 5px; 
     min-height: 24px;
-    max-height: 200px; /* Limits growth, enables scroll for long text */
+    max-height: 200px; /* Limits the height for long texts */
     resize: none; 
     font-family: inherit; 
     line-height: 1.5; 
-    overflow-y: auto; /* Smooth scrollbar */
+    overflow-y: auto; /* Adds smooth scroll when text exceeds max-height */
     scrollbar-width: thin; 
     scrollbar-color: var(--saffron-gold) transparent;
 }
@@ -352,5 +355,7 @@ body {
     .app-screen { padding: 0; }
     .sidebar { border-top-left-radius: 24px; border-bottom-left-radius: 24px; }
     .chat-area { padding: 25px 35px; }
-               }
-             
+}
+
+
+

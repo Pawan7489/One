@@ -1,5 +1,5 @@
 /* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (V11.0 MASTER)
+   PROJECT A1 - THE INDIAN SUPER-AI (V12.0 MASTER)
    Ultra-Premium Vibe, Bouncy Animations & Deep UI
 ==================================================== */
 
@@ -169,15 +169,23 @@ body {
 .ai-message { align-self: flex-start; background: transparent; border: none; color: var(--text-main); max-width: 100%; padding: 0; position: relative; }
 .ai-message::before { content: "A1"; display: inline-flex; justify-content: center; align-items: center; width: 30px; height: 30px; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; border-radius: 50%; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 0 0 12px var(--saffron-glow); }
 
-/* 🛠️ AI Feedback System */
-.ai-actions { display: flex; gap: 12px; margin-top: 15px; align-items: center; flex-wrap: wrap;}
+/* 🛠️ AI & User Feedback System */
+.ai-actions { display: flex; gap: 10px; margin-top: 10px; align-items: center; flex-wrap: wrap;}
+/* Added .user-actions for user message reader/editor */
+.user-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end;} 
 .action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
 .action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 
 /* ====================================================
-   4. ADVANCED INPUT AREA & THINKING LOGIC
+   4. ADVANCED INPUT AREA, PROMPTS & THINKING
 ==================================================== */
 .advanced-input-container { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
+
+/* 💡 NEW: Prompt Suggestions (ChatGPT Style Chips) */
+.prompt-suggestions { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+.prompt-suggestions::-webkit-scrollbar { display: none; }
+.prompt-chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.3s var(--bouncy-ease); }
+.prompt-chip:hover { background: rgba(255, 153, 51, 0.1); border-color: var(--saffron-gold); color: var(--saffron-gold); transform: translateY(-3px); box-shadow: 0 4px 12px rgba(255,153,51,0.15);}
 
 /* 🚨 AI Thinking Indicator */
 .ai-thinking-box { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(0,0,0,0.3); border-radius: 20px; align-self: flex-start; margin-bottom: 10px; border: 1px solid var(--glass-border); animation: slideUpFade 0.3s forwards;}
@@ -189,7 +197,7 @@ body {
 .step.hidden { display: none; }
 
 /* 🎛️ Quick Toggles & Active Badge */
-.quick-toggles { display: flex; gap: 10px; padding: 0 5px;}
+.quick-toggles { padding: 0 5px;}
 .toggle-pill { cursor: pointer; display: flex; align-items: center; }
 .toggle-pill input { display: none; }
 .toggle-pill span { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 5px;}
@@ -198,6 +206,10 @@ body {
 .active-tool-indicator { align-self: flex-start; background: rgba(255, 153, 51, 0.15); border: 1px solid var(--saffron-gold); color: var(--saffron-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: -5px; transition: 0.4s var(--bouncy-ease); transform-origin: left bottom;}
 .active-tool-indicator.hidden { opacity: 0; transform: scale(0.8) translateY(10px); display: none !important;}
 #close-tool-btn { background: transparent; border: none; color: var(--saffron-gold); cursor: pointer; font-size: 14px; margin-left: 5px; font-weight: bold;}
+
+/* 📎 Attachment Preview Area */
+.attachment-preview { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px; margin-bottom: -5px; display: flex; gap: 10px; overflow-x: auto;}
+.attachment-preview.hidden { display: none !important; }
 
 /* 🚨 SMART TEXTAREA (Gemini Style) */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
@@ -209,25 +221,13 @@ body {
 .icon-btn { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; margin-bottom: 2px;}
 .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; transform: scale(1.05);}
 .plus-icon { color: var(--text-main); }
-.send-arrow { background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; width: 40px; height: 40px; }
+
+/* 🛑 Send & Stop Button Styles */
+#action-btn-container { position: relative; width: 40px; height: 40px; margin-bottom: 2px; }
+.send-arrow { position: absolute; top: 0; left: 0; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; width: 100%; height: 100%; margin: 0;}
 .send-arrow:hover { box-shadow: 0 0 15px var(--saffron-glow); }
+.stop-square { position: absolute; top: 0; left: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 100%; height: 100%; margin: 0; transition: 0.3s var(--bouncy-ease);}
+.stop-square:hover { background: #ef4444; color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);}
+.stop-square.hidden { opacity: 0; transform: scale(0.5); pointer-events: none; }
 
-.mic-icon.active { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulseRed 1.5s infinite; }
-
-/* Floating + Menu */
-.action-menu-wrapper { position: relative; }
-.action-menu { position: absolute; bottom: 55px; left: 0; width: 230px; background: rgba(10, 15, 28, 0.95); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.7); z-index: 100; transform-origin: bottom left; transition: 0.3s var(--bouncy-ease); }
-.action-menu.hidden { opacity: 0; transform: scale(0.8) translateY(20px); pointer-events: none; display: none !important;}
-.menu-item { padding: 12px 20px; font-size: 14px; color: white; cursor: pointer; display: flex; gap: 12px; align-items: center; font-weight: 500; transition: 0.2s;}
-.menu-item:hover { background: rgba(255, 153, 51, 0.1); color: var(--saffron-gold); padding-left: 25px;}
-
-.security-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 10px; font-weight: 600; }
-.security-footer .shield { color: #38bdf8; } .security-footer .india { color: #f97316; } .security-footer .text-green { color: var(--emerald-green); }
-
-/* ====================================================
-   5. POP-UP MODALS & LIVE VOICE OVERLAY (Bouncy!)
-==================================================== */
-.custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 1; transition: 0.3s ease; }
-.custom-modal.hidden { opacity: 0; pointer-events: none; }
-
-.modal-content { background: var(--bg-dark); border: 1px solid var(
+.mic-icon.active { background: rgba(239,

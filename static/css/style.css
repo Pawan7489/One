@@ -1,10 +1,10 @@
 /* ====================================================
-   PROJECT A1 - PREMIUM INDIAN TECH VIBE (iOS/MacBook)
-   + GEMINI/CHATGPT STYLE CHAT LAYOUT
+   PROJECT A1 - THE INDIAN SUPER-AI (MASTER BLUEPRINT)
+   Premium Vibe + Gemini/ChatGPT Style Layout
 ==================================================== */
 
 :root {
-    /* Deep Midnight Navy - Trust, Security, Premium */
+    /* Deep Midnight Navy - Trust & Security */
     --bg-dark: #0a0f1c; 
     --glass-bg: rgba(15, 23, 42, 0.6);
     --glass-border: rgba(255, 255, 255, 0.08);
@@ -34,7 +34,7 @@ body {
     justify-content: center; 
 }
 
-/* Background Ambient Glow (MacBook Style) */
+/* Background Ambient Glow */
 .ambient-bg-glow { 
     position: absolute; top: 20%; left: 50%; transform: translateX(-50%); 
     width: 60vw; height: 60vw; border-radius: 50%; 
@@ -42,10 +42,11 @@ body {
     filter: blur(80px); z-index: 0; opacity: 0.5; pointer-events: none; 
 }
 
-/* Responsive Main Wrapper */
+/* Main Container */
 .main-wrapper { 
     position: relative; z-index: 1; 
-    width: 100%; max-width: 600px; height: 100dvh; 
+    width: 100%; max-width: 1100px; /* Bada width taaki sidebar fit ho sake */
+    height: 100dvh; 
     background: var(--glass-bg); backdrop-filter: blur(24px); 
     display: flex; flex-direction: column; overflow: hidden; 
 }
@@ -56,14 +57,11 @@ body {
 }
 .app-screen.hidden { display: none !important; opacity: 0; }
 
-/* Auth UI */
-.login-content { margin: auto; width: 100%; max-width: 360px; text-align: center; }
-.logo-box { 
-    width: 70px; height: 70px; margin: 0 auto 15px; 
-    background: linear-gradient(135deg, var(--saffron-gold), #d97706); 
-    border-radius: 20px; display: flex; justify-content: center; align-items: center; 
-    font-size: 28px; font-weight: bold; color: #fff; box-shadow: 0 10px 30px var(--saffron-glow); 
-}
+/* ====================================================
+   1. AUTH & LOGIN UI
+==================================================== */
+.login-content { margin: auto; width: 100%; max-width: 380px; text-align: center; overflow-y: auto; padding-bottom: 20px; scrollbar-width: none;}
+.logo-box { width: 70px; height: 70px; margin: 0 auto 15px; background: linear-gradient(135deg, var(--saffron-gold), #d97706); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: bold; color: #fff; box-shadow: 0 10px 30px var(--saffron-glow); }
 .welcome-text { font-size: 26px; font-weight: 700; margin-bottom: 5px; }
 .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
 
@@ -71,141 +69,149 @@ body {
 .auth-tab { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.3s; }
 .auth-tab.active { background: var(--glass-bg); color: var(--saffron-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-.input-field { margin-bottom: 15px; text-align: left; }
+.input-field { margin-bottom: 12px; text-align: left; }
 .input-row { display: flex; gap: 10px; } .w-50 { flex: 1; }
-.input-field input, .input-field select { width: 100%; padding: 14px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; font-size: 15px; outline: none; }
-.input-field input:focus { border-color: var(--saffron-gold); }
+.input-field input, .input-field select { width: 100%; padding: 14px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; font-size: 15px; outline: none; transition: 0.3s; }
+.input-field input:focus, .input-field select:focus { border-color: var(--saffron-gold); background: rgba(245, 158, 11, 0.05); }
 
-.apple-btn { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+.apple-btn { transition: transform 0.2s var(--apple-ease); cursor: pointer; }
 .apple-btn:active { transform: scale(0.95); }
 .btn-primary { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--saffron-gold); color: #000; font-size: 16px; font-weight: 700; box-shadow: 0 8px 20px var(--saffron-glow); }
+.btn-secondary { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: transparent; color: var(--text-main); font-size: 14px; font-weight: 600; }
+.mt-10 { margin-top: 10px; }
 
 .forgot-links { display: flex; justify-content: space-between; margin: -5px 0 15px; font-size: 12px; }
 .forgot-links a { color: var(--saffron-gold); text-decoration: none; }
+
 .social-divider { text-align: center; margin: 20px 0 15px; position: relative; }
 .social-divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--glass-border); z-index: 1; }
 .social-divider span { background: var(--bg-dark); padding: 0 15px; font-size: 10px; color: var(--text-muted); position: relative; z-index: 2; font-weight: bold; }
-.social-logins { display: flex; gap: 8px; }
-.social-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 10px; color: white; font-size: 12px; font-weight: 600; }
+/* Grid layout for 6 Social Buttons */
+.grid-socials { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.social-btn { padding: 12px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 10px; color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;}
+.social-btn:hover { background: rgba(255,255,255,0.1); }
 
-/* Chat Header */
-.header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--glass-border); transition: 0.5s var(--apple-ease); }
-.logo-text { font-size: 20px; font-weight: 800; color: var(--saffron-gold); }
-.mode-badge { background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); }
+/* ====================================================
+   2. DASHBOARD LAYOUT (SIDEBAR + CHAT)
+==================================================== */
+.full-layout { padding: 0 !important; flex-direction: row !important; }
 
-/* Hologram Aura */
-.hologram-stage { display: flex; flex-direction: column; align-items: center; margin: 15px 0; transition: transform 0.5s var(--apple-ease), margin 0.5s var(--apple-ease); }
-.hologram-container { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; }
-.hologram-core { width: 55px; height: 55px; border-radius: 50%; background: #1e293b; color: #fff; font-weight: bold; font-size: 16px; display: flex; justify-content: center; align-items: center; z-index: 3; border: 2px solid var(--glass-border); transition: 0.5s; }
-.aura-ring { position: absolute; border-radius: 50%; width: 100%; height: 100%; border: 2px solid transparent; opacity: 0; }
-
-.hologram-container.listening .hologram-core { background: var(--emerald-green); color: #000; box-shadow: 0 0 30px var(--emerald-glow); animation: coreBreathe 1.5s infinite alternate; }
-.hologram-container.speaking .hologram-core { background: var(--saffron-gold); color: #000; }
-.hologram-container.speaking .ring-1 { border-color: var(--saffron-gold); animation: auraRipple 1.5s infinite; }
-.hologram-container.speaking .ring-2 { border-color: var(--saffron-gold); animation: auraRipple 1.5s infinite 0.75s; }
-
-@keyframes coreBreathe { from { transform: scale(0.95); } to { transform: scale(1.05); } }
-@keyframes auraRipple { 0% { transform: scale(0.8); opacity: 0.8; border-width: 4px; } 100% { transform: scale(1.8); opacity: 0; border-width: 1px; } }
-#status-text { font-size: 11px; color: var(--text-muted); margin-top: 10px; font-weight: 500; transition: opacity 0.5s; }
-
-/* ==========================================================
-   🚨 UPDATE: CHATGPT / GEMINI STYLE CHAT BOX
-========================================================== */
-.chat-box { 
-    flex: 1; 
-    overflow-y: auto; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 24px; /* Zyada gap messages ke beech */
-    padding-bottom: 10px; 
-    scrollbar-width: none; 
+/* 🗂️ Sidebar */
+.sidebar { 
+    width: 260px; background: rgba(10, 15, 28, 0.9); 
+    border-right: 1px solid var(--glass-border); 
+    display: flex; flex-direction: column; padding: 20px 15px; 
+    flex-shrink: 0; transition: 0.3s var(--apple-ease);
 }
+.new-chat-btn { padding: 14px; background: transparent; border: 1px solid var(--saffron-gold); color: var(--saffron-gold); border-radius: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 25px; }
+.new-chat-btn span { font-size: 18px; }
+.new-chat-btn:hover { background: var(--saffron-glow); }
+
+.menu-section h3 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; padding-left: 5px;}
+.ai-tools-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.ai-tools-list li { padding: 12px 15px; font-size: 14px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: var(--text-muted); font-weight: 500;}
+.ai-tools-list li:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.ai-tools-list li.active { background: rgba(245, 158, 11, 0.15); color: var(--saffron-gold); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+.sidebar-bottom { margin-top: auto; }
+.settings-btn { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 14px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;}
+
+/* 💬 Chat Area */
+.chat-area { flex: 1; display: flex; flex-direction: column; padding: 15px 20px; overflow: hidden; position: relative;}
+
+.chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--glass-border); }
+.left-header { display: flex; align-items: center; gap: 12px; }
+.mode-badge { background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); }
+.profile-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: 18px; }
+
+/* 🌟 Mini Hologram (Voice Indicator) */
+.mini-hologram { position: relative; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; }
+.mini-core { width: 26px; height: 26px; background: var(--bg-dark); border: 2px solid var(--saffron-gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 800; color: var(--saffron-gold); z-index: 2; transition: 0.3s; }
+.mini-hologram.speaking .mini-core { background: var(--saffron-gold); color: #000; animation: pulseMini 1.5s infinite; }
+@keyframes pulseMini { 0% { box-shadow: 0 0 0 0 var(--saffron-glow); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* ====================================================
+   3. CHAT BOX & AI FEEDBACK SYSTEM
+==================================================== */
+.chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding: 15px 5px 30px; scrollbar-width: none; }
 .chat-box::-webkit-scrollbar { display: none; }
 
-.message { 
-    font-size: 15px; 
-    line-height: 1.6; 
-    animation: slideUpFade 0.3s forwards; 
-    display: flex;
-    flex-direction: column;
-}
+.message { font-size: 15px; line-height: 1.6; animation: slideUpFade 0.3s forwards; display: flex; flex-direction: column; }
 @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
-/* 👤 User Message (Right Aligned Bubble) */
-.user-message { 
-    align-self: flex-end; 
-    background: rgba(255, 255, 255, 0.08); /* Soft dark bubble instead of bright orange */
-    color: #fff; 
-    padding: 12px 18px;
-    border-radius: 24px;
-    max-width: 85%;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+.user-message { align-self: flex-end; background: rgba(255, 255, 255, 0.08); color: #fff; padding: 12px 18px; border-radius: 24px; max-width: 85%; border: 1px solid var(--glass-border); border-bottom-right-radius: 4px;}
+.ai-message { align-self: flex-start; background: transparent; border: none; color: var(--text-main); max-width: 100%; padding: 0; position: relative; }
 
-/* 🤖 AI Message (Left Aligned, No Bubble, Full Width like Gemini) */
-.ai-message { 
-    align-self: flex-start; 
-    background: transparent; /* No background */
-    border: none;
-    color: var(--text-main);
-    max-width: 100%;
-    padding: 0;
-    position: relative;
-}
+.ai-message::before { content: "A1"; display: inline-flex; justify-content: center; align-items: center; width: 28px; height: 28px; background: linear-gradient(135deg, var(--saffron-gold), #d97706); color: #000; border-radius: 50%; font-size: 11px; font-weight: bold; margin-bottom: 8px; box-shadow: 0 0 10px var(--saffron-glow); }
 
-/* AI Icon Setup before AI Message */
-.ai-message::before {
-    content: "A1";
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, var(--saffron-gold), #d97706);
-    color: #000;
-    border-radius: 50%;
-    font-size: 11px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    box-shadow: 0 0 10px var(--saffron-glow);
-}
+/* 🛠️ AI Feedback System (Thumbs Up, Copy, TTS, Sources) */
+.ai-actions { display: flex; gap: 15px; margin-top: 12px; align-items: center; flex-wrap: wrap;}
+.action-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; transition: 0.2s; font-weight: 500;}
+.action-icon:hover { color: var(--saffron-gold); transform: translateY(-2px);}
+.sources-badge { font-size: 11px; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 12px; color: var(--emerald-green); border: 1px solid rgba(16,185,129,0.3); font-weight: 600;}
 
-/* 🚨 UI TWEAK: Shrink Hologram when chat starts */
-.chat-active .hologram-stage {
-    margin: 5px 0;
-    transform: scale(0.6); /* Shrinks the hologram */
-}
-.chat-active #status-text {
-    display: none; /* Hides 'Ready...' text to save space */
-}
-.chat-active .header { padding-bottom: 5px; }
-
-/* Advanced Input Area (Plus, Arrow, Versions) */
+/* ====================================================
+   4. ADVANCED INPUT AREA
+==================================================== */
 .advanced-input-container { display: flex; flex-direction: column; gap: 8px; padding-top: 5px; }
-.version-selector select { background: transparent; border: none; color: var(--saffron-gold); font-size: 11px; font-weight: 600; outline: none; appearance: none; }
-.version-selector select option { background: var(--bg-dark); color: white; }
-
-.input-wrapper { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 25px; padding: 4px 8px; }
+.input-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 30px; padding: 6px 10px; }
 .input-wrapper input[type="text"] { flex: 1; background: transparent; border: none; color: white; font-size: 15px; outline: none; padding: 10px 5px; min-width: 0; }
 
-.icon-btn { display: flex; justify-content: center; align-items: center; width: 38px; height: 38px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.3s; flex-shrink: 0; }
+.icon-btn { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.3s; flex-shrink: 0; }
 .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
 .plus-icon { color: var(--text-main); }
-.send-arrow { background: var(--saffron-gold); color: #000; width: 36px; height: 36px; }
+.send-arrow { background: var(--saffron-gold); color: #000; width: 38px; height: 38px; }
 
 .mic-icon.active { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulseRed 1.5s infinite; }
 @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 70% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
 
 /* Floating + Menu */
 .action-menu-wrapper { position: relative; }
-.action-menu { position: absolute; bottom: 50px; left: 0; width: 200px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); z-index: 100; transform-origin: bottom left; transition: 0.2s; }
+.action-menu { position: absolute; bottom: 55px; left: 0; width: 220px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.6); z-index: 100; transform-origin: bottom left; transition: 0.2s; }
 .action-menu.hidden { opacity: 0; transform: scale(0.9) translateY(10px); pointer-events: none; }
-.menu-item { padding: 10px 15px; font-size: 12px; color: white; cursor: pointer; }
-.menu-item:hover { background: rgba(255, 153, 51, 0.15); color: var(--saffron-gold); }
-.action-menu hr { border-top: 1px solid var(--glass-border); margin: 4px 0; }
+.menu-item { padding: 12px 20px; font-size: 13px; color: white; cursor: pointer; display: flex; gap: 10px; align-items: center; font-weight: 500;}
+.menu-item:hover { background: rgba(245, 158, 11, 0.15); color: var(--saffron-gold); }
 
-.security-footer { text-align: center; font-size: 9px; color: #64748b; margin-top: 8px; font-weight: 500; }
+.security-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 10px; font-weight: 600; }
 .security-footer .shield { color: #38bdf8; } .security-footer .india { color: #f97316; } .security-footer .text-green { color: var(--emerald-green); }
 
-@media (min-width: 768px) { .main-wrapper { max-width: 700px; height: 90vh; border-radius: 20px; padding: 20px 30px; } }
-                          
+/* ====================================================
+   5. POP-UP MODALS (Settings & Profile)
+==================================================== */
+.custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 1; transition: 0.3s var(--apple-ease); }
+.custom-modal.hidden { opacity: 0; pointer-events: none; }
+
+.modal-content { background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 420px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); transform: scale(1) translateY(0); transition: 0.4s var(--apple-ease); }
+.custom-modal.hidden .modal-content { transform: scale(0.95) translateY(30px); }
+
+.modal-content h2 { font-size: 22px; margin-bottom: 25px; color: var(--saffron-gold); text-align: center;}
+.avatar-upload-box { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; cursor: pointer; }
+.avatar-circle { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed var(--text-muted); display: flex; justify-content: center; align-items: center; font-size: 28px; margin-bottom: 10px; transition: 0.3s;}
+.avatar-upload-box:hover .avatar-circle { border-color: var(--saffron-gold); color: var(--saffron-gold); }
+.avatar-upload-box p { font-size: 13px; color: var(--text-muted); font-weight: 600;}
+
+.verify-row { display: flex; gap: 10px; }
+.btn-verify { background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); border: 1px solid var(--emerald-green); border-radius: 12px; padding: 0 20px; font-weight: 700; cursor: pointer; transition: 0.3s;}
+.btn-verify:hover { background: var(--emerald-green); color: #000; }
+
+/* ====================================================
+   6. RESPONSIVE DESIGN (Mobile & Tablet)
+==================================================== */
+@media (max-width: 768px) {
+    /* Mobile par Sidebar slide-drawer ban jayega */
+    .sidebar { position: absolute; left: -280px; top: 0; bottom: 0; z-index: 500; box-shadow: 20px 0 50px rgba(0,0,0,0.8); width: 280px; }
+    .sidebar.open { left: 0; }
+    
+    /* Mobile Hamburger Menu (Aage JS se control karenge agar zarurat hui) */
+    .main-wrapper { max-width: 100%; border-radius: 0; }
+    .chat-area { padding: 15px 10px; }
+    .message { max-width: 90%; }
+}
+
+@media (min-width: 768px) { 
+    .main-wrapper { max-width: 1200px; height: 90vh; border-radius: 20px; padding: 0; } 
+    .app-screen { padding: 0; }
+    .sidebar { border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
+    .chat-area { padding: 20px 30px; }
+   }
+                  

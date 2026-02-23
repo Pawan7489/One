@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A1 Voice Engine</title>
+    <link rel="stylesheet" href="../static/css/voice.css">
+</head>
+<body>
+    <div id="voice-interface" class="voice-container">
+        <div class="voice-header">
+            <div class="status-indicator">
+                <span id="voice-status">A1 is Ready</span>
+                <div class="pulse-dot"></div>
+            </div>
+            <button class="close-voice" id="stop-voice">✖</button>
+        </div>
+
+        <div class="hologram-wrapper">
+            <div class="hologram-ring"></div>
+            <div class="hologram-ring"></div>
+            <div class="hologram-ring"></div>
+            <div class="main-core" id="ai-core">A1</div>
+            <div class="waveform-container" id="waveform">
+                </div>
+        </div>
+
+        <div class="voice-footer">
+            <div class="live-transcript" id="user-speech-text">
+                (Aapki awaaz yahan dikhegi...)
+            </div>
+            
+            <div class="active-persona" id="persona-display">
+                Mode: Loading...
+            </div>
+
+            <div class="voice-controls">
+                <button id="mic-toggle" class="mic-btn">🎙️</button>
+                <p>Tap to Talk</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/js/voice.js"></script>
+</body>
+</html>

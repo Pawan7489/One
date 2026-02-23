@@ -1,150 +1,21 @@
-/* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (MASTER CSS V13.0)
-   100% Integrated, Crash-Free & Premium UI
-==================================================== */
-
-:root {
-    /* 🇮🇳 Indian Navy & Saffron Palette */
-    --bg-dark: #070b14; 
-    --glass-bg: rgba(15, 23, 42, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --saffron: #ff9933; 
-    --saffron-glow: rgba(255, 153, 51, 0.3);
-    --emerald: #138808;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    
-    /* Apple/Samsung Bezier Curves */
-    --apple-ease: cubic-bezier(0.25, 1, 0.5, 1);
-    --bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Master UI Controller */
+.app-screen, .custom-modal {
+    display: none !important; /* डिफ़ॉल्ट रूप से सब छुपाओ */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body { 
-    background: var(--bg-dark); color: var(--text-main); 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-    height: 100dvh; overflow: hidden; 
-}
-
-/* 🚨 THE MASTER FIX: Display & Crash Protection */
-.app-screen {
-    width: 100%; height: 100dvh;
-    display: none !important; /* डिफ़ॉल्ट रूप से सब बंद */
-    opacity: 0; transition: opacity 0.4s var(--apple-ease);
-}
-
-/* केवल .active-screen वाली क्लास ही दिखेगी */
+/* केवल 'active-screen' वाली क्लास ही दिखेगी */
 .active-screen {
     display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-.hidden { display: none !important; }
-
-/* 🌟 Ambient Background Animation */
-.ambient-bg-glow { 
-    position: absolute; top: 10%; left: 50%; width: 80vw; height: 80vw; 
-    background: radial-gradient(circle, var(--saffron-glow) 0%, transparent 70%); 
-    filter: blur(80px); z-index: -1; animation: drift 15s infinite alternate;
-}
-@keyframes drift { 0% { transform: translateX(-50%) scale(1); } 100% { transform: translateX(-40%) scale(1.1); } }
-
-/* ====================================================
-   1. AUTHENTICATION (Login & Signup Design)
-==================================================== */
-.login-content { margin: auto; width: 90%; max-width: 380px; text-align: center; }
-.logo-box { 
-    width: 70px; height: 70px; background: var(--saffron); border-radius: 20px; 
-    margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
-    font-size: 30px; font-weight: 800; color: #000; box-shadow: 0 10px 30px var(--saffron-glow);
-}
-
-.input-field, .input-row { margin-bottom: 15px; display: flex; gap: 10px; }
-input, select, textarea {
-    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border);
-    background: rgba(0,0,0,0.4); color: white; outline: none; transition: 0.3s;
-}
-input:focus { border-color: var(--saffron); box-shadow: 0 0 10px var(--saffron-glow); }
-
-.btn-primary { 
-    width: 100%; padding: 16px; background: var(--saffron); border: none; 
-    border-radius: 14px; color: #000; font-weight: 700; cursor: pointer; transition: 0.3s;
-}
-.btn-primary:active { transform: scale(0.96); }
-
-/* ====================================================
-   2. DASHBOARD & SIDEBAR
-==================================================== */
-.full-layout { flex-direction: row !important; height: 100vh; }
-
-.sidebar {
-    width: 280px; background: rgba(7, 11, 20, 0.9); border-right: 1px solid var(--glass-border);
-    padding: 20px; display: flex; flex-direction: column; transition: 0.4s var(--apple-ease);
-}
-
-.chat-item {
-    padding: 12px; border-radius: 10px; color: var(--text-muted); cursor: pointer;
-    display: flex; justify-content: space-between; margin-bottom: 5px; transition: 0.2s;
-}
-.chat-item:hover, .chat-item.active { background: rgba(255,255,255,0.05); color: #fff; }
-
-/* ====================================================
-   3. CHAT AREA & BUBBLES
-==================================================== */
-.chat-area { flex: 1; display: flex; flex-direction: column; position: relative; }
-.chat-box { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: none; }
-.chat-box::-webkit-scrollbar { display: none; }
-
-.message-bubble {
-    max-width: 80%; padding: 15px; border-radius: 20px; margin-bottom: 20px;
-    animation: slideUp 0.4s var(--apple-ease) forwards;
-}
-.user-bubble { align-self: flex-end; background: rgba(255, 153, 51, 0.1); border: 1px solid rgba(255,153,51,0.2); }
-.ai-bubble { align-self: flex-start; background: var(--glass-bg); border: 1px solid var(--glass-border); }
-
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ====================================================
-   4. BOTTOM INPUT (The Smart Engine)
-==================================================== */
-.advanced-input-container { padding: 20px; background: linear-gradient(to top, var(--bg-dark), transparent); }
-.input-wrapper {
-    display: flex; align-items: flex-end; gap: 10px; background: rgba(0,0,0,0.5);
-    border: 1px solid var(--glass-border); border-radius: 24px; padding: 10px 15px;
-}
-textarea { background: transparent; border: none; padding: 10px 0; max-height: 150px; resize: none; }
-
-/* ====================================================
-   5. MODALS & OVERLAYS (Highest Z-Index)
-==================================================== */
-.custom-modal {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    z-index: 9999; justify-content: center; align-items: center;
-}
-.modal-content {
-    background: var(--bg-dark); border: 1px solid var(--glass-border);
-    padding: 30px; border-radius: 28px; width: 90%; max-width: 440px;
-}
-
-/* ====================================================
-   6. 🛡️ SECURITY FOOTER (Always Fixed)
-==================================================== */
+/* 🛡️ Security Footer Styling */
 .security-badge-footer {
     position: fixed; bottom: 10px; width: 100%; text-align: center;
-    font-size: 11px; color: #64748b; z-index: 10; pointer-events: none;
+    font-size: 11px; color: #64748b; z-index: 50;
 }
-.shield { color: #38bdf8; } .india { color: #f97316; } .lock { color: #10b981; }
-
-/* ====================================================
-   7. ANIMATIONS (MacBook Style)
-==================================================== */
-.animate-slide-up { animation: slideUp 0.6s var(--bouncy) forwards; }
-
-.mini-hologram {
-    width: 35px; height: 35px; background: var(--saffron); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-weight: 800;
-    font-size: 12px; color: #000; box-shadow: 0 0 15px var(--saffron-glow);
-          }
+.india { color: #f97316; font-weight: bold; }

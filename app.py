@@ -91,8 +91,8 @@ def chat():
         }
         
         # 20 second का timeout ताकि सर्वर कभी भी 'Black Screen' पर न अटके
-        response = requests.post(ADMIN_URL, json=payload, timeout=120)
-        backend_data = response.json()
+        # Ise badal kar timeout=120 kar dein:
+response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=120)
 
         # Final answer को सीधा फ्रंटएंड (script.js) को भेजना
         return jsonify(backend_data)

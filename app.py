@@ -78,23 +78,21 @@ def chat():
     try:
         data = request.get_json() or {}
         user_message = data.get('query', '')
-        ai_mode = data.get('mode', 'chat') # 8 AI Super Powers (Image, Video, etc.)
+        ai_mode = data.get('mode', 'chat') 
         user_context = data.get('user_context', {})
 
-        # Admin Panel को पेलोड भेजना (Blueprint के 'check_database_cache' फ्लैग के साथ)
         payload = {
             "query": user_message,
             "mode": ai_mode,
-            "check_database_cache": True, # पैसे और समय बचाने के लिए कैशे चेक करें
-            "web_search": True, # Deep Search active by default
+            "check_database_cache": True, 
+            "web_search": True, 
             "user_context": user_context
         }
         
-        # 20 second का timeout ताकि सर्वर कभी भी 'Black Screen' पर न अटके
-        # Ise badal kar timeout=120 kar dein:
-response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=120)
+        # ✅ URL aur 120 second ka timeout yahan theek se add kiya gaya hai
+        response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=120)
+        backend_data = response.json()
 
-        # Final answer को सीधा फ्रंटएंड (script.js) को भेजना
         return jsonify(backend_data)
             
     except Exception as e:
@@ -107,4 +105,3 @@ response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=
 if __name__ == '__main__':
     # Debug mode ON ताकि कोई भी गलती तुरंत कंसोल में दिखे
     app.run(debug=True, port=5000)
-    

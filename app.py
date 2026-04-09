@@ -90,7 +90,7 @@ def chat():
         }
         
         # ✅ URL aur 120 second ka timeout yahan theek se add kiya gaya hai
-        response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=120)
+        response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=500)
         backend_data = response.json()
 
         return jsonify(backend_data)

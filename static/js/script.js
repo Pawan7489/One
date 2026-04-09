@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let recognition;
     let existingInputText = ""; // 🎙️ FIX: To prevent mic from overwriting
 
-    const ADMIN_PANEL_URL = "https://nirman-ai-ubjx.onrender.com/api/ai/ask";
+    const ADMIN_PANEL_URL = "/api/chat";
 
     function unlockAudio() {
         if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }

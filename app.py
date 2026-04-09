@@ -91,7 +91,7 @@ def chat():
         }
         
         # 20 second का timeout ताकि सर्वर कभी भी 'Black Screen' पर न अटके
-        response = requests.post(ADMIN_URL, json=payload, timeout=20)
+        response = requests.post(ADMIN_URL, json=payload, timeout=120)
         backend_data = response.json()
 
         # Final answer को सीधा फ्रंटएंड (script.js) को भेजना

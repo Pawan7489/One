@@ -9,7 +9,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # --- [MASTER CONFIGURATION] ---
 # A1 Core Admin Panel - जहाँ असली AI प्रोसेसिंग और लॉजिक स्टोर है
-ADMIN_URL = "https://a1-zc43.onrender.com/api/ai/ask"
+ADMIN_URL = "https://nirman-ai-ubjx.onrender.com/api/ai/ask"
 
 # 2. Advanced Persona Database (Blueprint के अनुसार)
 # उम्र के हिसाब से AI का व्यक्तित्व और बातचीत का तरीका बदल जाता है

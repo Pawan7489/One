@@ -4,18 +4,15 @@ import requests
 import os
 
 # 1. Flask App Initialization
-# Static और Templates फोल्डर्स को स्पष्ट रूप से परिभाषित किया गया है ताकि कोई रेंडरिंग एरर न आए
+# Static aur Templates folders ko spasht roop se paribhashit kiya gaya hai
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # --- [MASTER CONFIGURATION] ---
-# A1 Core Admin Panel - जहाँ असली AI प्रोसेसिंग और लॉजिक स्टोर है
-# --- [MASTER CONFIGURATION] ---
-# A1 Core Admin Panel - where the main AI processing and logic live
+# A1 Core Admin Panel - naya URL update kar diya gaya hai
 ADMIN_URL = "https://nirman-ai1.onrender.com/api/chat"
 
-
-# 2. Advanced Persona Database (Blueprint के अनुसार)
-# उम्र के हिसाब से AI का व्यक्तित्व और बातचीत का तरीका बदल जाता है
+# 2. Advanced Persona Database 
+# Umar ke hisab se AI ka vyaktitva badalta hai
 PERSONAS = {
     "child": {"label": "Buddy Mode (5-15)", "greeting": "Namaste chote dost! Main A1 hoon. Aaj hum kya seekhenge?"},
     "youth": {"label": "Wingman Mode (18-25)", "greeting": "Hey bro! A1 here. Sab set hai? Kya help chahiye?"},
@@ -47,14 +44,14 @@ def get_persona_mode(age):
 
 @app.route('/')
 def home():
-    """Main Gateway - यह आपकी मास्टर index.html फाइल को लोड करेगा"""
+    """Main Gateway - index.html load karega"""
     return render_template('index.html')
 
 # --- [API ENDPOINTS - THE ENGINE ROOM] ---
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    """User login aur persona calculation endpoint"""
+    """User login aur persona calculation"""
     try:
         data = request.get_json() or {}
         dob = data.get('dob', '')
@@ -77,34 +74,39 @@ def login():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Admin Panel API Bridge - असली AI जवाब यहीं से आते हैं"""
+    """Admin Panel API Bridge"""
     try:
+        # Frontend (JS) se aane wala poora JSON data nikal liya
         data = request.get_json() or {}
-        user_message = data.get('query', '')
-        ai_mode = data.get('mode', 'chat') 
-        user_context = data.get('user_context', {})
 
-        payload = {
-            "query": user_message,
-            "mode": ai_mode,
-            "check_database_cache": True, 
-            "web_search": True, 
-            "user_context": user_context
-        }
+        # ✅ Naya ADMIN_URL use kiya gaya hai aur data directly bheja gaya hai 
+        # (is se session_id aur query dono aage jayenge memory ke liye)
+        # ✅ 500 second ka timeout lagaya gaya hai
+        response = requests.post(ADMIN_URL, json=data, timeout=500)
         
-        # ✅ URL aur 120 second ka timeout yahan theek se add kiya gaya hai
-        response = requests.post("https://nirman-ai-ubjx.onrender.com/api/ai/ask", json=payload, timeout=500)
-        backend_data = response.json()
-
-        return jsonify(backend_data)
+        if response.status_code == 200:
+            backend_data = response.json()
+            return jsonify(backend_data)
+        else:
+            return jsonify({
+                "status": "error",
+                "message": f"Admin Panel error: Status {response.status_code}"
+            })
             
+    except requests.exceptions.Timeout:
+        return jsonify({
+            "status": "error",
+            "answer": "Timeout (500s): Engine bahut deep thinking kar raha hai. Kripya thodi der baad dobara request bhejein.",
+            "message": "Engine thinking timeout."
+        })
     except Exception as e:
         return jsonify({
             "status": "error",
-            "answer": "Commander, AI Engine se sampark nahi ho paa raha hai. Kripya net check karein.",
+            "answer": "Commander, AI Engine se sampark nahi ho paa raha hai. Kripya apna backend ya internet check karein.",
             "message": str(e)
         })
 
 if __name__ == '__main__':
-    # Debug mode ON ताकि कोई भी गलती तुरंत कंसोल में दिखे
+    # Debug mode ON
     app.run(debug=True, port=5000)
+    

@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 # A1 Core Admin Panel - जहाँ असली AI प्रोसेसिंग और लॉजिक स्टोर है
 # --- [MASTER CONFIGURATION] ---
 # A1 Core Admin Panel - where the main AI processing and logic live
-ADMIN_URL = "https://nirman-ai.onrender.com/api/chat"
+ADMIN_URL = "https://nirman-ai1.onrender.com/api/chat"
 
 
 # 2. Advanced Persona Database (Blueprint के अनुसार)

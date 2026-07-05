@@ -2,17 +2,15 @@ from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 import requests
 import os
+import werkzeug # File formatting ke liye zaruri
 
 # 1. Flask App Initialization
-# Static aur Templates folders ko spasht roop se paribhashit kiya gaya hai
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # --- [MASTER CONFIGURATION] ---
-# A1 Core Admin Panel - naya URL update kar diya gaya hai
 ADMIN_URL = "https://nirman-ai1.onrender.com/api/chat"
 
 # 2. Advanced Persona Database 
-# Umar ke hisab se AI ka vyaktitva badalta hai
 PERSONAS = {
     "child": {"label": "Buddy Mode (5-15)", "greeting": "Namaste chote dost! Main A1 hoon. Aaj hum kya seekhenge?"},
     "youth": {"label": "Wingman Mode (18-25)", "greeting": "Hey bro! A1 here. Sab set hai? Kya help chahiye?"},
@@ -21,7 +19,6 @@ PERSONAS = {
 }
 
 # --- [CORE LOGIC FUNCTIONS] ---
-
 def calculate_age(dob_string):
     """Janam tithi se umar nikalne ka bulletproof logic"""
     try:
@@ -41,14 +38,12 @@ def get_persona_mode(age):
     else: return PERSONAS["senior"]
 
 # --- [MODULAR ROUTES] ---
-
 @app.route('/')
 def home():
     """Main Gateway - index.html load karega"""
     return render_template('index.html')
 
 # --- [API ENDPOINTS - THE ENGINE ROOM] ---
-
 @app.route('/api/login', methods=['POST'])
 def login():
     """User login aur persona calculation"""
@@ -72,21 +67,44 @@ def login():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+
+# 🚀 UPDATED: MULTI-MODAL CHAT ROUTER
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Admin Panel API Bridge"""
+    """Admin Panel API Bridge (Now Supports 10 File Frameworks)"""
     try:
-        # Frontend (JS) se aane wala poora JSON data nikal liya
-        data = request.get_json() or {}
+        # STEP 1: Check karna ki kya user ne File (Image/Code/Video) bheji hai
+        if request.content_type and request.content_type.startswith('multipart/form-data'):
+            
+            # Form se Text aur Tags nikalna
+            user_data = dict(request.form)
+            uploaded_files = request.files.getlist('files')
+            framework_tags = request.form.getlist('frameworks')
+            
+            files_to_send = []
+            
+            # Har file ko Render / Colab ke liye pack karna
+            for idx, file in enumerate(uploaded_files):
+                filename = werkzeug.utils.secure_filename(file.filename)
+                tag = framework_tags[idx] if idx < len(framework_tags) else "GENERAL_FRAMEWORK"
+                
+                # File ko HTTP post package mein convert karna
+                files_to_send.append(
+                    ('files', (filename, file.read(), file.content_type))
+                )
+                user_data[f'framework_tag_{idx}'] = tag
 
-        # ✅ Naya ADMIN_URL use kiya gaya hai aur data directly bheja gaya hai 
-        # (is se session_id aur query dono aage jayenge memory ke liye)
-        # ✅ 500 second ka timeout lagaya gaya hai
-        response = requests.post(ADMIN_URL, json=data, timeout=500)
+            # Data aur Files dono ko aage Admin URL par bhejna
+            response = requests.post(ADMIN_URL, data=user_data, files=files_to_send, timeout=500)
+
+        # STEP 2: Agar user ne sirf Text (JSON) bheja hai
+        else:
+            data = request.get_json() or {}
+            response = requests.post(ADMIN_URL, json=data, timeout=500)
         
+        # STEP 3: Admin URL se aane wale jawab ko Frontend par bhejna
         if response.status_code == 200:
-            backend_data = response.json()
-            return jsonify(backend_data)
+            return jsonify(response.json())
         else:
             return jsonify({
                 "status": "error",

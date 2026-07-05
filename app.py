@@ -48,7 +48,11 @@ def home():
 def login():
     """User login aur persona calculation"""
     try:
-        data = request.get_json() or {}
+        if request.is_json:
+            data = request.get_json()
+        else:
+            data = request.form
+
         dob = data.get('dob', '')
         name = data.get('name', 'Commander')
         
@@ -68,13 +72,24 @@ def login():
         return jsonify({"success": False, "error": str(e)})
 
 
-# 🚀 UPDATED: MULTI-MODAL CHAT ROUTER
+# 🚀 UPDATED: DUAL-MODE CHAT ROUTER (JSON + MULTIPART)
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Admin Panel API Bridge (Now Supports 10 File Frameworks)"""
+    """Admin Panel API Bridge (Supports both pure JSON and 10 File Frameworks)"""
     try:
-        # STEP 1: Check karna ki kya user ne File (Image/Code/Video) bheji hai
-        if request.content_type and request.content_type.startswith('multipart/form-data'):
+        # ==========================================
+        # MODE 1: PURE TEXT (JSON) - Super Fast
+        # ==========================================
+        if request.is_json:
+            data = request.get_json() or {}
+            
+            # JSON data ko aage JSON format mein hi bhej rahe hain
+            response = requests.post(ADMIN_URL, json=data, timeout=500)
+            
+        # ==========================================
+        # MODE 2: FILES + TEXT (MULTIPART/FORM-DATA)
+        # ==========================================
+        elif request.content_type and request.content_type.startswith('multipart/form-data'):
             
             # Form se Text aur Tags nikalna
             user_data = dict(request.form)
@@ -97,12 +112,16 @@ def chat():
             # Data aur Files dono ko aage Admin URL par bhejna
             response = requests.post(ADMIN_URL, data=user_data, files=files_to_send, timeout=500)
 
-        # STEP 2: Agar user ne sirf Text (JSON) bheja hai
+        # ==========================================
+        # MODE 3: UNKNOWN FORMAT
+        # ==========================================
         else:
-            data = request.get_json() or {}
-            response = requests.post(ADMIN_URL, json=data, timeout=500)
-        
-        # STEP 3: Admin URL se aane wale jawab ko Frontend par bhejna
+            return jsonify({
+                "status": "error",
+                "message": "Data format samajh nahi aaya. Kripya JSON ya Form-Data bhejein."
+            }), 415
+
+        # --- RESULT HANDLING ---
         if response.status_code == 200:
             return jsonify(response.json())
         else:

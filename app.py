@@ -8,7 +8,7 @@ import werkzeug # File formatting ke liye zaruri
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # --- [MASTER CONFIGURATION] ---
-ADMIN_URL = "https://nirman-ai1.onrender.com/api/chat"
+ADMIN_URL = "https://admin0-ihl1.onrender.com/api/chat"
 
 # 2. Advanced Persona Database 
 PERSONAS = {

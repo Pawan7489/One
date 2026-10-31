@@ -77,18 +77,14 @@ def login():
 def chat():
     """Admin Panel API Bridge (Supports both pure JSON and 10 File Frameworks)"""
     try:
-        # ==========================================
-        # MODE 1: PURE TEXT (JSON) - Super Fast
-        # ==========================================
+
         if request.is_json:
             data = request.get_json() or {}
             
             # JSON data ko aage JSON format mein hi bhej rahe hain
             response = requests.post(ADMIN_URL, json=data, timeout=500)
             
-        # ==========================================
-        # MODE 2: FILES + TEXT (MULTIPART/FORM-DATA)
-        # ==========================================
+
         elif request.content_type and request.content_type.startswith('multipart/form-data'):
             
             # Form se Text aur Tags nikalna
@@ -112,9 +108,7 @@ def chat():
             # Data aur Files dono ko aage Admin URL par bhejna
             response = requests.post(ADMIN_URL, data=user_data, files=files_to_send, timeout=500)
 
-        # ==========================================
         # MODE 3: UNKNOWN FORMAT
-        # ==========================================
         else:
             return jsonify({
                 "status": "error",

@@ -1,14 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ==========================================
-    // 🧹 0. REMOVE DUMMY DATA (Real Mode Active)
-    // ==========================================
-    // कमांडर के निर्देशानुसार: कोई डमी मैसेज नहीं चाहिए!
+
     const dummyMsg = document.getElementById("dummy-ai-message");
     if(dummyMsg) dummyMsg.remove();
 
-    // ==========================================
-    // 📱 1. PREMIUM HAPTIC ENGINE (Light Vibration)
-    // ==========================================
+    
     function triggerHaptic(type = "light") {
         if (!navigator.vibrate) return;
         if (type === "light") navigator.vibrate(10);   // MacBook Trackpad जैसा फील
@@ -16,9 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (type === "heavy") navigator.vibrate([30, 40, 30]); // एरर या स्टॉप के लिए
     }
 
-    // ==========================================
-    // 🗣️ 2. PRE-LOAD VOICES (Instant Speech Fix)
-    // ==========================================
+
     let availableVoices = [];
     function loadVoices() {
         availableVoices = window.speechSynthesis.getVoices();
@@ -28,9 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadVoices(); 
     }
 
-    // ==========================================
-    // 🎯 3. DOM ELEMENTS SETUP
-    // ==========================================
+
     const screens = {
         signup: document.getElementById("signup-screen"),
         login: document.getElementById("login-screen"),
@@ -90,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let isContinuousMicOn = false;
     let isLiveVoiceMode = false;
     let recognition;
-    let existingInputText = ""; // 🎙️ FIX: To prevent mic from overwriting
+    let existingInputText = ""; // To prevent mic from overwriting
 
     const ADMIN_PANEL_URL = "/api/chat";
 
@@ -98,9 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if(window.speechSynthesis) { let u = new SpeechSynthesisUtterance(''); u.volume = 0; window.speechSynthesis.speak(u); }
     }
 
-    // ==========================================
-    // 🖼️ 4. PROFILE PHOTO UPLOAD LOGIC (FIXED)
-    // ==========================================
+
+    // 4. PROFILE PHOTO UPLOAD 
     const photoUpload = document.getElementById('profile-photo-upload');
     const avatarPreview = document.getElementById('profile-avatar-preview');
     const headerProfileBtn = document.getElementById('profile-btn');
@@ -131,10 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ==========================================
-    // 🔐 5. AUTHENTICATION & LOGIN LOGIC
-    // ==========================================
-    window.speakText = function(text) { speak(text); }; 
+    
+    //  5. AUTHENTICATION & LOGIN LOGIC
+  window.speakText = function(text) { speak(text); }; 
 
     function switchScreen(hideElem, showElem) {
         triggerHaptic("light");
@@ -172,9 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
     auth.signupForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("reg-name").value); });
     auth.loginForm.addEventListener("submit", (e) => { e.preventDefault(); unlockAudio(); enterChatArea(document.getElementById("login-id").value.split('@')[0]); });
 
-    // ==========================================
-    // 🗂️ 6. SIDEBAR, MODALS & AI TOOLS (FIXED)
-    // ==========================================
+
+    // 🗂️ 6. SIDEBAR, MODALS & AI TOOLS
     menuToggle?.addEventListener("click", () => { appSidebar.classList.toggle("open"); triggerHaptic("light"); });
     document.querySelector(".chat-area").addEventListener("click", (e) => {
         if (window.innerWidth <= 768 && appSidebar.classList.contains("open") && !menuToggle.contains(e.target)) {
@@ -199,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if(demoRecoverBtn) {
         demoRecoverBtn.addEventListener("click", () => {
             triggerHaptic("medium");
-            alert("✅ Chat Recovered Successfully!");
+            alert("Chat Recovered Successfully!");
         });
     }
 
@@ -238,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.speakText("Naya chat shuru ho gaya hai.");
     });
 
-    // ⚡ FIX: AI Tools Selection Logic
+    //  AI Tools Selection Logic
     aiTools.forEach(item => {
         item.addEventListener("click", () => {
             triggerHaptic("light");
@@ -271,9 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ==========================================
-    // 🗣️ 7. TEXT-TO-SPEECH (TTS) & SATURN ANIMATION SYNC
-    // ==========================================
+
+    //  7. TEXT-TO-SPEECH (TTS) & SATURN ANIMATION SYNC
     window.speakText = function(text) { speak(text); };
 
     function speak(text) {
@@ -283,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let cleanText = text.replace(/[*#_`]/g, '').replace(/Commander AI:/gi, ''); 
         const utterance = new SpeechSynthesisUtterance(cleanText);
         
-        // Use pre-loaded voices (Bug Fix)
+        // Use pre-loaded voices 
         let selectedVoice = availableVoices.find(v => v.lang.includes("hi-IN") || v.lang.includes("en-IN")) || availableVoices[0];
         if (selectedVoice) utterance.voice = selectedVoice;
         
@@ -295,13 +282,13 @@ document.addEventListener("DOMContentLoaded", () => {
         else { utterance.pitch = 1.0; utterance.rate = 1.0; }
 
         utterance.onstart = () => { 
-            // 🪐 ANIMATION SYNC: Saturn Rings Spin Faster when speaking!
+            // ANIMATION SYNC: Saturn Rings Spin Faster when speaking!
             document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "0.5s"); 
             document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "2s");
             document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "3s");
         };
         utterance.onend = () => { 
-            // 🪐 ANIMATION SYNC: Return to normal calm speed
+            // ANIMATION SYNC: Return to normal calm speed
             document.querySelectorAll('.core-ai').forEach(el => el.style.animationDuration = "2s");
             document.querySelectorAll('.ring-x').forEach(el => el.style.animationDuration = "6s");
             document.querySelectorAll('.ring-y').forEach(el => el.style.animationDuration = "8s");
@@ -311,9 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.speechSynthesis.speak(utterance);
     }
 
-    // ==========================================
-    // ✍️ 8. SMART TEXTAREA (PASTE BUG FIXED)
-    // ==========================================
+
+    //  8. SMART TEXTAREA
     chatUI.input.addEventListener("input", function() {
         this.style.height = "auto"; 
         this.style.height = (this.scrollHeight) + "px";
@@ -337,9 +323,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // ==========================================
-    // 🎙️ 9. SPEECH RECOGNITION (MIC OVERWRITE BUG FIXED)
-    // ==========================================
+
+    // 9. SPEECH RECOGNITION
     const SpeechRecAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecAPI) {
         recognition = new SpeechRecAPI();
@@ -352,7 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 liveVoiceStatus.innerText = "Listening...";
             } else {
                 chatUI.micBtn.classList.add("active");
-                // 🚨 BUG FIX: Save whatever is already typed in the box before listening
+                // Save whatever is already typed in the box before listening
                 existingInputText = chatUI.input.value.trim(); 
             }
         };
@@ -368,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if(isLiveVoiceMode) {
                 liveVoiceText.innerText = finalTranscript + interimTranscript;
             } else {
-                // 🚨 BUG FIX: Append new speech to existing text instead of deleting it!
+                // Append new speech to existing text instead of deleting it!
                 let space = existingInputText.length > 0 ? " " : "";
                 chatUI.input.value = existingInputText + space + finalTranscript + interimTranscript;
                 chatUI.input.dispatchEvent(new Event('input')); // Auto-grow trigger
@@ -443,10 +428,9 @@ document.addEventListener("DOMContentLoaded", () => {
         liveVoiceChatLog.scrollTo({ top: liveVoiceChatLog.scrollHeight, behavior: 'smooth' });
     }
 
-    // ==========================================
-    // 🧠 10. AI ENGINE, ABORT LOGIC & ACTION BAR
-    // ==========================================
-    function toggleInputUI(generating) {
+
+    // 10. AI ENGINE, ABORT LOGIC & ACTION BAR
+     function toggleInputUI(generating) {
         isGenerating = generating;
         if (generating) {
             chatUI.sendBtn.classList.add("hidden");
@@ -461,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatUI.box.appendChild(chatUI.thinkingIndicator);
         chatUI.thinkingIndicator.classList.remove("hidden");
         
-        // 🪐 Faster Saturn Rings while thinking
+        // Faster Saturn Rings while thinking
         const thinkingHolo = chatUI.thinkingIndicator.querySelector('.saturn-hologram');
         if(thinkingHolo) {
             thinkingHolo.querySelector('.core-ai').style.animationDuration = "0.8s";
@@ -654,10 +638,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chatUI.sendBtn.addEventListener("click", sendMessageToAI);
 
-    // ==========================================
-    // 🍒 11. FINAL UX POLISH (Deep Search Fixes)
-    // ==========================================
-    
+
+    // 11. FINAL UX POLISH (Deep Search Fixes)
     // 1. Profile Name Update Logic
     const saveProfileBtn = document.getElementById("close-profile");
     const profNameInput = document.getElementById("prof-name");
@@ -690,16 +672,4 @@ document.addEventListener("DOMContentLoaded", () => {
             // alert(item.innerText.trim() + " selected!"); 
         });
     });
-    
-
-
-
-
-
-    
 }); 
-// End of DOMContentLoaded
-            
-
-    
-                                     

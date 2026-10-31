@@ -1,7 +1,4 @@
-/* ====================================================
-   PROJECT A1 - THE INDIAN SUPER-AI (V15.0 MASTER)
-   Saturn 3D Holograms, Premium UI & Bug-Free Layout
-==================================================== */
+/* THE AI (V15.0 MASTER)*/
 
 :root {
     /* Deep Indian Navy - Trust, Security, Calmness */
@@ -33,7 +30,7 @@ body {
     height: 100dvh; overflow: hidden; display: flex; justify-content: center; 
 }
 
-/* 🌟 Floating Ambient Background Animation */
+/*  Floating Ambient Background Animation */
 .ambient-bg-glow { 
     position: absolute; top: 10%; left: 50%; width: 70vw; height: 70vw; border-radius: 50%; 
     background: radial-gradient(circle, var(--saffron-glow) 0%, transparent 60%); 
@@ -55,9 +52,7 @@ body {
 .app-screen { width: 100%; height: 100%; display: flex; flex-direction: column; padding: 15px 20px; transition: opacity 0.5s ease; }
 .app-screen.hidden { display: none !important; opacity: 0; }
 
-/* ====================================================
-   🪐 1. UNIVERSAL SATURN HOLOGRAM (3D Rings matching Image)
-==================================================== */
+/* 1.  HOLOGRAM (3D Rings matching Image)*/
 .saturn-hologram-container {
     display: flex; justify-content: center; align-items: center; width: 100%;
     /* Extra padding prevents rings from clipping */
@@ -112,9 +107,9 @@ body {
     100% { transform: rotateX(65deg) rotateY(-20deg) rotateZ(360deg); } 
 }
 
-/* ====================================================
+/* 
    2. AUTH & LOGIN UI
-==================================================== */
+ */
 .login-content { margin: auto; width: 100%; max-width: 380px; text-align: center; overflow-y: auto; padding-bottom: 20px; scrollbar-width: none; animation: slideUpFade 0.6s var(--apple-ease) forwards; }
 .login-content::-webkit-scrollbar { display: none; }
 
@@ -143,12 +138,12 @@ body {
 .social-btn { padding: 12px 5px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;}
 .social-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
 
-/* ====================================================
+/*
    3. DASHBOARD LAYOUT & SIDEBAR
-==================================================== */
+*/
 .full-layout { padding: 0 !important; flex-direction: row !important; }
 
-/* 🗂️ Sidebar */
+/*  Sidebar */
 .sidebar { width: 280px; background: rgba(7, 11, 20, 0.85); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 20px 15px; flex-shrink: 0; transition: 0.4s var(--apple-ease); z-index: 100;}
 .sidebar-scroll-area { flex: 1; overflow-y: auto; scrollbar-width: none; padding-right: 5px; }
 .sidebar-scroll-area::-webkit-scrollbar { display: none; }
@@ -187,9 +182,9 @@ body {
 
 
 
-/* ====================================================
+/* 
    3. CHAT AREA, MESSAGES & ACTION BARS
-==================================================== */
+*/
 .chat-area { flex: 1; display: flex; flex-direction: column; padding: 15px 20px; position: relative; }
 .chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
 .left-header { display: flex; align-items: center; gap: 12px; }
@@ -220,7 +215,7 @@ body {
 .ai-message { align-self: flex-start; background: transparent; border: none; color: var(--text-main); max-width: 100%; padding: 0; position: relative; }
 .ai-message::before { content: "A1"; display: inline-flex; justify-content: center; align-items: center; width: 30px; height: 30px; background: linear-gradient(135deg, var(--saffron-gold), var(--saffron-dark)); color: #111; border-radius: 50%; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 0 0 12px var(--saffron-glow); }
 
-/* 🛠️ AI & User Action Bars (Premium Control) */
+/* AI & User Action Bars (Premium Control) */
 .ai-actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; flex-wrap: wrap;}
 .action-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 12px; transition: 0.2s var(--apple-ease); font-weight: 600;}
 .action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
@@ -230,9 +225,7 @@ body {
 .user-action-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 4px 8px; transition: 0.2s; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px;}
 .user-action-icon:hover { color: var(--saffron-gold); background: rgba(255,255,255,0.1); transform: scale(1.05);}
 
-/* ====================================================
-   4. ADVANCED INPUT AREA & THINKING LOGIC
-==================================================== */
+/* 4. ADVANCED INPUT AREA & THINKING LOGIC */
 .advanced-input-container { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
 
 /* Prompt Suggestions Chips */
@@ -255,7 +248,7 @@ body {
 .toggle-pill span { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 5px;}
 .toggle-pill input:checked + span { background: rgba(19, 136, 8, 0.15); border-color: var(--emerald-green); color: var(--emerald-green); box-shadow: 0 0 10px rgba(19,136,8,0.2);}
 
-/* 🚨 SMART TEXTAREA (Bug Fix: Limits Growth & Adds Scroll) */
+/* SMART TEXTAREA (Bug Fix: Limits Growth & Adds Scroll) */
 .input-wrapper { display: flex; align-items: flex-end; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 8px 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: 0.3s;}
 .input-wrapper:focus-within { border-color: var(--saffron-gold); box-shadow: 0 0 15px rgba(255,153,51,0.15); background: rgba(0,0,0,0.7); }
 
@@ -296,9 +289,7 @@ body {
 .security-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 10px; font-weight: 600; }
 .security-footer .shield { color: #38bdf8; } .security-footer .india { color: #f97316; } .security-footer .text-green { color: var(--emerald-green); }
 
-/* =============================================================
-   5. POP-UP MODALS & LIVE VOICE OVERLAY (Premium)
-============================================================= */
+/* 5. POP-UP MODALS & LIVE VOICE OVERLAY (Premium) */
 .custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 1; transition: 0.3s ease; }
 .custom-modal.hidden { opacity: 0; pointer-events: none; }
 
@@ -324,7 +315,7 @@ body {
 .btn-verify { background: rgba(19, 136, 8, 0.15); color: var(--emerald-green); border: 1px solid var(--emerald-green); border-radius: 12px; padding: 0 20px; font-weight: 700; cursor: pointer; transition: 0.3s; height: 50px; flex-shrink: 0;}
 .btn-verify:hover { background: var(--emerald-green); color: #000; box-shadow: 0 0 15px var(--emerald-glow);}
 
-/* 🎙️ Live Voice Overlay */
+/* Live Voice Overlay */
 #live-voice-overlay { backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); background: rgba(0,0,0,0.85); z-index: 2000; }
 
 /* Action Menu Floating */
@@ -334,9 +325,7 @@ body {
 .menu-item { padding: 12px 20px; font-size: 14px; color: white; cursor: pointer; display: flex; gap: 12px; align-items: center; font-weight: 500; transition: 0.2s;}
 .menu-item:hover { background: rgba(255, 153, 51, 0.1); color: var(--saffron-gold); padding-left: 25px;}
 
-/* =============================================================
-   6. RESPONSIVE DESIGN (Mobile Drawer)
-============================================================= */
+/*  6. RESPONSIVE DESIGN (Mobile Drawer)*/
 .menu-btn { display: none; font-size: 24px; color: var(--saffron-gold); background: transparent; border: none; cursor: pointer; padding: 5px;}
 
 @media (max-width: 768px) {

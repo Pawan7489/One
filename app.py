@@ -9,19 +9,22 @@ import uuid
 import queue
 import threading
 import requests
-import werkzeug  # File formatting ke liye zaruri
+import werkzeug
 
 # 1. Flask App Initialization
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# --- [INTERNAL API & ENGINE CONFIGURATION (ADMIN_URL REMOVED)] ---
+# --- [INTERNAL API & ENGINE CONFIGURATION] ---
 AI_ENGINE_CONFIG = {
     "base_url": os.environ.get("AI_ENGINE_URL", "").strip().rstrip("/"),
     "api_key": os.environ.get("AI_ENGINE_KEY", "").strip(),
     "engine_name": os.environ.get("AI_ENGINE_NAME", "A1-Core-Engine"),
     "updated_at": None
 }
+
+# Ultra-Long Context defaults (10,000 to 50,000+ words support)
+DEFAULT_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 32768))
 
 ACTIVE_STREAM_SESSIONS = {}
 
@@ -33,9 +36,9 @@ PERSONAS = {
     "senior": {"label": "Caretaker Mode (50+)", "greeting": "Pranam. Main A1 hoon. Aap aaram se bataiye, main aapke liye kya kar sakta hoon?"}
 }
 
-# --- [CORE LOGIC FUNCTIONS] ---
+# --- [CORE HELPER FUNCTIONS] ---
 def calculate_age(dob_string):
-    """Janam tithi se umar nikalne ka bulletproof logic"""
+    """Janam tithi se umar nikalne ka logic"""
     try:
         if not dob_string or dob_string == "null":
             return 25
@@ -47,7 +50,7 @@ def calculate_age(dob_string):
         return 25
 
 def get_persona_mode(age):
-    """Umar ke hisab se AI ka persona chunna"""
+    """Umar ke hisab se persona select karta hai"""
     if age <= 15:
         return PERSONAS["child"]
     elif 16 <= age <= 25:
@@ -71,7 +74,7 @@ def _get_engine_endpoints():
     return f"{base}/api/ai/ask", f"{base}/api/ai/stream"
 
 def _parse_incoming_request(req):
-    """JSON aur Multipart Form-Data dono ko parse karke unified structure banata hai"""
+    """Payload parsing bina kisi text-length truncation ke"""
     payload = {}
     files_to_send = []
     uploaded_meta = []
@@ -122,10 +125,9 @@ def _parse_incoming_request(req):
 
 def _stream_ai_tokens(payload, user_query, files_to_send=None):
     """
-    Real-Time SSE Generator:
-    1. Thinking frames aur 2-second heartbeat bhejta hai.
-    2. Agar GPU/Colab tunnel connected hai toh wahan se live stream lata hai.
-    3. Agar local mode me hai toh smooth live token stream generate karta hai.
+    High-capacity Live SSE Stream:
+    - Pure raw token streaming (math formulas, LaTeX, multi-line code block support bina formatting break hue).
+    - Long generation support (timeout 1800s / 30 mins).
     """
     ask_url, stream_url = _get_engine_endpoints()
     target_url = stream_url or ask_url
@@ -134,8 +136,8 @@ def _stream_ai_tokens(payload, user_query, files_to_send=None):
         headers["Authorization"] = f"Bearer {AI_ENGINE_CONFIG['api_key']}"
         headers["X-API-Key"] = AI_ENGINE_CONFIG["api_key"]
 
-    short_q = (user_query or "request")[:50]
-    yield f"data: {json.dumps({'thinking': f'Analyzing query: \"{short_q}\"...', 'replaceThinking': True}, ensure_ascii=False)}\n\n"
+    short_q = (user_query or "request")[:60]
+    yield f"data: {json.dumps({'thinking': f'Processing query: \"{short_q}\"...', 'replaceThinking': True}, ensure_ascii=False)}\n\n"
 
     if target_url:
         q_out = queue.Queue()
@@ -145,13 +147,21 @@ def _stream_ai_tokens(payload, user_query, files_to_send=None):
                 req_data = dict(payload)
                 req_data["query"] = user_query
                 req_data["message"] = user_query
+                req_data["prompt"] = user_query
                 req_data["stream"] = True
 
+                # Unlimited/Ultra-Long Token parameters pass karna
+                if "max_tokens" not in req_data:
+                    req_data["max_tokens"] = DEFAULT_MAX_OUTPUT_TOKENS
+                if "max_output_tokens" not in req_data:
+                    req_data["max_output_tokens"] = DEFAULT_MAX_OUTPUT_TOKENS
+
+                # Connect timeout: 30s, Read/Stream timeout: 1800s (30 minutes for massive answers)
                 if files_to_send:
-                    resp = requests.post(target_url, data=req_data, files=files_to_send, headers=headers, stream=True, timeout=(15, 300))
+                    resp = requests.post(target_url, data=req_data, files=files_to_send, headers=headers, stream=True, timeout=(30, 1800))
                 else:
                     headers["Content-Type"] = "application/json"
-                    resp = requests.post(target_url, json=req_data, headers=headers, stream=True, timeout=(15, 300))
+                    resp = requests.post(target_url, json=req_data, headers=headers, stream=True, timeout=(30, 1800))
 
                 with resp:
                     if resp.status_code == 200:
@@ -169,14 +179,15 @@ def _stream_ai_tokens(payload, user_query, files_to_send=None):
                         else:
                             body = resp.json()
                             ans = str(body.get("answer") or body.get("response") or body.get("text") or "")
-                            for word in re.split(r"(\s+)", ans):
-                                if word:
-                                    q_out.put(("token", word))
-                                    time.sleep(0.015)
+                            # Math aur code formatting preserve karne ke liye chunk streaming
+                            chunk_size = 32
+                            for i in range(0, len(ans), chunk_size):
+                                q_out.put(("token", ans[i:i+chunk_size]))
+                                time.sleep(0.005)
                             if body.get("generated_files") or body.get("image_url") or body.get("video_url") or body.get("audio_url"):
                                 q_out.put(("media", body))
                     else:
-                        q_out.put(("error", f"Engine HTTP {resp.status_code}"))
+                        q_out.put(("error", f"Engine HTTP Status: {resp.status_code}"))
             except Exception as err:
                 q_out.put(("error", str(err)))
             finally:
@@ -200,34 +211,33 @@ def _stream_ai_tokens(payload, user_query, files_to_send=None):
                 elif kind == "media":
                     yield f"data: {json.dumps(val, ensure_ascii=False)}\n\n"
                 elif kind == "error":
-                    fallback_msg = f"Commander, AI Engine notice: {val}"
-                    yield f"data: {json.dumps({'token': fallback_msg}, ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps({'token': f'\\n[Engine Notice: {val}]'}, ensure_ascii=False)}\n\n"
                     break
             except queue.Empty:
                 hb_count += 1
                 yield ": keepalive\n\n"
-                yield f"data: {json.dumps({'thinking': f'Processing neural layers ({hb_count * 2}s)...', 'replaceThinking': True}, ensure_ascii=False)}\n\n"
+                if hb_count % 3 == 0:
+                    yield f"data: {json.dumps({'thinking': f'Generating high-context response ({hb_count * 2}s)...', 'replaceThinking': True}, ensure_ascii=False)}\n\n"
 
         yield "data: [DONE]\n\n"
         return
 
-    # Local Built-in Stream Fallback (Jab external tunnel connected na ho tab bhi stream aur JSON 100% kaam karega)
+    # Fallback response jab koi tunnel connected na ho
     dob = payload.get("dob", "")
     persona = get_persona_mode(calculate_age(dob))
     reply_text = (
-        f"[{persona['label']}] Namaste! Aapka message mil gaya hai: \"{user_query}\". "
-        f"Local API aur Live Stream 100% active hain."
+        f"[{persona['label']}] Namaste! Query receive hui: \"{user_query}\". "
+        f"Local API active hai (Colab/Kaggle tunnel connect karne par live model answer dega)."
     )
     for word in re.split(r"(\s+)", reply_text):
         if word:
             yield f"data: {json.dumps({'token': word}, ensure_ascii=False)}\n\n"
-            time.sleep(0.02)
+            time.sleep(0.01)
 
     yield "data: [DONE]\n\n"
 
-
 def _execute_sync_json_response(payload, user_query, files_to_send, uploaded_meta):
-    """Standard JSON request ke liye poora answer collect karke clean JSON return karta hai"""
+    """Complete answer collect karke standard JSON response banata hai"""
     collected_tokens = []
     media_extras = {}
 
@@ -267,17 +277,13 @@ def _execute_sync_json_response(payload, user_query, files_to_send, uploaded_met
     resp_obj.update(media_extras)
     return resp_obj
 
-
-# --- [MODULAR ROUTES] ---
+# --- [ROUTES] ---
 @app.route('/')
 def home():
-    """Main Gateway - index.html load karega"""
     return render_template('index.html')
-
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    """User login aur persona calculation"""
     try:
         if request.is_json:
             data = request.get_json(silent=True) or {}
@@ -286,7 +292,6 @@ def login():
 
         dob = data.get('dob', '')
         name = data.get('name', 'Commander')
-
         age = calculate_age(dob)
         persona = get_persona_mode(age)
 
@@ -302,11 +307,9 @@ def login():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-
-# --- [IN-APP TUNNEL SYNC ENDPOINTS FOR COLAB / KAGGLE] ---
 @app.route('/api/admin/update-tunnel', methods=['POST'])
 def update_tunnel():
-    """Colab ya Kaggle se aane wale Cloudflare Tunnel URL ko seedha is app.py me save karta hai"""
+    """Colab / Kaggle Cloudflare Tunnel URL auto-sync endpoint"""
     try:
         data = request.get_json(silent=True) or {}
         raw_url = data.get("tunnel_url") or data.get("ask_endpoint") or ""
@@ -328,7 +331,6 @@ def update_tunnel():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-
 @app.route('/api/admin/tunnel-status', methods=['GET'])
 def tunnel_status():
     ask_url, stream_url = _get_engine_endpoints()
@@ -341,13 +343,11 @@ def tunnel_status():
         "updated_at": AI_ENGINE_CONFIG["updated_at"]
     })
 
-
-# --- [UNIFIED CHAT, JSON & LIVE STREAM API ENDPOINTS] ---
 @app.route('/api/chat', methods=['POST'])
 @app.route('/api/ai/ask', methods=['POST'])
 @app.route('/api/ai/stream', methods=['POST'])
 def chat():
-    """Supports both Direct JSON Response AND Real-Time SSE Live Streaming"""
+    """Real-Time SSE Live Streaming aur Full JSON support"""
     try:
         payload, user_query, files_to_send, uploaded_meta, stream_flag = _parse_incoming_request(request)
 
@@ -358,7 +358,6 @@ def chat():
                 "message": "Query ya file missing hai."
             }), 400
 
-        # Agar /api/ai/stream call hua hai ya stream=True hai, toh Live Stream (SSE) return karein
         if request.path == '/api/ai/stream' or stream_flag:
             return Response(
                 stream_with_context(_stream_ai_tokens(payload, user_query, files_to_send)),
@@ -370,7 +369,6 @@ def chat():
                 }
             )
 
-        # Warna Standard JSON Response return karein
         result_json = _execute_sync_json_response(payload, user_query, files_to_send, uploaded_meta)
         return jsonify(result_json)
 
@@ -378,22 +376,19 @@ def chat():
         return jsonify({
             "status": "error",
             "success": False,
-            "answer": "Timeout: Engine bahut deep thinking kar raha hai. Kripya dobara try karein.",
+            "answer": "Deep thinking timeout. Kripya dobara try karein.",
             "message": "Engine thinking timeout."
         }), 504
     except Exception as e:
         return jsonify({
             "status": "error",
             "success": False,
-            "answer": "Commander, AI Engine process me error aaya hai.",
+            "answer": "Commander, AI Engine processing me error aaya hai.",
             "message": str(e)
         }), 500
 
-
-# --- [TWO-STEP LIVESTREAM ROUTES FOR EVENT-SOURCE FRONTENDS] ---
 @app.route('/api/chat/omniprocess', methods=['POST'])
 def omniprocess_start():
-    """Frontend EventSource ke liye streamId generate karta hai"""
     try:
         payload, user_query, files_to_send, uploaded_meta, _ = _parse_incoming_request(request)
         stream_id = f"stream_{uuid.uuid4().hex[:12]}"
@@ -411,10 +406,8 @@ def omniprocess_start():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-
 @app.route('/api/chat/livestream/<stream_id>', methods=['GET'])
 def omniprocess_livestream(stream_id):
-    """EventSource (GET) ke zariye live SSE tokens stream karta hai"""
     session = ACTIVE_STREAM_SESSIONS.pop(stream_id, None)
     if not session:
         return jsonify({"success": False, "error": "Stream expired or not found"}), 404
@@ -429,8 +422,7 @@ def omniprocess_livestream(stream_id):
         }
     )
 
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", debug=True, port=port, threaded=True)
-                            
+    app.run(host="0.0.0.0", debug=False, port=port, threaded=True)
+    

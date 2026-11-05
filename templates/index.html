@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=15.0">
+    <title>One Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=16.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 <body>
     <div class="ambient-bg-glow"></div>
@@ -21,12 +22,12 @@
                     </div>
                 </div>
                 
-                <h1 class="welcome-text">Namaste! 🙏</h1>
-                <p class="subtitle">Aapka Apna Secure AI Companion</p>
+                <h1 class="welcome-text">Welcome! 👋</h1>
+                <p class="subtitle">Your secure AI workspace</p>
                 
                 <form id="signup-form" class="auth-form">
-                    <div class="input-field"><input type="text" id="reg-name" required placeholder="Aapka Poora Naam"></div>
-                    <div class="input-field"><input type="text" id="reg-username" required placeholder="Username banayein"></div>
+                    <div class="input-field"><input type="text" id="reg-name" required placeholder="Full name"></div>
+                    <div class="input-field"><input type="text" id="reg-username" required placeholder="Choose a username"></div>
                     <div class="input-row">
                         <div class="input-field w-50"><input type="password" id="reg-password" required placeholder="Password"></div>
                         <div class="input-field w-50"><input type="password" id="reg-confirm" required placeholder="Confirm Password"></div>
@@ -35,8 +36,8 @@
                         <div class="input-field w-50"><input type="date" id="reg-dob" required></div>
                         <div class="input-field w-50">
                             <select id="reg-gender">
-                                <option value="male">Male (Purush)</option>
-                                <option value="female">Female (Mahila)</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
                             </select>
                         </div>
                     </div>
@@ -53,7 +54,7 @@
                 </div>
                 
                 <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
-                    Pehle se account hai? <a href="#" id="go-to-login" style="color: var(--saffron-gold); font-weight: bold;">Login Karein</a>
+                    Already have an account? <a href="#" id="go-to-login" style="color: var(--saffron-gold); font-weight: bold;">Log in</a>
                 </p>
             </div>
         </div>
@@ -71,7 +72,7 @@
                 <p class="subtitle">Securely login to your AI Dashboard</p>
                 
                 <form id="login-form" class="auth-form">
-                    <div class="input-field"><input type="text" id="login-id" required placeholder="Username ya Email"></div>
+                    <div class="input-field"><input type="text" id="login-id" required placeholder="Username or email"></div>
                     <div class="input-field"><input type="password" id="login-pass" required placeholder="Password"></div>
                     
                     <div class="remember-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 12px;">
@@ -93,7 +94,7 @@
                 </div>
 
                 <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
-                    Naya user hain? <a href="#" id="go-to-signup" style="color: var(--saffron-gold); font-weight: bold;">Sign Up Karein</a>
+                    New here? <a href="#" id="go-to-signup" style="color: var(--saffron-gold); font-weight: bold;">Sign up</a>
                 </p>
             </div>
         </div>
@@ -101,7 +102,7 @@
         <div id="chat-screen" class="app-screen hidden full-layout">
             
             <aside class="sidebar" id="app-sidebar">
-                <button id="new-chat-btn" class="new-chat-btn apple-btn"><span>+</span> Naya Chat Room</button>
+                <button id="new-chat-btn" class="new-chat-btn apple-btn"><span>+</span> New Chat</button>
                 
                 <div class="sidebar-scroll-area">
                     <div class="menu-section">
@@ -117,12 +118,12 @@
                             </li>
                         </ul>
                         <button id="history-settings-btn" class="btn-secondary apple-btn mt-10" style="padding: 10px; font-size: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                            ⚙️ Chat Room History Setting
+                            ⚙️ Chat History Settings
                         </button>
                     </div>
 
                     <div class="menu-section mt-15">
-                        <h3>⚡ AI Super Powers</h3>
+                        <h3>⚡ AI Tools</h3>
                         <ul class="ai-tools-list" id="ai-tools-list">
                             <li class="active" data-mode="chat" data-name="AI Chat (A1 Core)" data-icon="💬">💬 AI Chat (A1 Core)</li>
                             <li data-mode="image" data-name="Image Generation Mode" data-icon="🎨">🎨 Image Generation</li>
@@ -140,14 +141,14 @@
                         <ul class="upcoming-list">
                             <li><span class="beta-tag">BETA</span> 📞 Voice Call with A1</li>
                             <li><span class="beta-tag">SOON</span> 📱 WhatsApp Integration</li>
-                            <li><span class="beta-tag">SOON</span> 🧠 Custom AI Agents</li>
+                            <li><span class="beta-tag">SOON</span> 🧠 Custom Agents</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="sidebar-bottom">
                     <button id="support-btn" class="settings-btn apple-btn" style="margin-bottom: 8px;">🆘 Help & Support</button>
-                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ Settings & Logic</button>
+                    <button id="settings-btn" class="settings-btn apple-btn">⚙️ Settings</button>
                 </div>
             </aside>
 
@@ -173,7 +174,7 @@
 
 
 
-                      <div class="chat-box" id="chat-box">
+                      <div class="chat-box chat-container" id="chat-box">
                     <div id="welcome-banner" class="welcome-banner">
                         <div class="saturn-hologram-container" style="padding: 30px 0; margin-bottom: 10px;">
                             <div class="saturn-hologram" style="width: 90px; height: 90px;">
@@ -183,12 +184,12 @@
                             </div>
                         </div>
                         <h2 id="welcome-user-name">Welcome back, Commander!</h2>
-                        <p>Aaj main aapki kya madad kar sakta hoon?</p>
+                        <p>How can I help you today?</p>
                     </div>
 
                     <div id="dummy-ai-message" style="display:flex; flex-direction:column; align-items:flex-end; margin-bottom: 20px; width: 100%;">
                         <div class="message user-message" style="margin-bottom: 5px;">
-                            Bharat ke naye AI features kya hain?
+                            What are the newest AI features this year?
                         </div>
                         <div class="user-actions" style="display: flex; gap: 8px; opacity: 0.8; margin-bottom: 20px;">
                             <button class="user-action-icon" title="Listen Your Message">🔊 Reader</button>
@@ -196,7 +197,7 @@
                         </div>
                         
                         <div class="message ai-message" style="align-self: flex-start; margin-bottom: 20px;">
-                            Namaste Commander! Bharat ka naya AI (Project A1) bahut hi advance hai. Yeh aapke har sawal ka turant aur secure jawab de sakta hai.
+                            Hello! The latest AI assistant can provide fast and secure help across many tasks.
                             <div class="ai-actions" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
                                 <button class="action-icon" title="Listen">🔊 Reader</button>
                                 <button class="action-icon" title="Copy">📋 Copy</button>
@@ -216,10 +217,10 @@
                         <div class="core-ai" style="font-size: 8px;">A1</div>
                     </div>
                     <div class="thinking-steps">
-                        <span class="step step-1">🔍 Checking Database...</span>
-                        <span class="step step-2 hidden">🧠 Applying AI Logic...</span>
+                        <span class="step step-1">🔍 Checking sources...</span>
+                        <span class="step step-2 hidden">🧠 Reasoning through your request...</span>
                         <span class="step step-3 hidden">🌐 Web Search...</span>
-                        <span class="step step-4 hidden">✨ Generating Answer...</span>
+                        <span class="step step-4 hidden">✨ Generating response...</span>
                     </div>
                 </div>
 
@@ -243,10 +244,10 @@
 
                     <div class="input-wrapper">
                         <div class="action-menu-wrapper">
-                            <button id="plus-btn" class="icon-btn plus-icon" type="button" title="Upload & Tools">
+                            <button id="attachment-menu-btn" class="icon-btn plus-icon" type="button" title="Upload & Tools">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             </button>
-                            <div id="action-menu" class="action-menu hidden">
+                            <div id="attachment-menu" class="action-menu hidden">
                                 <div class="menu-item">📸 Camera (Take Photo)</div>
                                 <div class="menu-item">📷 Upload Photo/Video</div>
                                 <div class="menu-item">📁 Select File/Document</div>
@@ -258,7 +259,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                         </button>
 
-                        <textarea id="user-input" placeholder="Message ya command dijiye... (Shift+Enter for new line)" rows="1" autocomplete="off" maxlength="10000" style="max-height: 200px; min-height: 24px;"></textarea>
+                        <textarea id="composer-input" placeholder="Type your message... (Shift+Enter for a new line)" rows="1" autocomplete="off" style="max-height: 200px; min-height: 24px;"></textarea>
 
                         <button id="send-btn" class="icon-btn send-arrow" type="button">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -271,7 +272,7 @@
                 </div>
 
                 <div class="security-footer">
-                    <span class="shield">🛡️ End-to-End Encrypted</span> • 
+                    <span class="shield">🛡️ End-to-end encrypted</span> • 
                     <span class="india">🇮🇳 Made in India</span> • 
                     <span class="text-green">🔒 100% Privacy</span>
                 </div>
@@ -281,19 +282,19 @@
 
     <div id="settings-modal" class="custom-modal hidden">
         <div class="modal-content">
-            <h2>⚙️ AI Logic & Settings</h2>
+            <h2>⚙️ Assistant Settings</h2>
             
             <div class="input-field">
-                <label>Language Model (Bhasha)</label>
+                <label>Language</label>
                 <select id="setting-lang">
-                    <option value="hinglish">Hinglish (Default)</option>
-                    <option value="hindi">Pure Hindi</option>
+                    <option value="hinglish">English (Default)</option>
+                    <option value="hindi">Hindi</option>
                     <option value="english">English</option>
                 </select>
             </div>
             
             <div class="input-field">
-                <label>Voice Preference (26+ Awaazein)</label>
+                <label>Voice preference</label>
                 <select id="setting-voice">
                     <optgroup label="👦👧 Kids (6 Voices)">
                         <option value="kid-boy-1">Boy 1 - Playful</option><option value="kid-boy-2">Boy 2 - Energetic</option><option value="kid-boy-3">Boy 3 - Soft</option>
@@ -315,16 +316,16 @@
             </div>
 
             <div class="input-field">
-                <label>Age Logic Selector (AI Mode)</label>
+                <label>Audience mode</label>
                 <select id="setting-logic">
-                    <option value="5-10">5-10 saal (Kids/Simple)</option>
-                    <option value="10-15">10-15 saal (Teens/School)</option>
-                    <option value="15-18">15-18 saal (High School)</option>
-                    <option value="18-25" selected>18-25 saal (College/Youth) - Active</option>
-                    <option value="25-30">25-30 saal (Professionals)</option>
-                    <option value="30-40">30-40 saal (Adults)</option>
-                    <option value="40-50">40-50 saal (Mature)</option>
-                    <option value="50+">50+ saal (Seniors/Respectful)</option>
+                    <option value="5-10">5-10 years (Kids/Simple)</option>
+                    <option value="10-15">10-15 years (Teens/School)</option>
+                    <option value="15-18">15-18 years (High School)</option>
+                    <option value="18-25" selected>18-25 years (College/Youth) - Active</option>
+                    <option value="25-30">25-30 years (Professionals)</option>
+                    <option value="30-40">30-40 years (Adults)</option>
+                    <option value="40-50">40-50 years (Mature)</option>
+                    <option value="50+">50+ years (Seniors)</option>
                 </select>
             </div>
             <button id="close-settings" class="btn-primary apple-btn mt-10">Save Settings</button>
@@ -339,7 +340,7 @@
                 <div class="avatar-circle" id="profile-avatar-preview" style="background-size: cover; background-position: center;">📷</div>
                 <p>Change Photo</p>
             </div>
-            <div class="input-field"><label>Update Name</label><input type="text" id="prof-name" placeholder="Aapka Naam"></div>
+            <div class="input-field"><label>Update Name</label><input type="text" id="prof-name" placeholder="Your name"></div>
             <div class="input-row">
                 <div class="input-field w-50"><label>Date of Birth</label><input type="date" id="prof-dob"></div>
                 <div class="input-field w-50"><label>Gender</label><select id="prof-gender"><option value="male">Male</option><option value="female">Female</option></select></div>
@@ -352,17 +353,17 @@
 
     <div id="support-modal" class="custom-modal hidden">
         <div class="modal-content">
-            <h2>🆘 Sahayata (Support)</h2>
+            <h2>🆘 Support</h2>
             <div class="input-field">
-                <label>Aapki Samasya (Issue)</label>
+                <label>Issue category</label>
                 <select>
-                    <option>Voice kaam nahi kar rahi</option>
-                    <option>AI galat jawab de raha hai</option>
-                    <option>Chat history delete ho gayi</option>
-                    <option>Other / Anya</option>
+                    <option>Voice is not working</option>
+                    <option>Assistant response is incorrect</option>
+                    <option>Chat history was deleted</option>
+                    <option>Other</option>
                 </select>
             </div>
-            <div class="input-field"><textarea rows="4" style="width: 100%; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white;" placeholder="Apni samasya yahan likhein..."></textarea></div>
+            <div class="input-field"><textarea rows="4" style="width: 100%; padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white;" placeholder="Describe your issue..."></textarea></div>
             <button id="close-support" class="btn-primary apple-btn mt-10">Submit Ticket</button>
         </div>
     </div>
@@ -409,12 +410,13 @@
             </div>
             
             <h2 id="live-voice-status" style="color: var(--saffron-gold); margin-bottom: 10px;">Listening...</h2>
-            <p id="live-voice-text" style="color: white; font-size: 18px; max-width: 80%; line-height: 1.5; min-height: 60px;">(Bolna shuru karein...)</p>
+            <p id="live-voice-text" style="color: white; font-size: 18px; max-width: 80%; line-height: 1.5; min-height: 60px;">(Start speaking...)</p>
             <button id="close-live-voice" class="btn-secondary apple-btn mt-15" style="width: auto; padding: 12px 30px; border-radius: 30px; border-color: #ef4444; color: #ef4444;">End Voice Chat</button>
         </div>
     </div>
 
-<script src="{{ url_for('static', filename='js/script.js') }}?v=15.0"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}?v=16.0"></script>
 </body>
 </html>
 
